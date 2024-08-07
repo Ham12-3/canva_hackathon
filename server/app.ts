@@ -2,7 +2,8 @@ import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 
 import cookieParser from "cookie-parser";
-
+import { ErrorMiddleware } from "./middleware/error";
+import userRouter from "./routes/user.route";
 require("dotenv").config();
 export const app = express();
 
@@ -22,6 +23,10 @@ app.use(
   })
 );
 
+// routes
+
+app.use("/api/v1", userRouter);
+
 // Tesing API
 
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
@@ -39,3 +44,5 @@ app.all("*", (req: Request, res: Response, next: NextFunction) => {
   err.statusCode = 404;
   next(err);
 });
+
+app.use(ErrorMiddleware);
