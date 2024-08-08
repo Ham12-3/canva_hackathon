@@ -11,9 +11,6 @@ export const isAuthenticated = CatchAsyncError(
     // Correctly access the access_token from req.cookies
     const access_token = req.cookies.access_token;
 
-    console.log("Cookies:", req); // Log cookies for debugging
-    console.log("Access token:", access_token); // Log access token for debugging
-
     if (!access_token) {
       return next(new ErrorHandler("Login first to access this resource", 400));
     }
