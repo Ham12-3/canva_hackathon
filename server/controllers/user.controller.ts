@@ -11,7 +11,11 @@ import ejs from "ejs";
 
 import path from "path";
 import sendMail from "../utils/sendMail";
-import { sendToken } from "../utils/jwt";
+import {
+  accessTokenOptions,
+  refreshTokenOptions,
+  sendToken,
+} from "../utils/jwt";
 
 import { redis } from "../utils/redis";
 
@@ -211,7 +215,7 @@ export const authorizeRoles = (...roles: string[]) => {
 
 // Update access token
 
-export const upateAccessToken = CatchAsyncError(
+export const updateAccessToken = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const refresh_token = req.cookies.refresh_token;
@@ -243,6 +247,14 @@ export const upateAccessToken = CatchAsyncError(
         process.env.REFRESH_TOKEN as string,
         { expiresIn: "3d" }
       );
+      res.cookie("access_token", accessToken, accessTokenOptions);
+
+      res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+
+      res.status(200).json({
+        status: "scuccess",
+        accessToken,
+      });
     } catch (err: any) {
       return next(new ErrorHandler(err.message, 400));
     }

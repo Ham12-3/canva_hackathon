@@ -14,6 +14,32 @@ interface ITokenOptions {
   secure?: boolean;
 }
 
+const accessTokenExpire = parseInt(
+  process.env.ACCESS_TOKEN_EXPIRE || "300",
+  10
+);
+const refreshTokenExpire = parseInt(
+  process.env.REFRESH_TOKEN_EXPIRE || "300",
+  10
+);
+
+// Options for cookies
+export const accessTokenOptions: ITokenOptions = {
+  expires: new Date(Date.now() + accessTokenExpire * 60 * 60 * 1000),
+  maxAge: accessTokenExpire * 60 * 60 * 1000,
+  httpOnly: true,
+  sameSite: "lax",
+  // Ensure this matches the path from where you're sending the request
+};
+
+export const refreshTokenOptions: ITokenOptions = {
+  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000),
+  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000,
+  httpOnly: true,
+  sameSite: "lax",
+  // Ensure this matches the path from where you're sending the request
+};
+
 export const sendToken = (user: IUser, statusCode: number, res: Response) => {
   const accessToken = user.SignAccessToken();
   const refreshToken = user.SignRefreshToken();
@@ -22,31 +48,6 @@ export const sendToken = (user: IUser, statusCode: number, res: Response) => {
   redis.set(user._id as RedisKey, JSON.stringify(user) as any);
 
   // Parse environment variable to integrate with fallback values
-  const accessTokenExpire = parseInt(
-    process.env.ACCESS_TOKEN_EXPIRE || "300",
-    10
-  );
-  const refreshTokenExpire = parseInt(
-    process.env.REFRESH_TOKEN_EXPIRE || "300",
-    10
-  );
-
-  // Options for cookies
-  const accessTokenOptions: ITokenOptions = {
-    expires: new Date(Date.now() + accessTokenExpire * 1000),
-    maxAge: accessTokenExpire * 1000,
-    httpOnly: true,
-    sameSite: "lax",
-    // Ensure this matches the path from where you're sending the request
-  };
-
-  const refreshTokenOptions: ITokenOptions = {
-    expires: new Date(Date.now() + refreshTokenExpire * 1000),
-    maxAge: refreshTokenExpire * 1000,
-    httpOnly: true,
-    sameSite: "lax",
-    // Ensure this matches the path from where you're sending the request
-  };
 
   // Only set secure to true in production
   if (process.env.NODE_ENV === "production") {
