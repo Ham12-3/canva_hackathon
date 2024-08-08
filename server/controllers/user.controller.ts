@@ -13,6 +13,8 @@ import path from "path";
 import sendMail from "../utils/sendMail";
 import { sendToken } from "../utils/jwt";
 
+import { redis } from "../utils/redis";
+
 require("dotenv").config();
 
 // Register User
@@ -154,16 +156,17 @@ export const loginUser = CatchAsyncError(
       }
 
       const user = await userModel.findOne({ email }).select("+password");
-
       if (!user) {
         return next(new ErrorHandler("Invalid email or password", 400));
       }
+      console.log(user, "user");
 
       const isPasswordMatched = await user.comparePassword(password);
       if (!isPasswordMatched) {
         return next(new ErrorHandler("Invalid email or password", 400));
       }
 
+      // Send token and set session/cookies
       sendToken(user, 200, res);
     } catch (err: any) {
       return next(new ErrorHandler(err.message, 400));
@@ -176,21 +179,35 @@ export const loginUser = CatchAsyncError(
 export const logoutUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      // Ensure user is authenticated
+      const userId = req.user?._id?.toString(); // Ensure userId is a string
+      if (!userId) {
+        return next(new ErrorHandler("Not authenticated", 401));
+      }
+
+      // Clear cookies
       res.cookie("access_token", "", {
-        expires: new Date(Date.now()),
+        expires: new Date(Date.now() - 1000), // Set expiration to a past date
         httpOnly: true,
+        path: "/", // Ensure path matches where cookies were set
       });
 
       res.cookie("refresh_token", "", {
-        expires: new Date(Date.now()),
+        expires: new Date(Date.now() - 1000), // Set expiration to a past date
         httpOnly: true,
+        path: "/", // Ensure path matches where cookies were set
       });
 
+      // Remove user session from Redis
+      await redis.del(userId); // Ensure userId is a string
+
+      // Respond with success
       res.status(200).json({
         success: true,
-        message: "Logged out",
+        message: "Logged out successfully",
       });
     } catch (err: any) {
+      console.error("Logout error:", err); // Log error for debugging
       return next(new ErrorHandler(err.message, 400));
     }
   }

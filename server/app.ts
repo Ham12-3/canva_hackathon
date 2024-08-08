@@ -1,34 +1,30 @@
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
-
 import cookieParser from "cookie-parser";
 import { ErrorMiddleware } from "./middleware/error";
 import userRouter from "./routes/user.route";
 require("dotenv").config();
+
 export const app = express();
 
-// body parser
+// Body parser middleware
 app.use(express.json({ limit: "50mb" }));
 
-// cookie parser
-
+// Cookie parser middleware
 app.use(cookieParser());
 
-// Use cross origin resource sharing
-
+// CORS configuration to allow credentials
 app.use(
   cors({
-    origin: process.env.ORIGIN,
-    credentials: true,
+    origin: process.env.ORIGIN, // Ensure this is correctly set
+    credentials: true, // Allow cookies and other credentials
   })
 );
 
-// routes
-
+// Routes
 app.use("/api/v1", userRouter);
 
-// Tesing API
-
+// Testing API endpoint
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({
     success: true,
@@ -36,13 +32,12 @@ app.get("/test", (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-// unkown route handler
-
+// Unknown route handler (404)
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   const err = new Error(`Route ${req.originalUrl} not found`) as any;
-
   err.statusCode = 404;
   next(err);
 });
 
+// Error handling middleware
 app.use(ErrorMiddleware);

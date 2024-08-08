@@ -82,13 +82,13 @@ userSchema.pre<IUser>("save", async function (next) {
 
 // Sign access token
 
-userSchema.methods.SignAccessToken = function (): string {
+userSchema.methods.SignAccessToken = function () {
   return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN || "");
 };
 
 // Assign refresh token
 
-userSchema.methods.SignRefreshToken = function (): string {
+userSchema.methods.SignRefreshToken = function () {
   return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN || "");
 };
 
