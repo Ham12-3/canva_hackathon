@@ -6,7 +6,7 @@ import ErrorHandler from "../utils/ErrorHandler";
 
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 
-import jwt, { Secret } from "jsonwebtoken";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import ejs from "ejs";
 
 import path from "path";
@@ -179,35 +179,71 @@ export const loginUser = CatchAsyncError(
 export const logoutUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Ensure user is authenticated
-      const userId = req.user?._id?.toString(); // Ensure userId is a string
-      if (!userId) {
-        return next(new ErrorHandler("Not authenticated", 401));
-      }
-
-      // Clear cookies
-      res.cookie("access_token", "", {
-        expires: new Date(Date.now() - 1000), // Set expiration to a past date
-        httpOnly: true,
-        path: "/", // Ensure path matches where cookies were set
-      });
-
-      res.cookie("refresh_token", "", {
-        expires: new Date(Date.now() - 1000), // Set expiration to a past date
-        httpOnly: true,
-        path: "/", // Ensure path matches where cookies were set
-      });
-
-      // Remove user session from Redis
-      await redis.del(userId); // Ensure userId is a string
-
-      // Respond with success
+      res.cookie("access_token", "", { maxAge: 1 });
+      res.cookie("refresh_token", "", { maxAge: 1 });
+      const userId = req.user?._id || "";
+      redis.del(userId as any);
       res.status(200).json({
         success: true,
         message: "Logged out successfully",
       });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+// Vaildate user role
+
+export const authorizeRoles = (...roles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!roles.includes(req.user?.role || "")) {
+      return next(
+        new ErrorHandler(
+          `Role (${req.user?.role}) is not allowed to access this resource`,
+          403
+        )
+      );
+    }
+    next();
+  };
+};
+
+// Update access token
+
+export const upateAccessToken = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const refresh_token = req.cookies.refresh_token;
+      const decoded = jwt.verify(
+        refresh_token,
+        process.env.REFRESH_TOKEN as string
+      ) as JwtPayload;
+
+      const message = "Could not refresh token";
+      if (!decoded) {
+        return next(new ErrorHandler(message, 400));
+      }
+
+      const session = await redis.get(decoded.id as string);
+
+      if (!session) {
+        return next(new ErrorHandler(message, 400));
+      }
+      const user = JSON.parse(session);
+
+      const accessToken = jwt.sign(
+        { id: user._id },
+        process.env.ACCESS_TOKEN as string,
+        { expiresIn: "5m" }
+      );
+
+      const refreshToken = jwt.sign(
+        { id: user._id },
+        process.env.REFRESH_TOKEN as string,
+        { expiresIn: "3d" }
+      );
     } catch (err: any) {
-      console.error("Logout error:", err); // Log error for debugging
       return next(new ErrorHandler(err.message, 400));
     }
   }

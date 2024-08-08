@@ -2,6 +2,7 @@ import express from "express";
 
 import {
   activateUser,
+  authorizeRoles,
   loginUser,
   logoutUser,
   registrationUser,
@@ -16,6 +17,6 @@ userRouter.post("/activate-user", activateUser);
 
 userRouter.post("/login", loginUser);
 
-userRouter.get("/logout", isAuthenticated, logoutUser);
+userRouter.get("/logout", isAuthenticated, authorizeRoles("admin"), logoutUser);
 
 export default userRouter;

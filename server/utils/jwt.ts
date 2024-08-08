@@ -4,6 +4,7 @@ import { Response } from "express";
 import { IUser } from "../models/user.model";
 import { redis } from "./redis";
 import { RedisKey } from "ioredis";
+import { access } from "fs";
 
 interface ITokenOptions {
   expires: Date;
@@ -59,6 +60,7 @@ export const sendToken = (user: IUser, statusCode: number, res: Response) => {
   res.status(statusCode).json({
     success: true,
     user,
-    accessToken,
+    access_token: accessToken,
+    refresh_token: refreshToken,
   });
 };
