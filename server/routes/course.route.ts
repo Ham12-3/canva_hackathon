@@ -1,5 +1,5 @@
 import express from "express";
-import { uploadCourse } from "../controllers/course.controller";
+import { editCourse, uploadCourse } from "../controllers/course.controller";
 import { isAuthenticated } from "../middleware/auth";
 import { authorizeRoles } from "../controllers/user.controller";
 
@@ -10,6 +10,13 @@ courseRouter.post(
   isAuthenticated,
   authorizeRoles("admin"),
   uploadCourse
+);
+
+courseRouter.put(
+  "/edit-course/:id",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  editCourse
 );
 
 export default courseRouter;
