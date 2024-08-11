@@ -45,12 +45,13 @@ export const createOrder = CatchAsyncError(
       const data: any = {
         courseId: course._id,
         userId: user?._id,
+        payment_info,
       };
 
       newOrder(data, res, next);
       const mailData = {
         order: {
-          _id: (course._id as string).slice(-5),
+          _id: (course._id as string).slice(0, 6),
           name: course.name,
           price: course.price,
           date: new Date().toLocaleDateString("en-US", {
@@ -86,17 +87,17 @@ export const createOrder = CatchAsyncError(
 
       await user?.save();
 
-      const notification = await NotificationModel.create({
+      await NotificationModel.create({
         user: user?._id,
         title: "New User",
         message: `You have purchased ${course?.name} course`,
       });
 
-      res.status(200).json({
-        success: true,
-        message: "Order created successfully",
-        course,
-      });
+      course.purchased ? course.purchased++ : course.purchased;
+
+      await course.save();
+
+      newOrder(data, res, next);
     } catch (err: any) {
       return next(new ErrorHandler(err.message, 500));
     }
