@@ -233,7 +233,9 @@ export const updateAccessToken = CatchAsyncError(
 
       const message = "Could not refresh token";
       if (!decoded) {
-        return next(new ErrorHandler(message, 400));
+        return next(
+          new ErrorHandler("Please login for access to this resources", 400)
+        );
       }
 
       const session = await redis.get(decoded.id as string);
@@ -261,6 +263,7 @@ export const updateAccessToken = CatchAsyncError(
 
       res.cookie("refresh_token", refreshToken, refreshTokenOptions);
 
+      await redis.set(user._id, JSON.stringify(user), "EX", 604800);
       res.status(200).json({
         status: "scuccess",
         accessToken,
