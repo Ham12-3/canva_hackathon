@@ -1,6 +1,10 @@
 import express from "express";
 import { isAuthenticated } from "../middleware/auth";
-import { getUserAnalytics } from "../controllers/analytics.controller";
+import {
+  getCourseAnalytics,
+  getOrderAnalytics,
+  getUserAnalytics,
+} from "../controllers/analytics.controller";
 import { authorizeRoles } from "../controllers/user.controller";
 
 const analyticsRouter = express.Router();
@@ -12,4 +16,17 @@ analyticsRouter.get(
   getUserAnalytics
 );
 
+analyticsRouter.get(
+  "/get-courses-analytics",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  getCourseAnalytics
+);
+
+analyticsRouter.get(
+  "/get-orders-analytics",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  getOrderAnalytics
+);
 export default analyticsRouter;
