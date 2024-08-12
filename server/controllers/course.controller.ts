@@ -5,7 +5,7 @@ import { CatchAsyncError } from "../middleware/catchAsyncError";
 import ErrorHandler from "../utils/ErrorHandler";
 
 import cloudinary from "cloudinary";
-import { createCourse } from "../services/course.service";
+import { createCourse, getAllCoursesService } from "../services/course.service";
 import CourseModel from "../models/course.model";
 import { redis } from "../utils/redis";
 import mongoose from "mongoose";
@@ -117,7 +117,7 @@ export const getSingleCourse = CatchAsyncError(
 
 // get all courses without purchasing
 
-export const getAllCourses = CatchAsyncError(
+export const getCourses = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const isCacheExist = await redis.get("allCourses");
@@ -437,6 +437,40 @@ export const addReplyToReview = CatchAsyncError(
       res.status(200).json({
         success: true,
         course,
+      });
+    } catch (err: any) {
+      return next(new ErrorHandler(err.message, 500));
+    }
+  }
+);
+
+export const getAllCourses = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      getAllCoursesService(res);
+    } catch (err: any) {
+      return next(new ErrorHandler(err.message, 400));
+    }
+  }
+);
+
+// deleteCourse
+
+export const deleteCourse = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const courseId = req.params.id;
+      const course = await CourseModel.findById(courseId);
+      if (!course) {
+        return next(new ErrorHandler("Course not found", 404));
+      }
+      await course.deleteOne({ courseId });
+
+      await redis.del(courseId);
+
+      res.status(200).json({
+        success: true,
+        message: "Course deleted successfully",
       });
     } catch (err: any) {
       return next(new ErrorHandler(err.message, 500));

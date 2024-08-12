@@ -15,3 +15,14 @@ export const newOrder = CatchAsyncError(
     });
   }
 );
+
+// get all orders service
+
+export const getAllOrdersService = async (res: Response) => {
+  const orders = await OrderModel.find();
+
+  res.status(200).json({
+    success: true,
+    orders,
+  });
+};

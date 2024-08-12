@@ -15,7 +15,8 @@ import ejs, { name } from "ejs";
 import sendMail from "../utils/sendMail";
 
 import NotificationModel from "../models/notification.model";
-import { newOrder } from "../services/order.service";
+import { getAllOrdersService, newOrder } from "../services/order.service";
+import { get } from "http";
 
 // Create order
 
@@ -98,6 +99,18 @@ export const createOrder = CatchAsyncError(
       await course.save();
 
       newOrder(data, res, next);
+    } catch (err: any) {
+      return next(new ErrorHandler(err.message, 500));
+    }
+  }
+);
+
+// get all orders
+
+export const getAllOrders = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      getAllOrdersService(res);
     } catch (err: any) {
       return next(new ErrorHandler(err.message, 500));
     }
