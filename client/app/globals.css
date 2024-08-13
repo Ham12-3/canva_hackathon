@@ -17,7 +17,7 @@
 }
 
 body {
-  color: rbg(var(--foreground-rgb));
+  color: rgb(var(--foreground-rgb));
 }
 
 .hero_animation {
