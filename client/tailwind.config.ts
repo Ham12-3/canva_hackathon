@@ -27,6 +27,9 @@ const config: Config = {
         "800px": "800px",
         "400px": "400px",
       },
+      borderRadius: {
+        "tr-br": "0 9999px 9999px 0", // top-right and bottom-right corners rounded
+      },
     },
   },
   plugins: [],
