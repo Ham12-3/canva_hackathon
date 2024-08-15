@@ -11,6 +11,7 @@ const Page: FC<Props> = (props) => {
   const [open, setOpen] = useState(false);
 
   const [activeItem, setActiveItem] = useState(0);
+  const [route, setRoute] = useState("");
   return (
     <div className="">
       <Heading
@@ -18,7 +19,13 @@ const Page: FC<Props> = (props) => {
         description="E- learning is a platform for learning online courses"
         keywords="E- learning, online courses, learning platform"
       />
-      <Header open={open} setOpen={setOpen} activeItem={activeItem} />
+      <Header
+        open={open}
+        setOpen={setOpen}
+        activeItem={activeItem}
+        setRoute={setRoute}
+        route={route}
+      />
 
       <Hero />
     </div>
