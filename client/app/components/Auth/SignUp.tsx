@@ -1,34 +1,37 @@
 "use client";
 import React, { FC, useState } from "react";
+
 import { useFormik } from "formik";
+
 import {
   AiOutlineEye,
   AiOutlineEyeInvisible,
   AiFillGithub,
 } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
+
 import * as Yup from "yup";
 import { styles } from "../../styles/style";
-
 type Props = {
   setRoute: (route: string) => void;
 };
 
 const schema = Yup.object().shape({
+  name: Yup.string().required("Please enter your name"),
   email: Yup.string()
     .email("Invalid email")
     .required("Please enter your email"),
   password: Yup.string().required("Please enter your password"),
 });
 
-const Login: FC<Props> = ({ setRoute }) => {
+const SignUp: FC<Props> = ({ setRoute }) => {
   const [show, setShow] = useState(false);
 
   const formik = useFormik({
-    initialValues: { email: "", password: "" },
+    initialValues: { name: "", email: "", password: "" },
     validationSchema: schema,
     onSubmit: async ({ email, password }) => {
-      console.log(email, password);
+      setRoute("Verification");
     },
   });
 
@@ -36,26 +39,48 @@ const Login: FC<Props> = ({ setRoute }) => {
 
   return (
     <div className="w-full">
-      <h1 className={`${styles.title}`}>Login with Elearning</h1>
+      <h1 className={`${styles.title}`}>Join Elearning</h1>
 
       <form onSubmit={handleSubmit}>
-        <label htmlFor="email" className={`${styles.label}`}>
-          Enter your email
-        </label>
-        <input
-          type="email"
-          name="email"
-          value={values.email}
-          onChange={handleChange}
-          id="email"
-          placeholder="loginmail@gmail.com"
-          className={`${errors.email && touched.email && "border-red-500"} ${
-            styles.input
-          }`}
-        />
-        {errors.email && touched.email && (
-          <span className="text-red-500 pt-2 block">{errors.email} </span>
-        )}
+        <div>
+          <label htmlFor="name" className={`${styles.label}`}>
+            Enter your name
+          </label>
+          <input
+            type="text"
+            name="name"
+            value={values.name}
+            onChange={handleChange}
+            id="name"
+            placeholder="John Doe"
+            className={`${errors.name && touched.name && "border-red-500"} ${
+              styles.input
+            }`}
+          />
+          {errors.name && touched.name && (
+            <span className="text-red-500 pt-2 block">{errors.name} </span>
+          )}
+        </div>
+
+        <div className="w-full mt-5 relative mb-1">
+          <label htmlFor="email" className={`${styles.label}`}>
+            Enter your email
+          </label>
+          <input
+            type="email"
+            name=""
+            value={values.email}
+            onChange={handleChange}
+            id="email"
+            placeholder="singupmail@gmail.com"
+            className={`${errors.email && touched.email && "border-red-500"} ${
+              styles.input
+            }`}
+          />
+          {errors.email && touched.email && (
+            <span className="text-red-500 pt-2 block">{errors.email} </span>
+          )}
+        </div>
 
         <div className="w-full mt-5 relative mb-1">
           <label htmlFor="password" className={`${styles.label}`}>
@@ -73,16 +98,15 @@ const Login: FC<Props> = ({ setRoute }) => {
               errors.password && touched.password && "border-red-500"
             } ${styles.input}`}
           />
-
           {!show ? (
             <AiOutlineEyeInvisible
-              className="absolute right-2 bottom-3  z-10 cursor-pointer"
+              className="absolute bottom-3 right-2 z-1 cursor-pointer"
               size={20}
               onClick={() => setShow(true)}
             />
           ) : (
             <AiOutlineEye
-              className="absolute right-2 bottom-3 z-10 cursor-pointer"
+              className="absolute bottom-3 right-2 z-1 cursor-pointer"
               size={20}
               onClick={() => setShow(false)}
             />
@@ -93,8 +117,9 @@ const Login: FC<Props> = ({ setRoute }) => {
           <span className="text-red-500 pt-2 block">{errors.password}</span>
         )}
         <div className="w-full mt-5">
-          <input type="submit" value="Login" className={`${styles.button}`} />
+          <input type="submit" value="Sign Up" className={`${styles.button}`} />
         </div>
+        <br />
 
         <h5 className="text-center pt-4 fontPoppins text-[14px] text-black dark:text-white">
           Or join with
@@ -104,18 +129,19 @@ const Login: FC<Props> = ({ setRoute }) => {
           <AiFillGithub size={30} className="cursor-pointer ml-2" />
         </div>
         <h5 className="text-center pt-4 font-Poppins text-[14px]">
-          Not have an account?{" "}
+          Already have an account?{" "}
           <span
             className="text-[#2190ff] pl-1 cursor-pointer"
-            onClick={() => setRoute("Sign-Up")}
+            onClick={() => setRoute("Login")}
           >
-            Sign Up
+            Sign In
           </span>
         </h5>
       </form>
+
       <br />
     </div>
   );
 };
 
-export default Login;
+export default SignUp;
