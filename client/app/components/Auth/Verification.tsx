@@ -30,7 +30,7 @@ const Verification: FC<Props> = ({ setRoute }) => {
   });
 
   const verificationHandler = async () => {
-    console.log("test");
+    setInvalidError(true);
   };
 
   const handleInputChange = (index: number, value: string) => {
@@ -56,12 +56,12 @@ const Verification: FC<Props> = ({ setRoute }) => {
       </div>
       <br />
       <br />
-      <div className="1100px:w-[70%] m-auto flex items-center justify-around">
+      <div className="m-auto flex items-center justify-around">
         {Object.keys(verifyNumber).map((key, index) => (
           <input
             key={key}
             ref={inputRefs[index]}
-            type="text"
+            type="number"
             value={verifyNumber[key]}
             onChange={(e) => handleInputChange(index, e.target.value)}
             maxLength={1}
@@ -70,9 +70,27 @@ const Verification: FC<Props> = ({ setRoute }) => {
                 ? "shake border-red-500"
                 : "dark:border-white border-[#00000004a]"
             } `}
+            placeholder=""
           />
         ))}
       </div>
+      <br />
+      <br />
+      <div className="w-full flex justify-center">
+        <button className={`${styles.button}`} onClick={verificationHandler}>
+          Verify OTP
+        </button>
+      </div>
+      <br />
+      <h5 className="text-center pt-4 font-Poppins text-[14px] text-black dark:text-white">
+        Go back to sign in?{" "}
+        <span
+          className="text-[#2190ff] pl-1 cursor-pointer"
+          onClick={() => setRoute("Login")}
+        >
+          Sign in
+        </span>
+      </h5>
     </div>
   );
 };
