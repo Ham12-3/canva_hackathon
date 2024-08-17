@@ -12,6 +12,9 @@ import { useSelector } from "react-redux";
 import Image from "next/image";
 
 import { RxAvatar } from "react-icons/rx";
+import { useSession } from "next-auth/react";
+import { useSocialAuthMutation } from "@/redux/features/auth/authApi";
+import toast from "react-hot-toast";
 
 type Props = {
   open: boolean;
@@ -26,6 +29,26 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   const [openSidebar, setOpenSidebar] = useState(false);
 
   const { user } = useSelector((state: any) => state.auth);
+
+  const { data } = useSession();
+  const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
+
+  useEffect(() => {
+    if (!user) {
+      if (data) {
+        socialAuth({
+          email: data?.user?.email,
+          name: data?.user?.name,
+          avatar: data.user?.image,
+        });
+      }
+    }
+
+    if (isSuccess) {
+      toast.success("Login successfully");
+    }
+  }, [data, user]);
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 80) {
