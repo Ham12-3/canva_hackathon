@@ -9,6 +9,8 @@ import { Toaster } from "react-hot-toast";
 import { Providers } from "./Provider";
 
 import { SessionProvider } from "next-auth/react";
+import { useLoadUserQuery } from "../redux/features/api/apiSlice";
+import Loader from "./components/Loader/Loader";
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -34,7 +36,7 @@ export default function RootLayout({
         <Providers>
           <SessionProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              {children}
+              <Custom>{children}</Custom>
               <Toaster position="top-center" reverseOrder={false} />
             </ThemeProvider>
           </SessionProvider>
@@ -43,3 +45,8 @@ export default function RootLayout({
     </html>
   );
 }
+
+const Custom: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isLoading } = useLoadUserQuery({});
+  return <>{isLoading ? <Loader /> : <>{children}</>}</>;
+};
