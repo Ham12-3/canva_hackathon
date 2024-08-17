@@ -8,6 +8,10 @@ import CustomModal from "../utils/CustomModal";
 import Login from "../components/Auth/Login";
 import SignUp from "../components/Auth/SignUp";
 import Verification from "./Auth/Verification";
+import { useSelector } from "react-redux";
+import Image from "next/image";
+
+import { RxAvatar } from "react-icons/rx";
 
 type Props = {
   open: boolean;
@@ -21,6 +25,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   const [active, setActive] = useState(true);
   const [openSidebar, setOpenSidebar] = useState(false);
 
+  const { user } = useSelector((state: any) => state.auth);
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 80) {
@@ -44,6 +49,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
     }
   };
 
+  console.log(user);
   return (
     <div className="w-full relative">
       <div
@@ -77,14 +83,37 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
               </div>
 
               {/* Desktop User Icon */}
-              <HiOutlineUserCircle
-                size={25}
-                className="hidden md:block cursor-pointer dark:text-white text-black"
-                onClick={() => {
-                  setOpen(true);
-                  setRoute("Login"); // Ensure the route is set to "Login"
-                }}
-              />
+
+              {user ? (
+                <>
+                  <Link href={"/profile"}>
+                    <Image
+                      src={
+                        user.avatar ? (
+                          user.avatar
+                        ) : (
+                          <RxAvatar
+                            size={25}
+                            className="hidden md:block cursor-pointer dark:text-white text-black"
+                          />
+                        )
+                      }
+                      alt=""
+                    />
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <HiOutlineUserCircle
+                    size={25}
+                    className="hidden md:block cursor-pointer dark:text-white text-black"
+                    onClick={() => {
+                      setOpen(true);
+                      setRoute("Login"); // Ensure the route is set to "Login"
+                    }}
+                  />
+                </>
+              )}
             </div>
           </div>
         </div>
