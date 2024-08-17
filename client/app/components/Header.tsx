@@ -11,9 +11,11 @@ import Verification from "./Auth/Verification";
 import { useSelector } from "react-redux";
 import Image from "next/image";
 
-import { RxAvatar } from "react-icons/rx";
 import { useSession } from "next-auth/react";
-import { useSocialAuthMutation } from "@/redux/features/auth/authApi";
+import {
+  useLogOutQuery,
+  useSocialAuthMutation,
+} from "../../redux/features/auth/authApi";
 import toast from "react-hot-toast";
 
 type Props = {
@@ -33,6 +35,12 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   const { data } = useSession();
   const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
 
+  const [logout, setLogout] = useState(false);
+
+  const {} = useLogOutQuery(undefined, {
+    skip: !logout ? true : false,
+  });
+
   useEffect(() => {
     if (!user) {
       if (data) {
@@ -44,8 +52,11 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
       }
     }
 
-    if (isSuccess) {
+    if (data === null && isSuccess) {
       toast.success("Login successfully");
+    }
+    if (data === null) {
+      setLogout(true);
     }
   }, [data, user]);
 
@@ -89,7 +100,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
                 href={"/"}
                 className={`text-[25px] font-Poppins font-[500] text-black dark:text-white`}
               >
-                Elearning
+                Lacodemy
               </Link>
             </div>
             <div className="flex items-center">
@@ -110,19 +121,18 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
               {user ? (
                 <>
                   <Link href={"/profile"}>
-                    <Image
-                      src={
-                        user.avatar ? (
-                          user.avatar
-                        ) : (
-                          <RxAvatar
-                            size={25}
-                            className="hidden md:block cursor-pointer dark:text-white text-black"
-                          />
-                        )
-                      }
-                      alt=""
-                    />
+                    {user.avatar ? (
+                      <Image
+                        src={user.avatar}
+                        alt="User Avatar"
+                        className="w-10 h-10 rounded-full object-cover" // You can adjust these classes as needed
+                      />
+                    ) : (
+                      <HiOutlineUserCircle
+                        size={25}
+                        className="hidden md:block cursor-pointer dark:text-white text-black"
+                      />
+                    )}
                   </Link>
                 </>
               ) : (

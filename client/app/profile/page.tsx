@@ -4,6 +4,8 @@ import React, { FC, useState } from "react";
 import Protected from "../hooks/useProtected";
 import Heading from "../utils/Heading";
 import Header from "../components/Header";
+import Profile from "../components/Profile/Profile";
+import { useSelector } from "react-redux";
 
 type Props = {};
 
@@ -12,11 +14,12 @@ const page: FC<Props> = (props) => {
 
   const [activeItem, setActiveItem] = useState(0);
   const [route, setRoute] = useState("");
+  const { user } = useSelector((state: any) => state.auth);
   return (
     <div>
       <Protected>
         <Heading
-          title="E- learning"
+          title={`${user.name} Profile`}
           description="E- learning is a platform for learning online courses"
           keywords="E- learning, online courses, learning platform"
         />
@@ -27,6 +30,7 @@ const page: FC<Props> = (props) => {
           setRoute={setRoute}
           route={route}
         />
+        <Profile user={user} />
       </Protected>
     </div>
   );
