@@ -29,61 +29,53 @@ type Props = {
 const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   const [active, setActive] = useState(true);
   const [openSidebar, setOpenSidebar] = useState(false);
-
   const { user } = useSelector((state: any) => state.auth);
-
-  const { data } = useSession();
-  const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
-
+  const { data, status } = useSession(); // Check status
+  const [socialAuth, { isSuccess }] = useSocialAuthMutation();
   const [logout, setLogout] = useState(false);
 
-  const {} = useLogOutQuery(undefined, {
-    skip: !logout ? true : false,
+  useLogOutQuery(undefined, {
+    skip: !logout,
   });
 
   useEffect(() => {
-    if (!user) {
-      if (data) {
-        socialAuth({
-          email: data?.user?.email,
-          name: data?.user?.name,
-          avatar: data.user?.image,
-        });
-      }
-    }
+    console.log("Session status:", status); // Check the status
+    console.log("Session data:", data); // Check the session data
 
-    if (data === null && isSuccess) {
-      toast.success("Login successfully");
-    }
-    if (data === null) {
+    if (data?.user && !user) {
+      const { email, name, image } = data.user;
+
+      socialAuth({
+        email,
+        name,
+        avatar: image,
+      })
+        .then(() => {
+          toast.success("Login successfully");
+        })
+        .catch(() => {
+          toast.error("Login failed");
+        });
+    } else if (data === null && isSuccess) {
       setLogout(true);
     }
-  }, [data, user]);
+  }, [data, user, isSuccess, socialAuth, status]);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 80) {
-        setActive(true);
-      } else {
-        setActive(false);
-      }
+      setActive(window.scrollY > 80);
     };
 
     window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleClose = (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-    if (target.id === "screen") {
+    if ((e.target as HTMLElement).id === "screen") {
       setOpenSidebar(false);
     }
   };
 
-  console.log(user);
   return (
     <div className="w-full relative">
       <div
@@ -107,7 +99,6 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
               <NavItems activeItem={activeItem} isMobile={false} />
               <ThemeSwitcher />
 
-              {/* Mobile Hamburger Button */}
               <div className="md:hidden">
                 <HiOutlineMenuAlt3
                   size={25}
@@ -116,42 +107,37 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
                 />
               </div>
 
-              {/* Desktop User Icon */}
-
               {user ? (
-                <>
-                  <Link href={"/profile"}>
-                    {user.avatar ? (
-                      <Image
-                        src={user.avatar}
-                        alt="User Avatar"
-                        className="w-10 h-10 rounded-full object-cover" // You can adjust these classes as needed
-                      />
-                    ) : (
-                      <HiOutlineUserCircle
-                        size={25}
-                        className="hidden md:block cursor-pointer dark:text-white text-black"
-                      />
-                    )}
-                  </Link>
-                </>
+                <Link href={"/profile"}>
+                  {user.avatar ? (
+                    <Image
+                      src={user.avatar.url}
+                      alt="User Avatar"
+                      className="w-10 h-10 rounded-full object-cover"
+                      width={25}
+                      height={25}
+                    />
+                  ) : (
+                    <HiOutlineUserCircle
+                      size={25}
+                      className="hidden md:block cursor-pointer dark:text-white text-black"
+                    />
+                  )}
+                </Link>
               ) : (
-                <>
-                  <HiOutlineUserCircle
-                    size={25}
-                    className="hidden md:block cursor-pointer dark:text-white text-black"
-                    onClick={() => {
-                      setOpen(true);
-                      setRoute("Login"); // Ensure the route is set to "Login"
-                    }}
-                  />
-                </>
+                <HiOutlineUserCircle
+                  size={25}
+                  className="hidden md:block cursor-pointer dark:text-white text-black"
+                  onClick={() => {
+                    setOpen(true);
+                    setRoute("Login");
+                  }}
+                />
               )}
             </div>
           </div>
         </div>
 
-        {/* Mobile Sidebar */}
         {openSidebar && (
           <div
             className="fixed w-full h-screen top-0 left-0 z-[99999] dark:bg-[unset] bg-[#00000024]"
@@ -160,19 +146,14 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
           >
             <div className="w-[70%] fixed z-[999999999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0">
               <NavItems activeItem={activeItem} isMobile={true} />
-
               <HiOutlineUserCircle
                 size={25}
                 className="cursor-pointer ml-5 my-2 text-black dark:text-white"
                 onClick={() => {
                   setOpen(true);
-                  setRoute("Login"); // Ensure the route is set to "Login"
+                  setRoute("Login");
                 }}
               />
-
-              <br />
-              <br />
-
               <p className="text-[16px] px-2 pl-5 text-black dark:text-white">
                 Copyright © {new Date().getFullYear()} Elearning
               </p>

@@ -406,48 +406,50 @@ export const updatePassword = CatchAsyncError(
 
 // update profile picture
 
+// Update profile picture
 interface IUpdateProfilePicture {
-  avatar: string;
+  avatar: string; // Expecting base64 encoded image data
 }
 
 export const updateProfilePicture = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { avatar } = req.body as IUpdateProfilePicture;
-
       const userId = req.user?._id;
+
+      if (!avatar || !userId) {
+        return next(new ErrorHandler("Avatar or User ID is missing", 400));
+      }
 
       const user = await userModel.findById(userId);
 
-      if (avatar && user) {
-        if (user?.avatar.public_id) {
-          // first delete the old image
-          await cloudinary.v2.uploader.destroy(user.avatar.public_id);
-
-          const myCloud = await cloudinary.v2.uploader.upload(avatar, {
-            folder: "avatars",
-            width: 150,
-            crop: "scale",
-          });
-          user.avatar = {
-            public_id: myCloud.public_id,
-            url: myCloud.secure_url,
-          };
-        } else {
-          const myCloud = await cloudinary.v2.uploader.upload(avatar, {
-            folder: "avatars",
-            width: 150,
-            crop: "scale",
-          });
-          user.avatar = {
-            public_id: myCloud.public_id,
-            url: myCloud.secure_url,
-          };
-        }
+      if (!user) {
+        return next(new ErrorHandler("User not found", 404));
       }
 
-      await user?.save();
+      // Check if user has an existing avatar
+      if (user?.avatar?.public_id) {
+        // First delete the old image from Cloudinary
+        await cloudinary.v2.uploader.destroy(user.avatar.public_id);
+      }
 
+      // Upload the new image to Cloudinary
+      const uploadResult = await cloudinary.v2.uploader.upload(avatar, {
+        folder: "avatars",
+        width: 150,
+        crop: "scale",
+      });
+
+      // Update user avatar
+      user.avatar = {
+        public_id: uploadResult.public_id,
+        url: uploadResult.secure_url,
+      };
+
+      // Save the updated user information
+      await user.save();
+
+      // Update user info in Redis cache
       await redis.set(userId as string, JSON.stringify(user));
 
       res.status(201).json({

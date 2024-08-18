@@ -1,5 +1,3 @@
-"use client";
-
 import React, { FC, useState } from "react";
 import SideBarProfile from "./SideBarProfile";
 import { useLogOutQuery } from "../../../redux/features/auth/authApi";
@@ -14,42 +12,33 @@ type Props = {
 
 const Profile: FC<Props> = ({ user }) => {
   const [scroll, setScroll] = useState(false);
-
   const [avatar, setAvatar] = useState(null);
-
   const [active, setActive] = useState(1);
-
   const [logout, setLogout] = useState(false);
 
   const {} = useLogOutQuery(undefined, {
-    skip: !logout ? true : false,
+    skip: !logout,
   });
 
   const logOutHandler = async () => {
     setLogout(true);
     await signOut();
-
     redirect("/");
   };
 
   if (typeof window !== "undefined") {
     window.addEventListener("scroll", () => {
-      if (window.scrollY > 85) {
-        setScroll(true);
-      } else {
-        setScroll(false);
-      }
+      setScroll(window.scrollY > 85);
     });
   }
 
   return (
-    <div className="w-[85%] flex mx-auto">
-      <div
-        className={`mt-[150px] w-[60px] 800px:w-[310px] h-[450px] bg-white dark:bg-slate-800 bg-opacity-90 dark:bg-opacity-90 border dark:border-[#ffffff1d] border-[#e0e0e0]
-          rounded-lg shadow-lg dark:shadow-md mt-[80px] transition-all duration-300 ease-in-out ${
-            scroll ? "sticky top-[120px]" : "sticky top-[30px]"
-          }`}
-      >
+    <div
+      className={`w-full px-3 800px:px-10 flex justify-center items-center pt-24 ${
+        scroll ? "mt-4" : ""
+      } transition-all duration-300`}
+    >
+      <div className="w-[100%] 800px:w-[25%] bg-white dark:bg-slate-800  rounded-lg">
         <SideBarProfile
           user={user}
           active={active}
@@ -58,8 +47,9 @@ const Profile: FC<Props> = ({ user }) => {
           logOutHandler={logOutHandler}
         />
       </div>
-
-      {active === 1 && <ProfileInfo avatar={avatar} user={user} />}
+      <div className="w-full ml-5">
+        <ProfileInfo avatar={avatar} user={user} />
+      </div>
     </div>
   );
 };
