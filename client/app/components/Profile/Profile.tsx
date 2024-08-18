@@ -6,6 +6,7 @@ import { useLogOutQuery } from "../../../redux/features/auth/authApi";
 import { signOut } from "next-auth/react";
 import { redirect } from "next/navigation";
 import toast from "react-hot-toast";
+import ProfileInfo from "./ProfileInfo";
 
 type Props = {
   user: any;
@@ -57,6 +58,8 @@ const Profile: FC<Props> = ({ user }) => {
           logOutHandler={logOutHandler}
         />
       </div>
+
+      {active === 1 && <ProfileInfo avatar={avatar} user={user} />}
     </div>
   );
 };
