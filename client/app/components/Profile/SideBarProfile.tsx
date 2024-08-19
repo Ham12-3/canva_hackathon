@@ -4,6 +4,8 @@ import { HiOutlineUserCircle } from "react-icons/hi";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { SiCoursera } from "react-icons/si";
 import { AiOutlineLogout } from "react-icons/ai";
+import { MdOutlineAdminPanelSettings } from "react-icons/md";
+import Link from "next/link";
 
 type Props = {
   user: any;
@@ -89,6 +91,29 @@ const SideBarProfile: FC<Props> = ({
           Enrolled Courses
         </h5>
       </div>
+
+      {/* Admin Dashboard  */}
+
+      {user.role === "admin" && (
+        <Link
+          className={`w-full flex items-center cursor-pointer rounded-md shadow-sm transition-all duration-300 ease-in-out mt-6 ${
+            active === 6
+              ? "bg-gray-200 dark:bg-slate-700 shadow-lg"
+              : "bg-transparent"
+          }`}
+          href={"/admin"}
+        >
+          <MdOutlineAdminPanelSettings
+            size={20}
+            className={`mr-4 text-black dark:text-white transition-transform duration-300 ease-in-out ${
+              active === 3 ? "transform scale-110" : ""
+            }`}
+          />
+          <h5 className="pl-4 font-Poppins text-lg font-semibold text-black dark:text-white">
+            Admin Dashboard
+          </h5>
+        </Link>
+      )}
 
       {/* Logout */}
       <div

@@ -8,6 +8,7 @@ import {
   useUpdateAvatarMutation,
 } from "../../../redux/features/user/userApi";
 import { useLoadUserQuery } from "@/redux/features/api/apiSlice";
+import toast from "react-hot-toast";
 
 type Props = {
   avatar: string | null;
@@ -44,17 +45,24 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess || success) {
       setLoadUser(true);
     }
-    if (error) {
+    if (error || updateError) {
       console.error("Error updating avatar:", error); // Debugging
     }
-  }, [isSuccess, error]);
+    if (success) {
+      toast.success("Profile updated successfully");
+    }
+  }, [isSuccess, error, success, updateError]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log("Form submitted");
+    if (name !== "") {
+      await editProfile({
+        name: name,
+      });
+    }
   };
 
   const imageSrc = user?.avatar?.url || avatar;

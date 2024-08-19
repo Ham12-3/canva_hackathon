@@ -30,7 +30,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   const [active, setActive] = useState(true);
   const [openSidebar, setOpenSidebar] = useState(false);
   const { user } = useSelector((state: any) => state.auth);
-  const { data, status } = useSession(); // Check status
+  const { data, status } = useSession();
   const [socialAuth, { isSuccess }] = useSocialAuthMutation();
   const [logout, setLogout] = useState(false);
 
@@ -39,10 +39,10 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   });
 
   useEffect(() => {
-    console.log("Session status:", status); // Check the status
-    console.log("Session data:", data); // Check the session data
+    console.log("Session status:", status);
+    console.log("Session data:", data);
 
-    if (data?.user && !user) {
+    if (status === "authenticated" && data?.user && !user && !logout) {
       const { email, name, image } = data.user;
 
       socialAuth({
@@ -59,7 +59,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
     } else if (data === null && isSuccess) {
       setLogout(true);
     }
-  }, [data, user, isSuccess, socialAuth, status]);
+  }, [data, user, isSuccess, socialAuth, status, logout]);
 
   useEffect(() => {
     const handleScroll = () => {

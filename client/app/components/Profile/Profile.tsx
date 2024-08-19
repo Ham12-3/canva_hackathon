@@ -5,6 +5,7 @@ import { signOut } from "next-auth/react";
 import { redirect } from "next/navigation";
 import toast from "react-hot-toast";
 import ProfileInfo from "./ProfileInfo";
+import ChangePassword from "./ChangePassword";
 
 type Props = {
   user: any;
@@ -22,7 +23,7 @@ const Profile: FC<Props> = ({ user }) => {
 
   const logOutHandler = async () => {
     setLogout(true);
-    await signOut();
+    await signOut({ redirect: false }); // Prevent automatic redirection by NextAuth
     redirect("/");
   };
 
@@ -38,7 +39,7 @@ const Profile: FC<Props> = ({ user }) => {
         scroll ? "mt-4" : ""
       } transition-all duration-300`}
     >
-      <div className="w-[100%] 800px:w-[25%] bg-white dark:bg-slate-800  rounded-lg">
+      <div className="w-[100%] 800px:w-[25%] bg-white dark:bg-slate-800 rounded-lg">
         <SideBarProfile
           user={user}
           active={active}
@@ -47,9 +48,18 @@ const Profile: FC<Props> = ({ user }) => {
           logOutHandler={logOutHandler}
         />
       </div>
-      <div className="w-full ml-5">
-        <ProfileInfo avatar={avatar} user={user} />
-      </div>
+
+      {active === 1 && (
+        <div className="w-full ml-5">
+          <ProfileInfo avatar={avatar} user={user} />
+        </div>
+      )}
+
+      {active === 2 && (
+        <div className="w-full h-full bg-transparent mt-[80px]">
+          <ChangePassword />
+        </div>
+      )}
     </div>
   );
 };
