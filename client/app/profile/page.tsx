@@ -19,7 +19,7 @@ const page: FC<Props> = (props) => {
     <div>
       <Protected>
         <Heading
-          title={`${user.name} Profile`}
+          title={`${user.name} Profile - Elearning`}
           description="E- learning is a platform for learning online courses"
           keywords="E- learning, online courses, learning platform"
         />
