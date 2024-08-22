@@ -113,7 +113,7 @@ const Sidebar = () => {
         <Menu iconShape="square">
           <Item
             title="Dashboard"
-            to="/dashboard"
+            to="/admin/dashboard"
             icon={<HomeOutlinedIcon style={{ color: "#ffffff" }} />}
             selected={selected}
             setSelected={setSelected}
@@ -123,14 +123,14 @@ const Sidebar = () => {
           </Typography>
           <Item
             title="Users"
-            to="/users"
+            to="/admin/users"
             icon={<PeopleOutlinedIcon style={{ color: "#ffffff" }} />}
             selected={selected}
             setSelected={setSelected}
           />
           <Item
             title="Invoices"
-            to="/invoices"
+            to="/admin/invoices"
             icon={<ReceiptOutlinedIcon style={{ color: "#ffffff" }} />}
             selected={selected}
             setSelected={setSelected}
@@ -147,7 +147,7 @@ const Sidebar = () => {
           />
           <Item
             title="Live Courses"
-            to="/live-courses"
+            to="/admin/live-courses"
             icon={<OndemandVideoIcon style={{ color: "#ffffff" }} />}
             selected={selected}
             setSelected={setSelected}
@@ -157,21 +157,21 @@ const Sidebar = () => {
           </Typography>
           <Item
             title="Hero"
-            to="/hero"
+            to="/admin/hero"
             icon={<WebIcon style={{ color: "#ffffff" }} />}
             selected={selected}
             setSelected={setSelected}
           />
           <Item
             title="FAQ"
-            to="/faq"
+            to="/admin/faq"
             icon={<QuizIcon style={{ color: "#ffffff" }} />}
             selected={selected}
             setSelected={setSelected}
           />
           <Item
             title="Categories"
-            to="/categories"
+            to="/admin/categories"
             icon={<WysiwygIcon style={{ color: "#ffffff" }} />}
             selected={selected}
             setSelected={setSelected}
@@ -181,7 +181,7 @@ const Sidebar = () => {
           </Typography>
           <Item
             title="Manage Team"
-            to="/manage-team"
+            to="/admin/manage-team"
             icon={<GroupsIcon style={{ color: "#ffffff" }} />}
             selected={selected}
             setSelected={setSelected}
@@ -191,7 +191,7 @@ const Sidebar = () => {
           </Typography>
           <Item
             title="Analytics"
-            to="/analytics"
+            to="/admin/analytics"
             icon={<BarChartOutlinedIcon style={{ color: "#ffffff" }} />}
             selected={selected}
             setSelected={setSelected}
