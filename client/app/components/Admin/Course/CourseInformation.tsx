@@ -54,6 +54,7 @@ const CourseInformation: FC<Props> = ({
       reader.onload = () => {
         setCourseInfo({ ...courseInfo, thumbnail: reader.result });
       };
+      reader.readAsDataURL(file);
     }
   };
 
