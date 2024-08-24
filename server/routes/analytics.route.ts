@@ -5,12 +5,16 @@ import {
   getOrderAnalytics,
   getUserAnalytics,
 } from "../controllers/analytics.controller";
-import { authorizeRoles } from "../controllers/user.controller";
+import {
+  authorizeRoles,
+  updateAccessToken,
+} from "../controllers/user.controller";
 
 const analyticsRouter = express.Router();
 
 analyticsRouter.get(
   "/get-users-analytics",
+  updateAccessToken,
   isAuthenticated,
   authorizeRoles("admin"),
   getUserAnalytics
@@ -18,6 +22,7 @@ analyticsRouter.get(
 
 analyticsRouter.get(
   "/get-courses-analytics",
+  updateAccessToken,
   isAuthenticated,
   authorizeRoles("admin"),
   getCourseAnalytics
@@ -25,6 +30,7 @@ analyticsRouter.get(
 
 analyticsRouter.get(
   "/get-orders-analytics",
+  updateAccessToken,
   isAuthenticated,
   authorizeRoles("admin"),
   getOrderAnalytics
