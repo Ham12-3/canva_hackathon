@@ -93,6 +93,52 @@ const CourseContent: FC<Props> = ({
     }
   };
 
+  const addNewSection = () => {
+    if (
+      courseContentData[courseContentData.length - 1].title === "" ||
+      courseContentData[courseContentData.length - 1].description === "" ||
+      courseContentData[courseContentData.length - 1].videoUrl === "" ||
+      courseContentData[courseContentData.length - 1].links[0].title === "" ||
+      courseContentData[courseContentData.length - 1].links[0].url === ""
+    ) {
+      toast.error("Please fill all fields first!");
+    } else {
+      setActiveSection(activeSection + 1);
+      const newContent = {
+        videoUrl: "",
+        title: "",
+        description: "",
+        videoSection: `Untitled section ${activeSection}`,
+        links: [
+          {
+            title: "",
+            url: "",
+          },
+        ],
+      };
+      setCourseContentData([...courseContentData, newContent]);
+    }
+  };
+
+  const prevButton = () => {
+    setActive(active - 1);
+  };
+
+  const handleOptions = () => {
+    if (
+      courseContentData[courseContentData.length - 1].title === "" ||
+      courseContentData[courseContentData.length - 1].description === "" ||
+      courseContentData[courseContentData.length - 1].videoUrl === "" ||
+      courseContentData[courseContentData.length - 1].links[0].title === "" ||
+      courseContentData[courseContentData.length - 1].links[0].url === ""
+    ) {
+      toast.error("Section can't be empty");
+    } else {
+      setActive(active + 1);
+      handleCourseSubmit();
+    }
+  };
+
   return (
     <div className="w-[80%] m-auto mt-24 p-3">
       <form action="" onSubmit={handleSubmit}>
@@ -309,7 +355,33 @@ const CourseContent: FC<Props> = ({
             </>
           );
         })}
+        <br />
+        <div
+          className="flex items-center text-[20px] dark:text-white text-black cursor-pointer"
+          onClick={() => addNewSection()}
+        >
+          <AiOutlinePlusCircle className="mr-2" />
+          Add new section
+        </div>
       </form>
+      <br />
+      <div className="w-full flex items-center justify-between">
+        <div
+          className="w-full 800px:w-[180px] flex items-center justify-center h-[40px] bg-[#37a39a] text-center text-[#fff] rounded mt-8 cursor-pointer"
+          onClick={() => prevButton()}
+        >
+          Prev
+        </div>
+        <div
+          className="w-full 800px:w-[180px] flex items-center justify-center h-[40px]bg-[#37a39a] text-center text-[#fff] rounded mt-8 cursor-pointer"
+          onClick={() => handleOptions()}
+        >
+          Next
+        </div>
+      </div>
+      <br />
+      <br />
+      <br />
     </div>
   );
 };
