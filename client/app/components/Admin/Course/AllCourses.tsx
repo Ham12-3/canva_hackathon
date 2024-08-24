@@ -2,13 +2,14 @@ import React from "react";
 import { Box, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { AiOutlineDelete } from "react-icons/ai";
-import { useTheme } from "next-themes";
 import { FiEdit2 } from "react-icons/fi";
+import { useTheme } from "next-themes";
 
 type Props = {};
 
 const AllCourses = (props: Props) => {
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme(); // Get the current theme
+
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
     { field: "title", headerName: "Course Title", flex: 1 },
@@ -16,7 +17,7 @@ const AllCourses = (props: Props) => {
     { field: "purchased", headerName: "Purchased", flex: 0.5 },
     { field: "created_at", headerName: "Created At", flex: 0.5 },
     {
-      field: "  ",
+      field: "edit",
       headerName: "Edit",
       flex: 0.2,
       renderCell: (params: any) => {
@@ -28,20 +29,19 @@ const AllCourses = (props: Props) => {
       },
     },
     {
-      field: " ",
+      field: "delete",
       headerName: "Delete",
       flex: 0.2,
       renderCell: (params: any) => {
         return (
-          <>
-            <Button>
-              <AiOutlineDelete className="dark:text-white text-black" />
-            </Button>
-          </>
+          <Button>
+            <AiOutlineDelete className="dark:text-white text-black" />
+          </Button>
         );
       },
     },
   ];
+
   const rows = [
     {
       id: "1234",
@@ -53,8 +53,8 @@ const AllCourses = (props: Props) => {
   ];
 
   return (
-    <div className="mt-[120px]">
-      <Box mx="20px">
+    <div className="mt-[120px] -z-10">
+      <Box m="20px">
         <Box
           m="40px 0 0 0"
           height="80vh"
@@ -63,7 +63,7 @@ const AllCourses = (props: Props) => {
               border: "none",
               outline: "none",
             },
-            "& .css-pqv5zy-MuiSvgIcon-root-MuiSelect-icon": {
+            "& .css-pqjvzy-MuiSvgIcon-root-MuiSelect-icon": {
               color: theme === "dark" ? "#fff" : "#000",
             },
             "& .MuiDataGrid-sortIcon": {
@@ -78,7 +78,6 @@ const AllCourses = (props: Props) => {
             },
             "& .MuiTablePagination-root": {
               color: theme === "dark" ? "#fff" : "#000",
-              borderBottom: "none",
             },
             "& .MuiDataGrid-cell": {
               borderBottom: "none",
@@ -86,29 +85,30 @@ const AllCourses = (props: Props) => {
             "& .name-column--cell": {
               color: theme === "dark" ? "#fff" : "#000",
             },
-            "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: theme === "dark" ? "#3e4396" : "#A4A9FC",
+            "& .MuiDataGrid-columnHeader": {
+              backgroundColor: theme === "dark" ? "#3e4396" : "#A4a9fc",
               borderBottom: "none",
               color: theme === "dark" ? "#fff" : "#000",
             },
             "& .MuiDataGrid-virtualScroller": {
-              backgroundColor: theme === "dark" ? "#1F2A40" : "#F2F0F0",
+              backgroundColor: theme === "dark" ? "#1f2a40" : "#f2f0f0",
             },
             "& .MuiDataGrid-footerContainer": {
               color: theme === "dark" ? "#fff" : "#000",
               borderTop: "none",
-              backgroundColor: theme === "dark" ? "#3e4396" : "#A4A9FC",
+              backgroundColor: theme === "dark" ? "#3e4396" : "#a4a9fc",
             },
             "& .MuiCheckbox-root": {
               color:
-                theme === "dark" ? "#b7ebde !important" : "#000 !important",
+                theme === "dark" ? `#b7ebde !important` : `#000 !important`,
             },
             "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-              color: "#fff !important",
+              color: `#fff !important`,
             },
           }}
-        />
-        <DataGrid rows={rows} columns={columns} />
+        >
+          <DataGrid rows={rows} columns={columns} checkboxSelection />
+        </Box>
       </Box>
     </div>
   );
