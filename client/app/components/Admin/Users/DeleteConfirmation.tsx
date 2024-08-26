@@ -149,7 +149,7 @@ const AllCourses = (props: Props) => {
       {/* Confirmation Modal */}
       {open && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white dark:bg-gray-800 text-black dark:text-white p-6 rounded shadow-md w-11/12 sm:w-96">
+          <div className={`bg-white dark:bg-gray-800 p-6 rounded shadow-md`}>
             <h1 className={`${styles.title}`}>
               Are you sure you want to delete this course?
             </h1>

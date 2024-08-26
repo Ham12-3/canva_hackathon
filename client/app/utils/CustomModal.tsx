@@ -4,7 +4,7 @@ import { Modal, Box } from "@mui/material";
 type Props = {
   open: boolean;
   setOpen: (open: boolean) => void;
-  activeItem: any;
+  activeItem?: any; // Make activeItem optional
   component: any;
   setRoute?: (route: string) => void;
 };
@@ -12,6 +12,7 @@ type Props = {
 const CustomModal: FC<Props> = ({
   open,
   setOpen,
+  activeItem, // optional activeItem
   setRoute,
   component: Component,
 }) => {

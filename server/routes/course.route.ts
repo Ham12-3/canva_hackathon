@@ -37,9 +37,9 @@ courseRouter.put(
   editCourse
 );
 
-courseRouter.get("get-course/:id", getSingleCourse);
+courseRouter.get("/get-course/:id", getSingleCourse);
 
-courseRouter.get("get-courses", getCourses);
+courseRouter.get("/get-courses", getCourses);
 
 courseRouter.get(
   "/get-course-content/:id",

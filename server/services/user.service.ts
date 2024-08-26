@@ -18,12 +18,13 @@ export const getUserById = async (id: string, res: Response) => {
 // Get all users
 
 export const getAllUsersService = async (res: Response) => {
-  const courses = await userModel.find().sort({ createdAt: -1 });
+  const users = await userModel.find().sort({ createdAt: -1 });
 
   res.status(201).json({
     success: true,
-    courses,
+    users,
   });
+  console.log(users, "Users");
 };
 
 // update user role

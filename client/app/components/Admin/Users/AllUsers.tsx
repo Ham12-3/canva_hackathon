@@ -6,33 +6,61 @@ import { FiEdit2 } from "react-icons/fi";
 import { useTheme } from "next-themes";
 
 import Loader from "../../Loader/Loader";
+import CustomModal from "@/app/utils/CustomModal";
+import AddMemberForm from "./AddMemberForm"; // Import AddMemberForm
+import DeleteConfirmation from "./DeleteConfirmation"; // Import DeleteConfirmation
 
 import { format } from "timeago.js";
-import { useGetAllUsersQuery } from "@/redux/features/user/userApi";
+import {
+  useDeleteUserMutation,
+  useGetAllUsersQuery,
+} from "@/redux/features/user/userApi";
 import { styles } from "@/app/styles/style";
 
 type Props = { isTeam?: boolean };
 
 const AllUsers: FC<Props> = ({ isTeam }) => {
-  const { theme } = useTheme(); // Get the current theme
-  const { isLoading, data, error } = useGetAllUsersQuery({});
+  const { theme } = useTheme();
+  const { isLoading, data, refetch } = useGetAllUsersQuery(
+    {},
+    { refetchOnMountOrArgChange: true }
+  );
+  const [deleteUser] = useDeleteUserMutation();
+
   const [active, setActive] = useState(false);
+  const [openAddModal, setOpenAddModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+
+  const handleDeleteUser = () => {
+    if (selectedUserId) {
+      deleteUser(selectedUserId).then(() => {
+        refetch();
+        setOpenDeleteModal(false);
+      });
+    }
+  };
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.3 },
     { field: "name", headerName: "Name", flex: 0.5 },
-    { field: "email", headerName: "Email", flex: 0.5 },
+    { field: "email", headerName: "Email-Address", flex: 0.5 },
     { field: "role", headerName: "Role", flex: 0.5 },
     { field: "courses", headerName: "Purchased Courses", flex: 0.5 },
     { field: "createdAt", headerName: "Joined At", flex: 0.5 },
 
     {
-      field: "",
+      field: "delete",
       headerName: "Delete",
       flex: 0.2,
       renderCell: (params: any) => {
         return (
-          <Button>
+          <Button
+            onClick={() => {
+              setSelectedUserId(params.row.id);
+              setOpenDeleteModal(true);
+            }}
+          >
             <AiOutlineDelete className="dark:text-white text-black" />
           </Button>
         );
@@ -40,14 +68,16 @@ const AllUsers: FC<Props> = ({ isTeam }) => {
     },
 
     {
-      field: " ",
+      field: "mail",
       headerName: "Email",
       flex: 0.2,
       renderCell: (params: any) => {
         return (
-          <a href={`mailto:${params.row.email}`}>
-            <AiOutlineMail className="dark:text-white text-black" />
-          </a>
+          <div>
+            <a className="mt-2" href={`mailto:${params.row.email}`}>
+              <AiOutlineMail className="mt-4 dark:text-white text-black" />
+            </a>
+          </div>
         );
       },
     },
@@ -82,6 +112,8 @@ const AllUsers: FC<Props> = ({ isTeam }) => {
       });
   }
 
+  console.log(data, "DATA");
+
   return (
     <div className="mt-[120px] -z-10">
       {isLoading ? (
@@ -91,7 +123,7 @@ const AllUsers: FC<Props> = ({ isTeam }) => {
           <div className="w-full flex justify-end">
             <div
               className={`${styles.button} !h-[35px] !w-[220px] dark:bg-[#57c7a3] dark:border dark:border-[#ffffff6c]`}
-              onClick={() => setActive(!active)}
+              onClick={() => setOpenAddModal(true)}
             >
               Add New Member
             </div>
@@ -152,6 +184,25 @@ const AllUsers: FC<Props> = ({ isTeam }) => {
           </Box>
         </Box>
       )}
+
+      {/* Add New Member Modal */}
+      <CustomModal
+        open={openAddModal}
+        setOpen={setOpenAddModal}
+        component={AddMemberForm}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <CustomModal
+        open={openDeleteModal}
+        setOpen={setOpenDeleteModal}
+        component={() => (
+          <DeleteConfirmation
+            setOpen={setOpenDeleteModal}
+            onDelete={handleDeleteUser}
+          />
+        )}
+      />
     </div>
   );
 };
