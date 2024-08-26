@@ -28,7 +28,7 @@ layoutRouter.post(
 );
 
 layoutRouter.get(
-  "/get-layout",
+  "/get-layout/:type",
   updateAccessToken,
   isAuthenticated,
   authorizeRoles("admin"),
