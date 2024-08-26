@@ -104,7 +104,7 @@ const CreateCourse = (props: Props) => {
       totalVideos: courseContentData.length,
       benefits: fomattedBenefits,
       prerequisites: formattedPrerequisites,
-      courseData: formattedCourseContentData,
+      courseContent: formattedCourseContentData,
     };
     setCourseData(data);
   };
@@ -157,6 +157,7 @@ const CreateCourse = (props: Props) => {
             setActive={setActive}
             courseData={courseData}
             handleCourseCreate={handleCourseCreate}
+            isEdit={false}
           />
         )}
       </div>
