@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { AiOutlineDelete } from "react-icons/ai";
@@ -12,6 +12,8 @@ import {
 import Loader from "../../Loader/Loader";
 import { format } from "timeago.js";
 import { styles } from "@/app/styles/style"; // Import styles for consistency
+import toast from "react-hot-toast";
+import Link from "next/link";
 
 type Props = {};
 
@@ -19,8 +21,25 @@ const AllCourses = (props: Props) => {
   const [open, setOpen] = useState(false);
   const [courseId, setCourseId] = useState<string | null>(null);
   const { theme } = useTheme(); // Get the current theme
-  const { isLoading, data, error } = useGetAllCoursesQuery({});
-  const [deleteCourse] = useDeleteCourseMutation(); // Add the delete mutation
+  const { isLoading, data, error, refetch } = useGetAllCoursesQuery(
+    {},
+    { refetchOnMountOrArgChange: true }
+  ); // Fetch all courses
+  const [deleteCourse, { isSuccess, error: deleteError }] =
+    useDeleteCourseMutation(); // Add the delete mutation
+
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+      toast.success("Course deleted successfully");
+    }
+    if (error) {
+      if ("data" in error) {
+        const errorMessage = error as any;
+        toast.error(errorMessage.data.message);
+      }
+    }
+  }, [isSuccess, error]);
 
   const handleDelete = async () => {
     if (courseId) {
@@ -47,9 +66,9 @@ const AllCourses = (props: Props) => {
       headerName: "Edit",
       flex: 0.2,
       renderCell: (params: any) => (
-        <Button>
-          <FiEdit2 className="dark:text-white text-black" />
-        </Button>
+        <Link href={`/admin/edit-course/${params.row.id}`}>
+          <FiEdit2 className="dark:text-white text-black mt-4" />
+        </Link>
       ),
     },
     {
