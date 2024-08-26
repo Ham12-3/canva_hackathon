@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC, useState } from "react";
 import { Box, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { AiOutlineDelete, AiOutlineMail } from "react-icons/ai";
@@ -9,12 +9,14 @@ import Loader from "../../Loader/Loader";
 
 import { format } from "timeago.js";
 import { useGetAllUsersQuery } from "@/redux/features/user/userApi";
+import { styles } from "@/app/styles/style";
 
-type Props = {};
+type Props = { isTeam?: boolean };
 
-const AllCourses = (props: Props) => {
+const AllUsers: FC<Props> = ({ isTeam }) => {
   const { theme } = useTheme(); // Get the current theme
   const { isLoading, data, error } = useGetAllUsersQuery({});
+  const [active, setActive] = useState(false);
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.3 },
@@ -52,8 +54,21 @@ const AllCourses = (props: Props) => {
   ];
 
   const rows: any = [];
-
-  {
+  if (isTeam) {
+    const newData =
+      data && data.users.filter((item: any) => item.role === "admin");
+    newData &&
+      newData.forEach((item: any) => {
+        rows.push({
+          id: item._id,
+          name: item.name,
+          email: item.email,
+          role: item.role,
+          courses: item.courses.length,
+          createdAt: format(item.createdAt),
+        });
+      });
+  } else {
     data &&
       data.users.forEach((item: any) => {
         rows.push({
@@ -73,6 +88,14 @@ const AllCourses = (props: Props) => {
         <Loader />
       ) : (
         <Box m="20px">
+          <div className="w-full flex justify-end">
+            <div
+              className={`${styles.button} !h-[35px] !w-[220px] dark:bg-[#57c7a3] dark:border dark:border-[#ffffff6c]`}
+              onClick={() => setActive(!active)}
+            >
+              Add New Member
+            </div>
+          </div>
           <Box
             m="40px 0 0 0"
             height="80vh"
@@ -133,4 +156,4 @@ const AllCourses = (props: Props) => {
   );
 };
 
-export default AllCourses;
+export default AllUsers;
