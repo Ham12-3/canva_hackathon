@@ -16,7 +16,7 @@ const EditHero: FC<Props> = () => {
   const [subTitle, setSubTitle] = useState(
     "We have 40k+ Online courses & 500k+ Online registered students. Find your desired Courses from them."
   );
-  const { data } = useGetHeroDataQuery("Banner", {
+  const { data, refetch } = useGetHeroDataQuery("Banner", {
     refetchOnMountOrArgChange: true,
   });
 
@@ -28,6 +28,7 @@ const EditHero: FC<Props> = () => {
       setImage(data?.layout?.banner?.image?.url);
     }
     if (isSuccess) {
+      refetch();
       toast.success("Hero updated successfully");
     }
     if (error) {
