@@ -10,34 +10,33 @@ import { HiMinus, HiPlus } from "react-icons/hi";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import Loader from "../../Loader/Loader";
 
-type Props = {};
-
-const EditFaq = (props: Props) => {
-  const { data, isLoading } = useGetHeroDataQuery("FAQ", {
+const EditFaq = () => {
+  const { data, isLoading, refetch } = useGetHeroDataQuery("FAQ", {
     refetchOnMountOrArgChange: true,
   });
   const [questions, setQuestions] = useState<any[]>([]);
-  const [editLayout, { isSuccess, error }] = useEditLayoutMutation();
+  const [editLayout, { isSuccess: faqSuccess, error, reset }] =
+    useEditLayoutMutation();
   const [hasChanges, setHasChanges] = useState<boolean>(false);
 
+  // Load the FAQ data when it becomes available
   useEffect(() => {
     if (data && data.layout?.faq) {
       setQuestions(data.layout.faq);
     }
-  }, [data]);
-
-  useEffect(() => {
-    if (isSuccess) {
+    if (faqSuccess) {
+      refetch(); // Refetch to update the UI with the latest
       toast.success("FAQ updated successfully");
-      setHasChanges(false); // Reset changes after successful save
-    } else if (error) {
-      console.error("Error saving FAQ:", error);
+    }
+    if (error) {
       if ("data" in error) {
         const errorData = error as any;
-        toast.error(errorData.data.message);
+        toast.error(errorData?.data?.message);
       }
     }
-  }, [isSuccess, error]);
+  }, [data, faqSuccess, error]);
+
+  // Watch for success or error in the mutation and trigger toast notifications
 
   const toggleQuestion = (id: any) => {
     setQuestions((prevQuestions) =>
@@ -64,10 +63,10 @@ const EditFaq = (props: Props) => {
     setQuestions([
       ...questions,
       {
-        _id: Date.now().toString(), // Ensure unique ID for new items
+        _id: Date.now().toString(),
         question: "",
         answer: "",
-        active: true, // New FAQ should be in edit mode
+        active: true,
       },
     ]);
     setHasChanges(true);
@@ -80,25 +79,25 @@ const EditFaq = (props: Props) => {
   };
 
   const handleEdit = async () => {
-    console.log("Preparing to save FAQs:", questions); // Debugging: log the questions being saved
-    if (
-      data &&
-      data.layout?.faq &&
-      hasChanges &&
-      !isAnyQuestionEmpty(questions)
-    ) {
-      try {
-        const response = await editLayout({
-          type: "FAQ",
-          faq: questions,
-        }).unwrap(); // Unwrap the response to handle success/failure directly
-        console.log("Save successful:", response);
-      } catch (err) {
-        console.error("Failed to save FAQ:", err);
-      }
+    if (hasChanges && !isAnyQuestionEmpty(questions)) {
+      editLayout({
+        type: "FAQ",
+        faq: questions,
+      })
+        .unwrap()
+        .then(() => {
+          toast.success("FAQ updated successfully");
+          setHasChanges(false);
+          reset();
+        })
+        .catch((err) => {
+          console.error("Failed to save FAQ:", err);
+          toast.error("Failed to update FAQ. Please try again.");
+        });
+    } else {
+      toast.error("Please fill out all questions and answers before saving.");
     }
   };
-
   return (
     <>
       {isLoading ? (
@@ -123,12 +122,11 @@ const EditFaq = (props: Props) => {
                         type="text"
                         className={`${styles.input} border-none`}
                         value={q.question}
-                        onChange={(e: any) =>
+                        onChange={(e) =>
                           handleQuestionChange(q._id, e.target.value)
                         }
-                        placeholder={"Add your question..."}
+                        placeholder="Add your question..."
                       />
-
                       <span className="ml-6 flex-shrink-0">
                         {q.active ? (
                           <HiMinus className="h-6 w-6" />
@@ -144,12 +142,11 @@ const EditFaq = (props: Props) => {
                         type="text"
                         className={`${styles.input} border-none`}
                         value={q.answer}
-                        onChange={(e: any) =>
+                        onChange={(e) =>
                           handleAnswerChange(q._id, e.target.value)
                         }
-                        placeholder={"Add your answer..."}
+                        placeholder="Add your answer..."
                       />
-
                       <span className="ml-6 flex-shrink-0">
                         <AiOutlineDelete
                           className="dark:text-white text-black text-[18px] cursor-pointer"
@@ -183,7 +180,7 @@ const EditFaq = (props: Props) => {
             onClick={
               hasChanges && !isAnyQuestionEmpty(questions)
                 ? handleEdit
-                : () => null
+                : () => toast.error("Please make changes before saving.")
             }
           >
             Save

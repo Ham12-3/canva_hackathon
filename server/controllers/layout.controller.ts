@@ -70,6 +70,63 @@ export const createLayout = CatchAsyncError(
   }
 );
 
+// Create layout
+export const addLayout = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { type, image, title, subTitle, faq, categories } = req.body;
+
+      const isTypeExist = await LayoutModel.findOne({ type });
+      if (isTypeExist) {
+        return next(new ErrorHandler("Layout already exists", 400));
+      }
+
+      if (type === "Banner" && image) {
+        const myCloud = await cloudinary.v2.uploader.upload(image, {
+          folder: "layout",
+        });
+
+        const banner = {
+          image: {
+            public_id: myCloud.public_id,
+            url: myCloud.secure_url,
+          },
+          title,
+          subTitle,
+        };
+
+        await LayoutModel.create({ type: "Banner", banner });
+      }
+
+      if (type === "FAQ" && faq) {
+        const faqItems = faq.map((item: any) => ({
+          question: item.question,
+          answer: item.answer,
+        }));
+
+        await LayoutModel.create({ type: "FAQ", faq: faqItems });
+      }
+
+      if (type === "categories" && categories) {
+        const categoriesItems = categories.map((item: any) => ({
+          title: item.title,
+        }));
+
+        await LayoutModel.create({
+          type: "categories",
+          categories: categoriesItems,
+        });
+      }
+
+      res.status(201).json({
+        success: true,
+        message: "Layout created successfully",
+      });
+    } catch (err: any) {
+      return next(new ErrorHandler(err.message, 500));
+    }
+  }
+);
 // Edit layout
 
 export const editLayout = CatchAsyncError(

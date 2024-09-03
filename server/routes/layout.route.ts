@@ -5,6 +5,7 @@ import {
   updateAccessToken,
 } from "../controllers/user.controller";
 import {
+  addLayout,
   createLayout,
   editLayout,
   getLayoutByType,
@@ -19,6 +20,15 @@ layoutRouter.post(
   authorizeRoles("admin"),
   createLayout
 );
+
+layoutRouter.post(
+  "/add-layout",
+  updateAccessToken,
+  isAuthenticated,
+  authorizeRoles("admin"),
+  addLayout
+);
+
 layoutRouter.put(
   "/edit-layout",
   updateAccessToken,
