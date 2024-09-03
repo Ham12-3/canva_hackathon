@@ -4,6 +4,7 @@ import AdminSidebar from "../../components/Admin/Sidebar/AdminSidebar";
 import Heading from "../../utils/Heading";
 import CreateCourse from "../../components/Admin/Course/CreateCourse";
 import DashboardHeader from "../../components/Admin/DashboardHeader";
+import EditFaq from "@/app/components/Admin/Customization/EditFaq";
 
 type Props = {};
 
