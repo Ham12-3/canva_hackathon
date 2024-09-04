@@ -2,6 +2,7 @@ import React, { useState, FC, useEffect } from "react";
 import { AiOutlineCamera } from "react-icons/ai";
 import {
   useEditLayoutMutation,
+  useAddLayoutMutation,
   useGetHeroDataQuery,
 } from "@/redux/features/layout/layoutApi";
 import toast from "react-hot-toast";
@@ -20,97 +21,109 @@ const EditHero: FC<Props> = () => {
     refetchOnMountOrArgChange: true,
   });
 
-  const [editLayout, { isLoading, isSuccess, error }] = useEditLayoutMutation();
+  const [
+    editLayout,
+    { isLoading: isEditing, isSuccess: isEditSuccess, error: editError },
+  ] = useEditLayoutMutation();
+  const [
+    addLayout,
+    { isLoading: isAdding, isSuccess: isAddSuccess, error: addError },
+  ] = useAddLayoutMutation();
+
   useEffect(() => {
     if (data) {
-      setTitle(data?.layout?.banner?.title);
-      setSubTitle(data?.layout?.banner?.subTitle);
-      setImage(data?.layout?.banner?.image?.url);
+      setTitle(data?.layout?.banner?.title || "");
+      setSubTitle(data?.layout?.banner?.subTitle || "");
+      setImage(data?.layout?.banner?.image?.url || "");
     }
-    if (isSuccess) {
+  }, [data]);
+
+  useEffect(() => {
+    if (isEditSuccess) {
       refetch();
       toast.success("Hero updated successfully");
+    } else if (isAddSuccess) {
+      refetch();
+      toast.success("Hero added successfully");
     }
-    if (error) {
-      if ("data" in error) {
-        const errorData = error as any;
+    if (editError) {
+      if ("data" in editError) {
+        const errorData = editError as any;
         toast.error(errorData.data.message);
       }
     }
-  }, [data, isSuccess, error]);
+  }, [isEditSuccess, isAddSuccess, editError, addError, refetch]);
 
-  const handleUpdate = (e: any) => {
+  const handleUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
         if (reader.readyState === 2) {
-          setImage(e.target.result as string);
+          setImage(reader.result as string);
         }
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleEdit = async () => {
-    // Implement the logic to handle the edit action
-    await editLayout({
-      type: "Banner",
-      image,
-      title,
-      subTitle,
-    });
+  const handleSave = async () => {
+    if (data && data.layout?.banner) {
+      // Edit existing hero
+      await editLayout({
+        type: "Banner",
+        image,
+        title,
+        subTitle,
+      });
+    } else {
+      // Add new hero
+      await addLayout({
+        type: "Banner",
+        image,
+        title,
+        subTitle,
+        faq: [],
+        categories: [],
+      });
+    }
   };
 
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-around py-10 lg:py-14 text-black dark:text-white font-Josefin mt-20">
+    <div className="flex flex-col p-6 lg:p-8">
       {/* Left Section - Larger Circular Image with Edit Option */}
-      <div className="relative w-[500px] lg:w-[500px] flex items-center justify-center h-[60vh] lg:h-[60vh] mb-10 lg:mb-0">
-        <div className="relative w-[450px] h-[450px] rounded-full overflow-hidden bg-gradient-to-br from-gray-200 to-gray-400 dark:from-[#0f172a] dark:to-[#1e293b] hero_animation ml-4">
-          <img
-            src={image || "/assets/banner-img.png"} // Use uploaded image or default
-            alt="Hero Image"
-            className="object-cover w-full h-full"
-            onError={(event) => {
-              console.error("Image error:", event);
-              // Handle potential image loading errors here
-            }}
-          />
-
-          {/* <
-            className="absolute bottom-2 right-2 bg-gray-200 dark:bg-gray-700 p-3 rounded-full cursor-pointer flex items-center justify-center"
-            style={{ zIndex: 10 }}
-          > */}
-        </div>
-        <input
-          type="file"
-          id="banner"
-          accept="image/*"
-          onChange={handleUpdate}
-          className="hidden"
+      <div className="relative mb-6 lg:mb-8">
+        <img
+          src={image || "/placeholder-image.png"} // Placeholder image if no image is set
+          alt="Hero"
+          className="w-full h-64 object-cover rounded-lg"
+          onError={(event) => {
+            console.error("Image error:", event);
+            // Handle potential image loading errors here
+          }}
         />
         <label
-          htmlFor="banner"
-          className="absolute    p-3 rounded-full cursor-pointer flex items-center justify-center"
+          className="absolute bottom-2 right-2 bg-gray-200 dark:bg-gray-700 p-3 rounded-full cursor-pointer flex items-center justify-center"
           style={{ zIndex: 10 }}
         >
-          <AiOutlineCamera className="text-black dark:text-white" size={80} />
+          <AiOutlineCamera className="text-gray-600 dark:text-gray-300" />
+          <input type="file" className="hidden" onChange={handleUpdate} />
         </label>
       </div>
 
       {/* Right Section - Larger Content Editing */}
-      <div className="relative z-10 flex flex-col items-start text-left w-[600px] lg:w-[550px] px-2">
+      <div className="flex flex-col">
         {/* Hero Title Input */}
-        <textarea
-          className="dark:text-white text-black text-3xl lg:text-4xl font-bold font-Josefin mb-6 leading-tight lg:leading-snug resize-none bg-transparent w-full"
+        <input
+          type="text"
+          className="text-2xl lg:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4 bg-transparent border-b-2 border-gray-300 dark:border-gray-600 focus:outline-none"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          rows={2}
         />
 
         {/* Hero Description Input */}
         <textarea
-          className="text-lg lg:text-xl text-gray-600 dark:text-gray-400 mb-8 resize-none bg-transparent w-full"
+          className="text-lg lg:text-xl text-gray-600 dark:text-gray-400 mb-8 resize-none bg-transparent border-b-2 border-gray-300 dark:border-gray-600 focus:outline-none"
           value={subTitle}
           onChange={(e) => setSubTitle(e.target.value)}
           rows={3}
@@ -125,15 +138,10 @@ const EditHero: FC<Props> = () => {
               ? "cursor-pointer"
               : "cursor-not-allowed opacity-50"
           }`}
-          onClick={
-            title !== data?.layout?.banner?.title ||
-            subTitle !== data?.layout?.banner?.subTitle ||
-            image !== data?.layout?.banner?.image?.url
-              ? handleEdit
-              : undefined
-          }
+          onClick={handleSave}
+          disabled={isEditing || isAdding}
         >
-          Save
+          {isEditing || isAdding ? "Saving..." : "Save"}
         </button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { styles } from "@/app/styles/style";
 import {
   useEditLayoutMutation,
+  useAddLayoutMutation,
   useGetHeroDataQuery,
 } from "@/redux/features/layout/layoutApi";
 import React, { useEffect, useState } from "react";
@@ -15,8 +16,10 @@ const EditFaq = () => {
     refetchOnMountOrArgChange: true,
   });
   const [questions, setQuestions] = useState<any[]>([]);
-  const [editLayout, { isSuccess: faqSuccess, error, reset }] =
+  const [editLayout, { isSuccess: editSuccess, error: editError, reset }] =
     useEditLayoutMutation();
+  const [addLayout, { isSuccess: addSuccess, error: addError }] =
+    useAddLayoutMutation();
   const [hasChanges, setHasChanges] = useState<boolean>(false);
 
   // Load the FAQ data when it becomes available
@@ -24,19 +27,20 @@ const EditFaq = () => {
     if (data && data.layout?.faq) {
       setQuestions(data.layout.faq);
     }
-    if (faqSuccess) {
+    if (editSuccess || addSuccess) {
       refetch(); // Refetch to update the UI with the latest
       toast.success("FAQ updated successfully");
+      setHasChanges(false);
+      reset();
     }
-    if (error) {
+    if (editError || addError) {
+      const error: any = editError || addError;
       if ("data" in error) {
         const errorData = error as any;
         toast.error(errorData?.data?.message);
       }
     }
-  }, [data, faqSuccess, error]);
-
-  // Watch for success or error in the mutation and trigger toast notifications
+  }, [data, editSuccess, addSuccess, editError, addError, refetch, reset]);
 
   const toggleQuestion = (id: any) => {
     setQuestions((prevQuestions) =>
@@ -80,24 +84,28 @@ const EditFaq = () => {
 
   const handleEdit = async () => {
     if (hasChanges && !isAnyQuestionEmpty(questions)) {
-      editLayout({
-        type: "FAQ",
-        faq: questions,
-      })
-        .unwrap()
-        .then(() => {
-          toast.success("FAQ updated successfully");
-          setHasChanges(false);
-          reset();
-        })
-        .catch((err) => {
-          console.error("Failed to save FAQ:", err);
-          toast.error("Failed to update FAQ. Please try again.");
-        });
+      if (data && data.layout?.faq && data.layout.faq.length > 0) {
+        // Update existing FAQs
+        await editLayout({
+          type: "FAQ",
+          faq: questions,
+        }).unwrap();
+      } else {
+        // Add new FAQs
+        await addLayout({
+          type: "FAQ",
+          faq: questions,
+          image: "", // If you have other required fields, include them here
+          title: "",
+          subTitle: "",
+          categories: [], // Example empty arrays if not required
+        }).unwrap();
+      }
     } else {
       toast.error("Please fill out all questions and answers before saving.");
     }
   };
+
   return (
     <>
       {isLoading ? (

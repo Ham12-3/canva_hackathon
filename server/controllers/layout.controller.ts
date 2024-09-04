@@ -1,85 +1,23 @@
 import { Request, Response, NextFunction } from "express";
-import cloudinary from "cloudinary"; // Import the 'cloudinary' module
-
+import cloudinary from "cloudinary";
 import ErrorHandler from "../utils/ErrorHandler";
-
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import LayoutModel from "../models/layout.model";
 
-// create layout
-
+// Create layout
 export const createLayout = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
+    const { type, image, title, subTitle, faq, categories } = req.body;
+    console.log("Create Layout Request Body:", req.body); // Debugging
+
     try {
-      const { type } = req.body;
+      // Check if the layout type already exists
       const isTypeExist = await LayoutModel.findOne({ type });
       if (isTypeExist) {
         return next(new ErrorHandler("Layout already exists", 400));
       }
-      if (type === "Banner") {
-        const { image, title, subTitle } = req.body;
-        const myCloud = await cloudinary.v2.uploader.upload(image, {
-          folder: "layout",
-        });
 
-        const banner = {
-          image: {
-            public_id: myCloud.public_id,
-            url: myCloud.secure_url,
-          },
-          title,
-          subTitle,
-        };
-        await LayoutModel.create(banner);
-        if (type === "FAQ") {
-          const { faq } = req.body;
-
-          const faqItems = await Promise.all(
-            faq.map(async (item: any) => {
-              return {
-                question: item.question,
-                answer: item.answer,
-              };
-            })
-          );
-          await LayoutModel.create({ type: "FAQ", faq: faqItems });
-        }
-        if (type === "categories") {
-          const { categories } = req.body;
-          const categoriesItems = await Promise.all(
-            categories.map(async (item: any) => {
-              return {
-                title: item.title,
-              };
-            })
-          );
-
-          await LayoutModel.create({
-            type: "categories",
-            categories: categoriesItems,
-          });
-        }
-      }
-      res.status(201).json({
-        success: true,
-        message: "Layout created successfully",
-      });
-    } catch (err: any) {
-      return next(new ErrorHandler(err.message, 500));
-    }
-  }
-);
-
-// Create layout
-export const addLayout = CatchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { type, image, title, subTitle, faq, categories } = req.body;
-
-      const isTypeExist = await LayoutModel.findOne({ type });
-      if (isTypeExist) {
-        return next(new ErrorHandler("Layout already exists", 400));
-      }
+      let result;
 
       if (type === "Banner" && image) {
         const myCloud = await cloudinary.v2.uploader.upload(image, {
@@ -95,7 +33,8 @@ export const addLayout = CatchAsyncError(
           subTitle,
         };
 
-        await LayoutModel.create({ type: "Banner", banner });
+        result = await LayoutModel.create({ type: "Banner", banner });
+        console.log("Banner Created:", result); // Debugging
       }
 
       if (type === "FAQ" && faq) {
@@ -104,7 +43,8 @@ export const addLayout = CatchAsyncError(
           answer: item.answer,
         }));
 
-        await LayoutModel.create({ type: "FAQ", faq: faqItems });
+        result = await LayoutModel.create({ type: "FAQ", faq: faqItems });
+        console.log("FAQ Created:", result); // Debugging
       }
 
       if (type === "categories" && categories) {
@@ -112,10 +52,11 @@ export const addLayout = CatchAsyncError(
           title: item.title,
         }));
 
-        await LayoutModel.create({
+        result = await LayoutModel.create({
           type: "categories",
           categories: categoriesItems,
         });
+        console.log("Categories Created:", result); // Debugging
       }
 
       res.status(201).json({
@@ -123,100 +64,112 @@ export const addLayout = CatchAsyncError(
         message: "Layout created successfully",
       });
     } catch (err: any) {
+      console.error("Create Layout Error:", err.message); // Debugging
       return next(new ErrorHandler(err.message, 500));
     }
   }
 );
-// Edit layout
 
+// Edit layout
 export const editLayout = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
+    const { type, image, title, subTitle, faq, categories } = req.body;
+    console.log("Edit Layout Request Body:", req.body); // Debugging
+
     try {
-      const { type } = req.body;
+      let result;
 
       if (type === "Banner") {
         const bannerData: any = await LayoutModel.findOne({ type: "Banner" });
-        const { image, title, subTitle } = req.body;
+        console.log("Banner Data Found:", bannerData); // Debugging
 
-        const data = image.startsWith("https")
-          ? bannerData
-          : await cloudinary.v2.uploader.upload(image, {
-              folder: "layout",
-            });
+        const imageUpload =
+          image && !image.startsWith("https")
+            ? await cloudinary.v2.uploader.upload(image, { folder: "layout" })
+            : null;
 
         const banner = {
           type: "Banner",
           image: {
             public_id: image.startsWith("https")
               ? bannerData.banner.image.public_id
-              : data?.public_id,
+              : imageUpload?.public_id,
             url: image.startsWith("https")
               ? bannerData.banner.image.url
-              : data?.secure_url,
+              : imageUpload?.secure_url,
           },
           title,
           subTitle,
         };
-        await LayoutModel.findOneAndUpdate(bannerData.id, { banner });
+
+        result = await LayoutModel.findByIdAndUpdate(bannerData._id, {
+          banner,
+        });
+        console.log("Banner Updated:", result); // Debugging
       }
 
       if (type === "FAQ") {
-        const { faq } = req.body;
         const faqItem = await LayoutModel.findOne({ type: "FAQ" });
-        const faqItems = await Promise.all(
-          faq.map(async (item: any) => {
-            return {
-              question: item.question,
-              answer: item.answer,
-            };
-          })
-        );
-        await LayoutModel.findByIdAndUpdate(faqItem?._id, {
+        console.log("FAQ Data Found:", faqItem); // Debugging
+
+        const faqItems = faq.map((item: any) => ({
+          question: item.question,
+          answer: item.answer,
+        }));
+
+        result = await LayoutModel.findByIdAndUpdate(faqItem?._id, {
           type: "FAQ",
           faq: faqItems,
         });
+        console.log("FAQ Updated:", result); // Debugging
       }
 
       if (type === "categories") {
-        const { categories } = req.body;
         const categoriesItem = await LayoutModel.findOne({
           type: "categories",
         });
-        const categoriesItems = await Promise.all(
-          categories.map(async (item: any) => {
-            return {
-              title: item.title,
-            };
-          })
-        );
-        await LayoutModel.findByIdAndUpdate(categoriesItem?._id, {
+        console.log("Categories Data Found:", categoriesItem); // Debugging
+
+        const categoriesItems = categories.map((item: any) => ({
+          title: item.title,
+        }));
+
+        result = await LayoutModel.findByIdAndUpdate(categoriesItem?._id, {
           type: "categories",
           categories: categoriesItems,
         });
-
-        res.status(200).json({
-          success: true,
-          message: "Layout updated successfully",
-        });
+        console.log("Categories Updated:", result); // Debugging
       }
+
+      res.status(200).json({
+        success: true,
+        message: "Layout updated successfully",
+      });
     } catch (err: any) {
+      console.error("Edit Layout Error:", err.message); // Debugging
       return next(new ErrorHandler(err.message, 500));
     }
   }
 );
 
-// get layout by type
-
+// Get layout by type
 export const getLayoutByType = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
+    const { type } = req.params;
+    console.log("Get Layout By Type:", type); // Debugging
+
     try {
-      const { type } = req.params;
       const layout = await LayoutModel.findOne({ type });
+      if (!layout) {
+        return next(new ErrorHandler("Layout not found", 404));
+      }
+
       res.status(200).json({
         success: true,
         layout,
       });
     } catch (err: any) {
+      console.error("Get Layout Error:", err.message); // Debugging
       return next(new ErrorHandler(err.message, 500));
     }
   }

@@ -7,41 +7,25 @@ export const layoutApi = apiSlice.injectEndpoints({
       query: (type) => ({
         url: `get-layout/${type}`,
         method: "GET",
-        credentials: "include" as const,
+        credentials: "include",
       }),
     }),
 
-    // Edit layout mutation
     editLayout: builder.mutation({
       query: ({ type, image, title, subTitle, faq, categories }) => ({
         url: "edit-layout",
         method: "PUT",
-        credentials: "include" as const,
-        body: {
-          type,
-          image,
-          title,
-          subTitle,
-          faq, // Ensure that FAQ is included if editing
-          categories,
-        },
+        credentials: "include",
+        body: { type, image, title, subTitle, faq, categories },
       }),
     }),
 
-    // Add layout mutation
     addLayout: builder.mutation({
       query: ({ type, image, title, subTitle, faq, categories }) => ({
-        url: "add-layout",
+        url: "create-layout",
         method: "POST",
-        credentials: "include" as const,
-        body: {
-          type,
-          image,
-          title,
-          subTitle,
-          faq, // Ensure that FAQ is included if adding
-          categories,
-        },
+        credentials: "include",
+        body: { type, image, title, subTitle, faq, categories },
       }),
     }),
   }),
