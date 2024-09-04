@@ -190,8 +190,22 @@ const Sidebar = () => {
             Analytics
           </Typography>
           <Item
-            title="Analytics"
-            to="/admin/analytics"
+            title="Course Analytics"
+            to="/admin/courses-analytics"
+            icon={<BarChartOutlinedIcon style={{ color: "#ffffff" }} />}
+            selected={selected}
+            setSelected={setSelected}
+          />
+          <Item
+            title="Order Analytics"
+            to="/admin/orders-analytics"
+            icon={<BarChartOutlinedIcon style={{ color: "#ffffff" }} />}
+            selected={selected}
+            setSelected={setSelected}
+          />
+          <Item
+            title="User Analytics"
+            to="/admin/users-analytics"
             icon={<BarChartOutlinedIcon style={{ color: "#ffffff" }} />}
             selected={selected}
             setSelected={setSelected}
