@@ -44,7 +44,7 @@ const EditCategories = () => {
       reset();
     }
     if (editError || addError) {
-      const error = editError || addError;
+      const error: any = editError || addError;
       if ("data" in error) {
         const errorData = error as any;
         toast.error(errorData?.data?.message);
