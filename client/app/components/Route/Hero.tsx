@@ -2,10 +2,12 @@ import React, { FC } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { BiSearch } from "react-icons/bi";
+import { useGetHeroDataQuery } from "@/redux/features/layout/layoutApi";
 
 type Props = {};
 
 const Hero: FC<Props> = () => {
+  const { data } = useGetHeroDataQuery("Banner", {});
   return (
     <div className="relative flex flex-col lg:flex-row items-center justify-around py-16 lg:py-20 bg-white dark:bg-black text-black dark:text-white font-Josefin">
       {/* Left Section - Circular Image */}
@@ -13,11 +15,12 @@ const Hero: FC<Props> = () => {
         <div className="relative w-[550px] h-[550px] rounded-full overflow-hidden bg-gradient-to-br from-gray-200 to-gray-400 dark:from-[#0f172a] dark:to-[#1e293b] hero_animation ml-4">
           {/* Overlay */}
           <Image
-            src="/assets/banner-img.png" // Replace with your hero image path
+            src={data?.layout?.banner?.image?.url} // Replace with your hero image path
             alt="Hero Image"
-            layout="fill"
+            width={550}
+            height={550}
             objectFit="contain"
-            className="absolute"
+            className="absolute w-[100%] h-[100%] object-cover"
           />
         </div>
       </div>
@@ -26,13 +29,12 @@ const Hero: FC<Props> = () => {
       <div className="relative z-10 flex flex-col items-start text-left w-[600px] px-2 mr-4">
         {/* Hero Title */}
         <h1 className="text-4xl lg:text-5xl font-bold font-Josefin mb-6 leading-tight lg:leading-snug">
-          Improve Your Online Learning Experience <br /> Better Instantly
+          {data?.layout?.banner?.title}
         </h1>
 
         {/* Hero Description */}
         <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-          We have 40k+ Online courses & 500k+ Online registered students. Find
-          your desired Courses from them.
+          {data?.layout?.banner?.subTitle}
         </p>
 
         {/* Search Input */}
