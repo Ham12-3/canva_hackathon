@@ -1,12 +1,11 @@
 "use client";
-import React, { FC, use, useEffect, useState } from "react";
 
+import React, { FC, useEffect, useState } from "react";
 import CourseInformation from "./CourseInformation";
 import CourseOptions from "./CourseOptions";
 import CourseData from "./CourseData";
 import CoursePreview from "./CoursePreview";
 import CourseContent from "./CourseContent";
-import { title } from "process";
 import {
   useEditCourseMutation,
   useGetAllInfoCoursesQuery,
@@ -21,51 +20,17 @@ type Props = {
 const EditCourse: FC<Props> = ({ id }) => {
   const [active, setActive] = useState(0);
   const [editCourse, { isSuccess, error }] = useEditCourseMutation();
-
   const { data, refetch } = useGetAllInfoCoursesQuery(
     {},
     { refetchOnMountOrArgChange: true }
   );
-
-  const editCourseData = data && data.courses.find((i: any) => i._id === id);
-  useEffect(() => {
-    if (editCourseData) {
-      setCourseInfo({
-        name: editCourseData.name,
-        description: editCourseData.description,
-        price: editCourseData.price,
-        estimatedPrice: editCourseData.estimatedPrice,
-        tags: editCourseData.tags,
-        level: editCourseData.level,
-        demoUrl: editCourseData.demoUrl,
-        thumbnail: editCourseData.thumbnail,
-      });
-      setBenefits(editCourseData.benefits);
-      setPrerequisites(editCourseData.prerequisites);
-      setCourseContentData(editCourseData.courseContent);
-    }
-  }, [editCourseData]);
-
-  console.log(editCourseData);
-
-  useEffect(() => {
-    if (isSuccess) {
-      toast.success("Course created successfully");
-      redirect("/admin/all-courses");
-    }
-    if (error) {
-      if ("data" in error) {
-        const errorMessage = error as any;
-        toast.error(errorMessage.data.message);
-      }
-    }
-  }, [isSuccess, error]);
 
   const [courseInfo, setCourseInfo] = useState({
     name: "",
     description: "",
     price: "",
     estimatedPrice: "",
+    category: "",
     tags: "",
     level: "",
     demoUrl: "",
@@ -73,9 +38,7 @@ const EditCourse: FC<Props> = ({ id }) => {
   });
 
   const [benefits, setBenefits] = useState([{ title: "" }]);
-
   const [prerequisites, setPrerequisites] = useState([{ title: "" }]);
-
   const [courseContentData, setCourseContentData] = useState([
     {
       videoUrl: "",
@@ -91,20 +54,54 @@ const EditCourse: FC<Props> = ({ id }) => {
       suggestions: "",
     },
   ]);
-
+  console.log(data);
   const [courseData, setCourseData] = useState({});
 
-  const handleSubmit = async () => {
-    // Format benefits array
+  // Safe access to data and courses
+  const editCourseData = data?.users?.find((i: any) => i._id === id);
 
-    const fomattedBenefits = benefits.map((benefit) => ({
+  useEffect(() => {
+    if (editCourseData) {
+      setCourseInfo({
+        name: editCourseData.name || "",
+        description: editCourseData.description || "",
+        price: editCourseData.price || "",
+        estimatedPrice: editCourseData.estimatedPrice || "",
+        tags: editCourseData.tags || "",
+        level: editCourseData.level || "",
+        demoUrl: editCourseData.demoUrl || "",
+        thumbnail: editCourseData.thumbnail.url || "",
+        category: editCourseData.category || "",
+      });
+      setBenefits(editCourseData.benefits || []);
+      setPrerequisites(editCourseData.prerequisites || []);
+      setCourseContentData(editCourseData.courseContent || []);
+    }
+  }, [editCourseData, data]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Course updated successfully");
+      redirect("/admin/all-courses");
+    }
+    if (error) {
+      if ("data" in error) {
+        const errorMessage = error as any;
+        toast.error(errorMessage.data.message || "An error occurred");
+      } else {
+        toast.error("An error occurred");
+      }
+    }
+  }, [isSuccess, error]);
+
+  const handleSubmit = async () => {
+    const formattedBenefits = benefits.map((benefit) => ({
       title: benefit.title,
     }));
-    // formatted prerequisites array /
+
     const formattedPrerequisites = prerequisites.map((prerequisite) => ({
       title: prerequisite.title,
     }));
-    // format course content array
 
     const formattedCourseContentData = courseContentData.map(
       (courseContent) => ({
@@ -116,11 +113,9 @@ const EditCourse: FC<Props> = ({ id }) => {
           title: link.title,
           url: link.url,
         })),
-        suggestion: courseContent.suggestions,
+        suggestions: courseContent.suggestions,
       })
     );
-
-    // Prepare our data object
 
     const data = {
       name: courseInfo.name,
@@ -128,22 +123,36 @@ const EditCourse: FC<Props> = ({ id }) => {
       price: courseInfo.price,
       estimatedPrice: courseInfo.estimatedPrice,
       tags: courseInfo.tags,
+      category: courseInfo.category,
       thumbnail: courseInfo.thumbnail,
       level: courseInfo.level,
       demoUrl: courseInfo.demoUrl,
       totalVideos: courseContentData.length,
-      benefits: fomattedBenefits,
+      benefits: formattedBenefits,
       prerequisites: formattedPrerequisites,
       courseContent: formattedCourseContentData,
     };
     setCourseData(data);
   };
 
-  console.log(courseData);
-
-  const handleCourseCreate = async (e: any) => {
-    const data = courseData;
-    await editCourse({ id: editCourseData?._id, data });
+  const handleCourseCreate = async () => {
+    if (!editCourseData?._id) {
+      toast.error("Course ID is missing");
+      return;
+    }
+    try {
+      const result = await editCourse({
+        id: editCourseData._id,
+        data: courseData,
+      }).unwrap();
+      if (result) {
+        toast.success("Course updated successfully");
+        redirect("/admin/all-courses");
+      }
+    } catch (err) {
+      toast.error("An error occurred while updating the course");
+      console.error("Edit Course Error:", err);
+    }
   };
 
   return (

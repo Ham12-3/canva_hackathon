@@ -1,6 +1,7 @@
 "use client";
 
 import { FC, useEffect, useState } from "react";
+
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography } from "@mui/material";
 import "react-pro-sidebar/dist/css/styles.css";
@@ -70,15 +71,33 @@ const Sidebar = () => {
     <ProSidebar
       collapsed={isCollapsed}
       style={{
-        background: "#0e1a35", // Dark navy-blue background
-        color: "#ffffff",
+        background: "#121a3a", // Dark navy-blue background
+        color: "#ffffff33",
         height: "100vh",
         transition: "width 0.3s",
       }}
     >
-      <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <Box
+        className="sidebar-scrollable"
+        sx={{
+          color: "#ffffff",
+          background: "#121a3a",
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          width: "100%",
+        }}
+      >
         {/* User Info */}
-        <Box sx={{ padding: "16px", display: "flex", alignItems: "center" }}>
+        <Box
+          sx={{
+            color: "#ffffff",
+            background: "#121a3a",
+            padding: "16px",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
           <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
             {isCollapsed ? (
               <ArrowForwardIosIcon style={{ color: "#ffffff" }} />
@@ -88,7 +107,11 @@ const Sidebar = () => {
           </IconButton>
           {!isCollapsed && (
             <Box
-              sx={{ marginLeft: "16px", display: "flex", alignItems: "center" }}
+              sx={{
+                marginLeft: "16px",
+                display: "flex",
+                alignItems: "center",
+              }}
             >
               <Image
                 src="/assets/avatar.png"
@@ -189,28 +212,38 @@ const Sidebar = () => {
           <Typography sx={{ color: "#6c757d", padding: "0 16px" }}>
             Analytics
           </Typography>
-          <Item
-            title="Course Analytics"
-            to="/admin/courses-analytics"
-            icon={<BarChartOutlinedIcon style={{ color: "#ffffff" }} />}
-            selected={selected}
-            setSelected={setSelected}
-          />
-          <Item
-            title="Order Analytics"
-            to="/admin/orders-analytics"
-            icon={<BarChartOutlinedIcon style={{ color: "#ffffff" }} />}
-            selected={selected}
-            setSelected={setSelected}
-          />
-          <Item
-            title="User Analytics"
-            to="/admin/users-analytics"
-            icon={<BarChartOutlinedIcon style={{ color: "#ffffff" }} />}
-            selected={selected}
-            setSelected={setSelected}
-          />
-          <Box sx={{ marginTop: "auto", padding: "10px 20px" }}>
+          <div className="bg-[#121a3a] dark:text-white text-black ">
+            <Item
+              title="Course Analytics"
+              to="/admin/courses-analytics"
+              icon={<BarChartOutlinedIcon style={{ color: "#ffffff" }} />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Order Analytics"
+              to="/admin/orders-analytics"
+              icon={<BarChartOutlinedIcon style={{ color: "#ffffff" }} />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="User Analytics"
+              to="/admin/users-analytics"
+              icon={<BarChartOutlinedIcon style={{ color: "#ffffff" }} />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+          </div>
+
+          <Box
+            sx={{
+              color: "#ffffff",
+              background: "#121a3a",
+              marginTop: "auto",
+              padding: "10px 20px",
+            }}
+          >
             <MenuItem
               icon={<ExitToAppIcon style={{ color: "#ffffff" }} />}
               onClick={logOutHandler}

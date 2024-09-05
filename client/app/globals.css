@@ -44,6 +44,28 @@ body {
   color: rgb(var(--foreground-rgb));
 }
 
+/* Custom scrollbar for modern browsers */
+.sidebar-scrollable {
+  overflow-y: auto;
+}
+
+.sidebar-scrollable::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+.sidebar-scrollable::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2); /* Scrollbar color */
+  border-radius: 4px; /* Rounded corners for the scrollbar */
+}
+
+.sidebar-scrollable::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4); /* Darker color when hovering */
+}
+
+.sidebar-scrollable::-webkit-scrollbar-track {
+  background: transparent; /* Track background color */
+}
+
 .hero_animation {
   background-image: linear-gradient(147.92 deg, hsla(239,76%,53%,0.456) 10.41%,hsla(0,0%,100%,0)89.25%);
   animation: changeBackgroundColor 8s infinite alternate;

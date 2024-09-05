@@ -3,8 +3,28 @@ import { useGetHeroDataQuery } from "@/redux/features/layout/layoutApi";
 import React, { FC, useEffect, useState } from "react";
 
 type Props = {
-  courseInfo: any;
-  setCourseInfo: (courseInfo: any) => void;
+  courseInfo: {
+    name: string;
+    description: string;
+    price: string;
+    estimatedPrice: string;
+    tags: string;
+    category: string;
+    level: string;
+    demoUrl: string;
+    thumbnail: string;
+  };
+  setCourseInfo: (courseInfo: {
+    name: string;
+    description: string;
+    price: string;
+    estimatedPrice: string;
+    tags: string;
+    category: string;
+    level: string;
+    demoUrl: string;
+    thumbnail: string;
+  }) => void;
   active: number;
   setActive: (active: number) => void;
 };
@@ -17,50 +37,51 @@ const CourseInformation: FC<Props> = ({
 }: Props) => {
   const [dragging, setDragging] = useState(false);
   const { data } = useGetHeroDataQuery("categories", {});
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<any[]>([]);
 
   useEffect(() => {
     if (data) {
-      setCategories(data.layout.categories);
+      setCategories(data.layout.categories || []);
     }
   }, [data]);
-  const handleSubmit = (e: any) => {
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setActive(active + 1);
   };
 
-  const handleFileChange = (e: any) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e: any) => {
+      reader.onload = (e: ProgressEvent<FileReader>) => {
         if (reader.readyState === 2) {
-          setCourseInfo({ ...courseInfo, thumbnail: reader.result });
+          setCourseInfo({ ...courseInfo, thumbnail: reader.result as string });
         }
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleDragOver = (e: any) => {
+  const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     setDragging(true);
   };
 
-  const handleDragLeave = (e: any) => {
+  const handleDragLeave = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     setDragging(false);
   };
 
-  const handleDrop = (e: any) => {
+  const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     setDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setCourseInfo({ ...courseInfo, thumbnail: reader.result });
+        setCourseInfo({ ...courseInfo, thumbnail: reader.result as string });
       };
       reader.readAsDataURL(file);
     }
@@ -68,38 +89,36 @@ const CourseInformation: FC<Props> = ({
 
   return (
     <div className="w-[80%] m-auto mt-24">
-      <form onSubmit={handleSubmit} action="">
+      <form onSubmit={handleSubmit}>
         <div>
-          <label className={`${styles.label}`} htmlFor="">
+          <label className={`${styles.label}`} htmlFor="name">
             Course Name
           </label>
           <input
-            type="name"
-            name=""
+            type="text"
+            id="name"
             required
             value={courseInfo.name}
-            onChange={(e: any) =>
+            onChange={(e) =>
               setCourseInfo({ ...courseInfo, name: e.target.value })
             }
-            id="name"
-            placeholder="MERN STack LMS platform with next 13"
+            placeholder="MERN Stack LMS platform with Next.js 13"
             className={`${styles.input}`}
           />
         </div>
         <br />
         <div className="mb-5">
-          <label className={`${styles.label}`} htmlFor="">
+          <label className={`${styles.label}`} htmlFor="description">
             Course Description
           </label>
           <textarea
-            name=""
-            id=""
+            id="description"
             cols={30}
             rows={10}
             placeholder="Write something amazing"
             className={`${styles.input} !h-min !py-2`}
             value={courseInfo.description}
-            onChange={(e: any) => {
+            onChange={(e) => {
               setCourseInfo({ ...courseInfo, description: e.target.value });
             }}
           ></textarea>
@@ -107,37 +126,35 @@ const CourseInformation: FC<Props> = ({
         <br />
         <div className="w-full flex justify-between">
           <div className="w-[45%]">
-            <label htmlFor="" className={`${styles.label}`}>
+            <label className={`${styles.label}`} htmlFor="price">
               Course Price
             </label>
             <input
               type="number"
-              name=""
+              id="price"
               required
               value={courseInfo.price}
-              onChange={(e: any) => {
+              onChange={(e) => {
                 setCourseInfo({ ...courseInfo, price: e.target.value });
               }}
-              id="price"
               placeholder="29"
               className={`${styles.input}`}
             />
           </div>
           <div className="w-[50%]">
-            <label htmlFor="" className={`${styles.label} w-[50%]`}>
-              Estimated Price (optional){" "}
+            <label className={`${styles.label}`} htmlFor="estimatedPrice">
+              Estimated Price (optional)
             </label>
             <input
               type="number"
-              name=""
+              id="estimatedPrice"
               value={courseInfo.estimatedPrice}
-              onChange={(e: any) => {
+              onChange={(e) => {
                 setCourseInfo({
                   ...courseInfo,
                   estimatedPrice: e.target.value,
                 });
               }}
-              id="estimatedPrice"
               className={`${styles.input}`}
             />
           </div>
@@ -145,39 +162,36 @@ const CourseInformation: FC<Props> = ({
         <br />
         <div className="w-full flex justify-between">
           <div className="w-[45%]">
-            <label htmlFor="email" className={`${styles.label}`}>
+            <label className={`${styles.label}`} htmlFor="tags">
               Course Tags
             </label>
             <input
               type="text"
+              id="tags"
               required
-              name=""
               value={courseInfo.tags}
-              onChange={(e: any) =>
+              onChange={(e) =>
                 setCourseInfo({ ...courseInfo, tags: e.target.value })
               }
-              id="tags"
-              placeholder="MERN, NEXT 13 Sockeet io tailwind cdd ,LMS"
+              placeholder="MERN, NEXT.js 13, Socket.io, Tailwind CSS, LMS"
               className={`${styles.input}`}
             />
           </div>
 
           <div className="w-[50%]">
-            <label className={`${styles.label}`} htmlFor="">
+            <label className={`${styles.label}`} htmlFor="category">
               Course Categories
             </label>
             <select
-              name=""
-              id=""
+              id="category"
               className={`${styles.input}`}
               value={courseInfo.category}
-              onChange={(e: any) =>
+              onChange={(e) =>
                 setCourseInfo({ ...courseInfo, category: e.target.value })
               }
             >
               <option value="">Select Category</option>
-
-              {categories.map((item: any) => (
+              {categories.map((item) => (
                 <option value={item._id} key={item._id}>
                   {item.title}
                 </option>
@@ -189,38 +203,35 @@ const CourseInformation: FC<Props> = ({
         <br />
         <div className="w-full flex justify-between">
           <div className="w-[45%]">
-            <label className={`${styles.label}`} htmlFor="">
+            <label className={`${styles.label}`} htmlFor="level">
               Course Level
             </label>
-
             <input
               type="text"
-              name=""
+              id="level"
               value={courseInfo.level}
               required
-              onChange={(e: any) => {
+              onChange={(e) => {
                 setCourseInfo({ ...courseInfo, level: e.target.value });
               }}
-              id="level"
-              placeholder="Beginner/Immediate/Expert"
+              placeholder="Beginner/Intermediate/Expert"
               className={`${styles.input}`}
             />
           </div>
 
           <div className="w-[50%]">
-            <label className={`${styles.label}`} htmlFor="">
+            <label className={`${styles.label}`} htmlFor="demoUrl">
               Demo Url
             </label>
             <input
               type="text"
-              name=""
+              id="demoUrl"
               required
               value={courseInfo.demoUrl}
-              onChange={(e: any) => {
+              onChange={(e) => {
                 setCourseInfo({ ...courseInfo, demoUrl: e.target.value });
               }}
-              id="demoUrl"
-              placeholder="eer74fs"
+              placeholder="example.com/demo"
               className={`${styles.input}`}
             />
           </div>
@@ -247,7 +258,7 @@ const CourseInformation: FC<Props> = ({
             {courseInfo.thumbnail ? (
               <img
                 src={courseInfo.thumbnail}
-                alt=""
+                alt="Course Thumbnail"
                 className="max-h-full w-full object-cover"
               />
             ) : (
@@ -264,8 +275,6 @@ const CourseInformation: FC<Props> = ({
             value="Next"
             className="w-full 800px:w-[180px] h-[40px] bg-[#37a39a] text-center text-[#fff] rounded mt-8 cursor-pointer"
           />
-          <br />
-          <br />
         </div>
       </form>
     </div>
