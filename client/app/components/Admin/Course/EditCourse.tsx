@@ -58,7 +58,7 @@ const EditCourse: FC<Props> = ({ id }) => {
   const [courseData, setCourseData] = useState({});
 
   // Safe access to data and courses
-  const editCourseData = data?.users?.find((i: any) => i._id === id);
+  const editCourseData = data?.courses?.find((i: any) => i._id === id);
 
   useEffect(() => {
     if (editCourseData) {

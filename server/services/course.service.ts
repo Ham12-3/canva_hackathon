@@ -17,10 +17,10 @@ export const createCourse = CatchAsyncError(
 );
 
 export const getAllCoursesService = async (res: Response) => {
-  const users = await CourseModel.find().sort({ createdAt: -1 });
+  const courses = await CourseModel.find().sort({ createdAt: -1 });
 
   res.status(201).json({
     success: true,
-    users,
+    courses,
   });
 };
