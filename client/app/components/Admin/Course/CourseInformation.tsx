@@ -2,29 +2,26 @@ import { styles } from "@/app/styles/style";
 import { useGetHeroDataQuery } from "@/redux/features/layout/layoutApi";
 import React, { FC, useEffect, useState } from "react";
 
+type Thumbnail = {
+  public_id: string;
+  url: string;
+};
+
+type CourseInfo = {
+  name: string;
+  description: string;
+  price: string;
+  estimatedPrice: string;
+  tags: string;
+  category: string;
+  level: string;
+  demoUrl: string;
+  thumbnail: Thumbnail; // Change to Thumbnail object
+};
+
 type Props = {
-  courseInfo: {
-    name: string;
-    description: string;
-    price: string;
-    estimatedPrice: string;
-    tags: string;
-    category: string;
-    level: string;
-    demoUrl: string;
-    thumbnail: string;
-  };
-  setCourseInfo: (courseInfo: {
-    name: string;
-    description: string;
-    price: string;
-    estimatedPrice: string;
-    tags: string;
-    category: string;
-    level: string;
-    demoUrl: string;
-    thumbnail: string;
-  }) => void;
+  courseInfo: CourseInfo;
+  setCourseInfo: (courseInfo: CourseInfo) => void;
   active: number;
   setActive: (active: number) => void;
 };
@@ -57,7 +54,13 @@ const CourseInformation: FC<Props> = ({
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
         if (reader.readyState === 2) {
-          setCourseInfo({ ...courseInfo, thumbnail: reader.result as string });
+          setCourseInfo({
+            ...courseInfo,
+            thumbnail: {
+              public_id: `mock_public_id_${file.name}`, // Replace this with actual public_id from your upload service
+              url: reader.result as string,
+            },
+          });
         }
       };
       reader.readAsDataURL(file);
@@ -73,7 +76,6 @@ const CourseInformation: FC<Props> = ({
     e.preventDefault();
     setDragging(false);
   };
-
   const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     setDragging(false);
@@ -81,7 +83,13 @@ const CourseInformation: FC<Props> = ({
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setCourseInfo({ ...courseInfo, thumbnail: reader.result as string });
+        setCourseInfo({
+          ...courseInfo,
+          thumbnail: {
+            public_id: `mock_public_id_${file.name}`, // Replace this with actual public_id from your upload service
+            url: reader.result as string,
+          },
+        });
       };
       reader.readAsDataURL(file);
     }
@@ -255,9 +263,9 @@ const CourseInformation: FC<Props> = ({
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
           >
-            {courseInfo.thumbnail ? (
+            {courseInfo.thumbnail.url ? (
               <img
-                src={courseInfo.thumbnail}
+                src={courseInfo.thumbnail.url}
                 alt="Course Thumbnail"
                 className="max-h-full w-full object-cover"
               />
@@ -268,6 +276,7 @@ const CourseInformation: FC<Props> = ({
             )}
           </label>
         </div>
+
         <br />
         <div className="w-full flex items-center justify-end">
           <input

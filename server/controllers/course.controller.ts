@@ -51,9 +51,18 @@ export const editCourse = CatchAsyncError(
       const thumbnail = data.thumbnail;
       const courseData = (await CourseModel.findById(courseId)) as any;
 
-      if (thumbnail && !thumbnail.startsWith("https")) {
-        await cloudinary.v2.uploader.destroy(thumbnail.public_id);
+      // Check if thumbnail is provided and if it's not already a URL
+      if (
+        thumbnail &&
+        typeof thumbnail === "object" &&
+        !thumbnail.url.startsWith("https")
+      ) {
+        // Destroy old thumbnail if present
+        if (courseData.thumbnail && courseData.thumbnail.public_id) {
+          await cloudinary.v2.uploader.destroy(courseData.thumbnail.public_id);
+        }
 
+        // Upload new thumbnail
         const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
           folder: "courses",
         });
@@ -64,13 +73,19 @@ export const editCourse = CatchAsyncError(
         };
       }
 
-      if (thumbnail.startsWith("https")) {
+      // If thumbnail is already a URL
+      if (
+        thumbnail &&
+        typeof thumbnail === "object" &&
+        thumbnail.url.startsWith("https")
+      ) {
         data.thumbnail = {
-          url: courseData.thumbnail,
+          url: courseData.thumbnail.url,
           public_id: courseData.thumbnail.public_id,
         };
       }
 
+      // Update course with the new data
       const course = await CourseModel.findByIdAndUpdate(
         courseId,
         {
@@ -88,7 +103,6 @@ export const editCourse = CatchAsyncError(
     }
   }
 );
-
 // Get single course without purchasing
 
 export const getSingleCourse = CatchAsyncError(

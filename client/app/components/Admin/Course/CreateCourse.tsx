@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import CourseInformation from "./CourseInformation";
 import CourseOptions from "./CourseOptions";
@@ -9,28 +10,73 @@ import { useCreateCourseMutation } from "@/redux/features/courses/coursesApi";
 import toast from "react-hot-toast";
 import { redirect } from "next/navigation";
 
-type Props = {};
+// Define types for course content and other structures
+type Link = {
+  title: string;
+  url: string;
+};
 
-const CreateCourse = (props: Props) => {
+type CourseContentData = {
+  videoUrl: string;
+  title: string;
+  description: string;
+  videoSection: string;
+  videoLength: string;
+  links: Link[];
+  suggestions: string;
+};
+
+type BenefitsPrerequisites = {
+  title: string;
+};
+
+type Thumbnail = {
+  public_id: string;
+  url: string;
+};
+
+type CourseInfo = {
+  name: string;
+  description: string;
+  price: string;
+  estimatedPrice: string;
+  tags: string;
+  level: string;
+  category: string;
+  demoUrl: string;
+  thumbnail: Thumbnail; // Change this to an object
+};
+
+const CreateCourse = () => {
   const [active, setActive] = useState(0);
   const [createCourse, { isLoading, isSuccess, error }] =
     useCreateCourseMutation();
 
-  const [courseInfo, setCourseInfo] = useState({
+  // Initialize state with correct types
+  const [courseInfo, setCourseInfo] = useState<CourseInfo>({
     name: "",
     description: "",
     price: "",
     estimatedPrice: "",
     tags: "",
     level: "",
-    category: "", // Ensure this field matches the one used in CourseInformation
+    category: "",
     demoUrl: "",
-    thumbnail: "",
+    thumbnail: {
+      public_id: "",
+      url: "",
+    },
   });
 
-  const [benefits, setBenefits] = useState([{ title: "" }]);
-  const [prerequisites, setPrerequisites] = useState([{ title: "" }]);
-  const [courseContentData, setCourseContentData] = useState([
+  const [benefits, setBenefits] = useState<BenefitsPrerequisites[]>([
+    { title: "" },
+  ]);
+  const [prerequisites, setPrerequisites] = useState<BenefitsPrerequisites[]>([
+    { title: "" },
+  ]);
+  const [courseContentData, setCourseContentData] = useState<
+    CourseContentData[]
+  >([
     {
       videoUrl: "",
       title: "",
@@ -42,7 +88,7 @@ const CreateCourse = (props: Props) => {
     },
   ]);
 
-  const [courseData, setCourseData] = useState({});
+  const [courseData, setCourseData] = useState<any>({});
 
   useEffect(() => {
     if (isSuccess) {
@@ -77,7 +123,7 @@ const CreateCourse = (props: Props) => {
           title: link.title,
           url: link.url,
         })),
-        suggestion: courseContent.suggestions,
+        suggestions: courseContent.suggestions,
       })
     );
 
@@ -87,14 +133,17 @@ const CreateCourse = (props: Props) => {
       price: courseInfo.price,
       estimatedPrice: courseInfo.estimatedPrice,
       tags: courseInfo.tags,
-      thumbnail: courseInfo.thumbnail,
+      thumbnail: {
+        public_id: courseInfo.thumbnail.public_id,
+        url: courseInfo.thumbnail.url,
+      },
       level: courseInfo.level,
       demoUrl: courseInfo.demoUrl,
       totalVideos: courseContentData.length,
       benefits: formattedBenefits,
       prerequisites: formattedPrerequisites,
-      courseContent: formattedCourseContentData,
-      category: courseInfo.category, // Ensure this field is included
+      courseData: formattedCourseContentData,
+      category: courseInfo.category,
     };
     setCourseData(data);
   };

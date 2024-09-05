@@ -13,6 +13,23 @@ import {
 import toast from "react-hot-toast";
 import { redirect } from "next/navigation";
 
+type Thumbnail = {
+  public_id: string;
+  url: string;
+};
+
+type CourseInfo = {
+  name: string;
+  description: string;
+  price: string;
+  estimatedPrice: string;
+  category: string;
+  tags: string;
+  level: string;
+  demoUrl: string;
+  thumbnail: Thumbnail; // Now it's a Thumbnail object
+};
+
 type Props = {
   id: string;
 };
@@ -20,12 +37,12 @@ type Props = {
 const EditCourse: FC<Props> = ({ id }) => {
   const [active, setActive] = useState(0);
   const [editCourse, { isSuccess, error }] = useEditCourseMutation();
-  const { data, refetch } = useGetAllInfoCoursesQuery(
+  const { data } = useGetAllInfoCoursesQuery(
     {},
     { refetchOnMountOrArgChange: true }
   );
 
-  const [courseInfo, setCourseInfo] = useState({
+  const [courseInfo, setCourseInfo] = useState<CourseInfo>({
     name: "",
     description: "",
     price: "",
@@ -34,7 +51,7 @@ const EditCourse: FC<Props> = ({ id }) => {
     tags: "",
     level: "",
     demoUrl: "",
-    thumbnail: "",
+    thumbnail: { public_id: "", url: "" }, // Initialize as object
   });
 
   const [benefits, setBenefits] = useState([{ title: "" }]);
@@ -54,7 +71,7 @@ const EditCourse: FC<Props> = ({ id }) => {
       suggestions: "",
     },
   ]);
-  console.log(data);
+
   const [courseData, setCourseData] = useState({});
 
   // Safe access to data and courses
@@ -70,12 +87,15 @@ const EditCourse: FC<Props> = ({ id }) => {
         tags: editCourseData.tags || "",
         level: editCourseData.level || "",
         demoUrl: editCourseData.demoUrl || "",
-        thumbnail: editCourseData.thumbnail.url || "",
+        thumbnail: {
+          public_id: editCourseData.thumbnail?.public_id || "",
+          url: editCourseData.thumbnail?.url || "",
+        }, // Handle as object
         category: editCourseData.category || "",
       });
       setBenefits(editCourseData.benefits || []);
       setPrerequisites(editCourseData.prerequisites || []);
-      setCourseContentData(editCourseData.courseContent || []);
+      setCourseContentData(editCourseData.courseData || []);
     }
   }, [editCourseData, data]);
 
@@ -95,6 +115,21 @@ const EditCourse: FC<Props> = ({ id }) => {
   }, [isSuccess, error]);
 
   const handleSubmit = async () => {
+    // If thumbnail is a string (from older data), treat it accordingly
+    let thumbnailData;
+
+    if (typeof courseInfo.thumbnail === "string") {
+      thumbnailData = {
+        url: courseInfo.thumbnail, // Handle as a string
+        public_id: "", // Assume no public_id if it's just a string
+      };
+    } else {
+      thumbnailData = {
+        url: courseInfo.thumbnail.url, // Access the URL from the object
+        public_id: courseInfo.thumbnail.public_id || "",
+      };
+    }
+
     const formattedBenefits = benefits.map((benefit) => ({
       title: benefit.title,
     }));
@@ -124,7 +159,7 @@ const EditCourse: FC<Props> = ({ id }) => {
       estimatedPrice: courseInfo.estimatedPrice,
       tags: courseInfo.tags,
       category: courseInfo.category,
-      thumbnail: courseInfo.thumbnail,
+      thumbnail: thumbnailData, // Correctly handle both cases
       level: courseInfo.level,
       demoUrl: courseInfo.demoUrl,
       totalVideos: courseContentData.length,
@@ -132,6 +167,7 @@ const EditCourse: FC<Props> = ({ id }) => {
       prerequisites: formattedPrerequisites,
       courseContent: formattedCourseContentData,
     };
+
     setCourseData(data);
   };
 
@@ -147,7 +183,7 @@ const EditCourse: FC<Props> = ({ id }) => {
       }).unwrap();
       if (result) {
         toast.success("Course updated successfully");
-        redirect("/admin/all-courses");
+        redirect("/admin/live-courses");
       }
     } catch (err) {
       toast.error("An error occurred while updating the course");
