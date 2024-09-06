@@ -4,7 +4,7 @@ import React, { FC, ReactNode, useState } from "react";
 import Heading from "./utils/Heading";
 import Header from "./components/Header";
 import Hero from "./components/Route/Hero";
-import Courses from "./components/Course/Courses";
+import Courses from "./components/Route/Courses";
 
 interface Props {}
 

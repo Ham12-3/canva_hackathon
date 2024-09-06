@@ -1,4 +1,3 @@
-"use client";
 import Link from "next/link";
 import React, { FC, useState, useEffect } from "react";
 import NavItems from "../utils/NavItems";
@@ -10,7 +9,6 @@ import SignUp from "../components/Auth/SignUp";
 import Verification from "./Auth/Verification";
 import { useSelector } from "react-redux";
 import Image from "next/image";
-
 import { useSession } from "next-auth/react";
 import {
   useLogOutQuery,
@@ -39,9 +37,6 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   });
 
   useEffect(() => {
-    console.log("Session status:", status);
-    console.log("Session data:", data);
-
     if (status === "authenticated" && data?.user && !user && !logout) {
       const { email, name, image } = data.user;
 
@@ -79,14 +74,15 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   return (
     <div className="w-full relative">
       <div
-        className={`w-full h-[80px] z-[80] border-b transition duration-500 ${
+        className={`w-full h-[80px] z-[80] transition duration-500 ${
           active || openSidebar
-            ? "bg-white dark:bg-gradient-to-b dark:from-gray-900 dark:to-black shadow-xl dark:border-[#ffffff1c]"
+            ? "backdrop-blur-md bg-white/20 dark:bg-black/20 shadow-xl border-b border-gray-200 dark:border-[#ffffff1c]"
             : "bg-transparent"
         } fixed top-0 left-0`}
       >
         <div className="w-[95%] md:w-[92%] m-auto py-2 h-full">
           <div className="w-full h-[80px] flex items-center justify-between p-3">
+            {/* Brand Name */}
             <div>
               <Link
                 href={"/"}
@@ -95,10 +91,13 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
                 Lacodemy
               </Link>
             </div>
+
+            {/* Navigation Items and Theme Switcher */}
             <div className="flex items-center">
               <NavItems activeItem={activeItem} isMobile={false} />
               <ThemeSwitcher />
 
+              {/* Mobile Menu Icon */}
               <div className="md:hidden">
                 <HiOutlineMenuAlt3
                   size={25}
@@ -107,6 +106,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
                 />
               </div>
 
+              {/* User Avatar or Icon */}
               {user ? (
                 <Link href={"/profile"}>
                   {user.avatar ? (
@@ -114,8 +114,8 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
                       src={user.avatar.url}
                       alt="User Avatar"
                       className="w-10 h-10 rounded-full object-cover"
-                      width={25}
-                      height={25}
+                      width={40}
+                      height={40}
                     />
                   ) : (
                     <HiOutlineUserCircle
@@ -138,6 +138,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
           </div>
         </div>
 
+        {/* Sidebar for Mobile Navigation */}
         {openSidebar && (
           <div
             className="fixed w-full h-screen top-0 left-0 z-[99999] dark:bg-[unset] bg-[#00000024]"
@@ -162,6 +163,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
         )}
       </div>
 
+      {/* Modal for Authentication */}
       {route === "Login" && open && (
         <CustomModal
           open={open}
