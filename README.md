@@ -1,1 +1,1 @@
-# canva_hackathon
+# Lacodemy AI edtech app
