@@ -11,7 +11,6 @@ import { Providers } from "./Provider";
 import { SessionProvider } from "next-auth/react";
 import { useLoadUserQuery } from "../redux/features/api/apiSlice";
 import Loader from "./components/Loader/Loader";
-
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -37,18 +36,7 @@ export default function RootLayout({
         <Providers>
           <SessionProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              {/* Custom Wrapper to prevent overlap */}
-              <div className="relative z-0">
-                {/* Background Section with Grid and Glitter */}
-                <div className="absolute inset-0 z-[-1]">
-                  {/* Grid Background */}
-                  <div className="absolute inset-0 bg-grid opacity-50"></div>
-                  {/* Glitter Effect */}
-                  <div className="absolute inset-0 bg-glitter opacity-40"></div>
-                </div>
-                <Custom>{children}</Custom>
-              </div>
-
+              <Custom>{children}</Custom>
               <Toaster position="top-center" reverseOrder={false} />
             </ThemeProvider>
           </SessionProvider>
