@@ -9,7 +9,7 @@ type Props = {};
 const Hero: FC<Props> = () => {
   const { data } = useGetHeroDataQuery("Banner", {});
   return (
-    <div className="relative flex flex-col lg:flex-row items-center justify-around py-16 lg:py-20 bg-white dark:bg-black text-black dark:text-white font-Josefin">
+    <div className="relative flex flex-col lg:flex-row items-center justify-around py-16 lg:py-20  text-black dark:text-white font-Josefin">
       {/* Left Section - Circular Image */}
       <div className="relative w-[600px] flex items-center justify-center h-[60vh] lg:h-[80vh] mt-10 mb-10">
         <div className="relative w-[550px] h-[550px] rounded-full overflow-hidden bg-gradient-to-br from-gray-200 to-gray-400 dark:from-[#0f172a] dark:to-[#1e293b] hero_animation ml-4">

@@ -13,7 +13,7 @@ const Courses = (props: Props) => {
   }, [data]);
 
   return (
-    <div className="relative flex flex-col items-center justify-center py-16 lg:py-20 bg-white dark:bg-black text-black dark:text-white">
+    <div className="relative flex flex-col items-center justify-center py-16 lg:py-20 text-black dark:text-white">
       <div className="w-[90%] 800px:w-[80%] m-auto">
         <h1 className="text-center font-Poppins text-[25px] leading-[35px] sm:text-3xl lg:text-4xl dark:text-white text-[#000] font-[700] 800px:leading-[40px]">
           Expand Your Career{" "}
