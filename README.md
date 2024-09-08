@@ -1,4 +1,4 @@
-## Lacodemy AI edtech app
+<h1> Lacodemy AI edtech app </h1>
 
 ![alt text](image.png)
 
