@@ -1,4 +1,4 @@
-# Lacodemy AI edtech app
+## Lacodemy AI edtech app
 
 ![alt text](image.png)
 
