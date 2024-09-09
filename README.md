@@ -3,10 +3,7 @@
 
 # Lacodemy AI Edtech App
 
-![alt text](image.png)
-![alt text](image-1.png)
-![alt text](image-2.png)
-![alt text](image-3.png)
+
 
 ## Introduction
 
@@ -296,3 +293,13 @@ For any questions or support, please reach out to [mobolaji2309@gmail.com](mailt
 - **License** section refers to the MIT License in the `LICENSE` file.
 
 Feel free to adjust any section or provide more details if needed! Let me know if you need further assistance.
+
+
+
+
+### Images 
+
+![alt text](image.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
+![alt text](image-3.png)
