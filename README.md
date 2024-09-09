@@ -1,6 +1,4 @@
-I’d be happy to help with your README file! Here’s an updated version for your Lacodemy AI edtech app. I'll add some details about the project, its features, and instructions on how to get started.
 
----
 
 # Lacodemy AI EdTech App
 
@@ -70,7 +68,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-For any questions or inquiries, please reach out to Abdulhamid Sonaike at [your-email@example.com](mailto:mobolaji2309@gmail.com).
+For any questions or inquiries, please reach out to Abdulhamid Sonaike at [mobolaji2309@gmail.com](mailto:mobolaji2309@gmail.com).
 
 ---
 
