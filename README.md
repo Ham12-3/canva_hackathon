@@ -1,6 +1,4 @@
-Sure! Here's an updated README file for your project that includes a comprehensive sitemap for your backend, a tree-like structure for the routes, and other relevant information.
 
----
 
 # Lacodemy AI EdTech App
 
