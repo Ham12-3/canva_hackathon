@@ -21,7 +21,7 @@ const page = (props: Props) => {
           <AdminSidebar />
         </div>
         <div className="w-[85%]">
-          <DashboardHeader open={false} setOpen={undefined} />
+          <DashboardHeader />
           <EditCategories />
         </div>
       </div>

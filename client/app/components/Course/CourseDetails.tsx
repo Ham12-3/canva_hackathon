@@ -1,9 +1,12 @@
+import { styles } from "@/app/styles/style";
 import CoursePlayer from "@/app/utils/CoursePlayer";
 import Ratings from "@/app/utils/Ratings";
+import Link from "next/link";
 import React from "react";
 import { IoCheckmarkDoneOutline } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import { format } from "timeago.js";
+import CourseContentList from "./CourseContentList";
 
 type Props = {
   data: any;
@@ -97,6 +100,7 @@ const CourseDetails = ({ data }: Props) => {
               </h1>
 
               {/* Course Content List  */}
+              <CourseContentList data={data?.courseData} />
             </div>
             <br />
 
@@ -166,12 +170,53 @@ const CourseDetails = ({ data }: Props) => {
               </div>
             </div>
           </div>
-        </div>
+          <div className="w-full 800px:w-[35%] relative">
+            <div className="sticky top-[100px] left-0 z-50 w-full">
+              <CoursePlayer videoUrl={data?.demoUrl} title={data.name} />
+              <div className="flex items-center">
+                <h1 className="pt-5 text-[25px] text-black dark:text-white">
+                  {data.price === 0 ? "Free" : "£" + data.price}
+                </h1>
+                <h5 className="pl-3 text-[20px] mt-2 line-through opacity-80 text-black dark:text-white">
+                  £{data.estimatedPrice}
+                </h5>
+                <h4 className="pl-5 pt-4 text-[22px] text-black dakr:text-white">
+                  {discountPercentagePrice}% Off
+                </h4>
+              </div>
 
-        <div className="w-full 800px:w-[35%] relative">
-          <div className="sticky top-[100px] left-0 z-50 w-full">
-            <CoursePlayer videoUrl={data?.demoUrl} title={data.name} />
-            {<h1 className="text-black dark:text-white">{demoUrl}</h1>}
+              <div className="flex items-center">
+                {isPurchased ? (
+                  <Link
+                    className={`${styles.button} !w-[180px] my-3 font-Poppins cursor-pointer !bg-[crimson]`}
+                    href={`/course-access/${data._id}`}
+                  >
+                    Enter to Course
+                  </Link>
+                ) : (
+                  <div
+                    className={`${styles.button} !w-[180px] my-3 font-Poppins cursor-pointer !bg-[crimson]`}
+                    onClick={handleOrder}
+                  >
+                    Buy Now £{data.price}
+                  </div>
+                )}
+              </div>
+              <br />
+              <p className="pb-1 text-black dark:text-white">
+                {" "}
+                . Source code included
+              </p>
+              <p className="pb-1 text-black dark:text-white">
+                . Full lifetime access
+              </p>
+              <p className="pb-1 text-black dark:text-white">
+                . Certificate of completion
+              </p>
+              <p className="pb-3 800px:pb-1 text-black dark:text-white">
+                . Premium Support
+              </p>
+            </div>
           </div>
         </div>
       </div>

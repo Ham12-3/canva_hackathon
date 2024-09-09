@@ -6,6 +6,8 @@
       "esnext"
     ],
     "allowJs": true,
+    "target": "es2016", // or es2015, es6
+    "downlevelIteration": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
