@@ -20,6 +20,7 @@ const CourseDetails = ({ data }: Props) => {
     console.log("ggg");
   };
 
+  const demoUrl = data?.tags;
   return (
     <div>
       <div className="w-[90%] 800px:w-[90%] m-auto py-5">
@@ -170,6 +171,7 @@ const CourseDetails = ({ data }: Props) => {
         <div className="w-full 800px:w-[35%] relative">
           <div className="sticky top-[100px] left-0 z-50 w-full">
             <CoursePlayer videoUrl={data?.demoUrl} title={data.name} />
+            {<h1 className="text-black dark:text-white">{demoUrl}</h1>}
           </div>
         </div>
       </div>

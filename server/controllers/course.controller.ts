@@ -110,28 +110,42 @@ export const getSingleCourse = CatchAsyncError(
     try {
       const courseId = req.params.id;
 
+      // Try fetching from Redis first
       const isCacheExist = await redis.get(courseId);
 
       if (isCacheExist) {
+        console.log("Cache hit for course", courseId);
         const course = JSON.parse(isCacheExist);
 
-        res.status(200).json({
-          success: true,
-          course,
-        });
-      } else {
-        const course = await CourseModel.findById(req.params.id).select(
-          "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
-        );
-
-        await redis.set(courseId, JSON.stringify(course), "EX", 604800);
-
-        res.status(200).json({
+        // Return cached course
+        return res.status(200).json({
           success: true,
           course,
         });
       }
+
+      // Cache miss, fetching from the database
+      console.log("Cache miss for course", courseId);
+      const course = await CourseModel.findById(courseId).select(
+        "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
+      );
+
+      // If no course is found, don't cache and return a 404
+      if (!course) {
+        console.log(`Course with id ${courseId} not found`);
+        return next(new ErrorHandler("Course not found", 404));
+      }
+
+      // Cache the course data only if it exists
+      await redis.set(courseId, JSON.stringify(course), "EX", 604800); // 7 days expiration
+
+      // Return the course from DB
+      return res.status(200).json({
+        success: true,
+        course,
+      });
     } catch (err: any) {
+      console.error("Error fetching course:", err);
       return next(new ErrorHandler(err.message, 400));
     }
   }

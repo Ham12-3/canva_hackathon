@@ -53,6 +53,14 @@ export const courseApi = apiSlice.injectEndpoints({
         credentials: "include" as const,
       }),
     }),
+    getVdoCipherOTP: builder.mutation({
+      query: (videoId) => ({
+        url: "getVdoCipherOTP",
+        method: "POST",
+        body: { videoId },
+        credentials: "include" as const,
+      }),
+    }),
   }),
 });
 
@@ -64,4 +72,5 @@ export const {
   useEditCourseMutation,
   useGetUsersAllCoursesQuery,
   useGetCourseDetailsQuery,
+  useGetVdoCipherOTPMutation,
 } = courseApi;
