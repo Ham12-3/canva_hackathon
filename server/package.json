@@ -30,6 +30,7 @@
     "mongoose": "^8.5.2",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.14",
+    "stripe": "^16.10.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.5.4"
   },
