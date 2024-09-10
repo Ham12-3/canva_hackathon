@@ -16,6 +16,7 @@ import sendMail from "../utils/sendMail";
 
 import NotificationModel from "../models/notification.model";
 import { getAllOrdersService, newOrder } from "../services/order.service";
+import { redis } from "../utils/redis";
 
 require("dotenv").config();
 
@@ -27,6 +28,18 @@ export const createOrder = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { courseId, payment_info } = req.body as IOrder;
+
+      if (payment_info) {
+        if ("id" in payment_info) {
+          const paymentIntentId = payment_info.id;
+          const paymentIntent = await stripe.paymentIntents.retrieve(
+            paymentIntentId
+          );
+          if (paymentIntent.status === "succeeded") {
+            return next(new ErrorHandler("Payment not authorized", 400));
+          }
+        }
+      }
 
       const user = await userModel.findById(req.user?.id);
 
@@ -88,6 +101,7 @@ export const createOrder = CatchAsyncError(
         return next(new ErrorHandler(err.message, 500));
       }
       user?.courses.push({ courseId: course?._id } as any);
+      await redis.set(req.user?.id, JSON.stringify(user));
 
       await user?.save();
 

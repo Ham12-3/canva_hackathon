@@ -10,9 +10,11 @@ import CourseContentList from "./CourseContentList";
 
 type Props = {
   data: any;
+  clientSecret: string;
+  stripePromise: any;
 };
 
-const CourseDetails = ({ data }: Props) => {
+const CourseDetails = ({ data, stripePromise, clientSecret }: Props) => {
   const { user } = useSelector((state: any) => state.auth);
   const [open, setOpen] = useState(false);
   const discountPercentage =
