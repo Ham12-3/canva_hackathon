@@ -7,6 +7,8 @@ import { IoCheckmarkDoneOutline, IoCloseOutline } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import { format } from "timeago.js";
 import CourseContentList from "./CourseContentList";
+import { Elements } from "@stripe/react-stripe-js";
+import CheckOutForm from "../Payment/CheckOutForm";
 
 type Props = {
   data: any;
@@ -21,12 +23,15 @@ const CourseDetails = ({ data, stripePromise, clientSecret }: Props) => {
     ((data?.estimatedPrice - data.price) / data?.estimatedPrice) * 100;
   const discountPercentagePrice = discountPercentage.toFixed(0);
   const isPurchased =
-    user && user?.courses?.find((item: any) => item._id === data._id);
+    user && user?.courses?.find((item: any) => item.courseId === data._id);
   const handleOrder = (e: any) => {
     setOpen(true);
   };
 
   const demoUrl = data?.tags;
+  console.log(user, "user courses");
+  console.log(isPurchased, "Purchase");
+  console.log(data._id, "data id");
   return (
     <div>
       <div className="w-[90%] 800px:w-[90%] m-auto py-5">
@@ -233,6 +238,13 @@ const CourseDetails = ({ data, stripePromise, clientSecret }: Props) => {
                   className="text-black cursor-pointer"
                   onClick={() => setOpen(false)}
                 />
+              </div>
+              <div className="w-full">
+                {stripePromise && clientSecret && (
+                  <Elements stripe={stripePromise} options={{ clientSecret }}>
+                    <CheckOutForm setOpen={setOpen} data={data} />
+                  </Elements>
+                )}
               </div>
             </div>
           </div>
