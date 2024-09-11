@@ -23,7 +23,9 @@ const CoursePlayer: FC<Props> = ({ videoUrl, title }) => {
   if (error) return <div>Failed to load video.</div>; // Handle error state
 
   return (
-    <div style={{ paddingTop: "41%", position: "relative" }}>
+    <div
+      style={{ paddingTop: "56.25%", position: "relative", overflow: "hidden" }}
+    >
       {/* Only render the video player if OTP and playbackInfo are available */}
       {videoData?.otp && videoData?.playbackInfo && (
         <iframe
