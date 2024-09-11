@@ -18,7 +18,7 @@ type Props = {
 };
 
 const CourseDetails = ({ data, stripePromise, clientSecret }: Props) => {
-  const { data: user } = useLoadUserQuery(undefined, {});
+  const { user } = useSelector((state: any) => state.auth);
 
   const [open, setOpen] = useState(false);
   const discountPercentage =

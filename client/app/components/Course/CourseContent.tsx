@@ -14,8 +14,9 @@ const CourseContent = ({ id }: Props) => {
   const [open, setOpen] = useState(false);
   const [route, setRoute] = useState("Login");
 
-  const data = contentData?.content;
+  const data = contentData.content;
   const [activeVideo, setActiveVideo] = useState(0);
+  console.log(data[activeVideo], "active vedeos");
   return isLoading ? (
     <Loader />
   ) : (
@@ -27,7 +28,7 @@ const CourseContent = ({ id }: Props) => {
         route={route}
         setRoute={setRoute}
       />
-      <div className="w-full grid 800px:grid-cols-10">
+      <div className="w-full grid 800px:grid-cols-10 mt-[120px]">
         <Heading
           title={data[activeVideo]?.title}
           description="Course Video Content"

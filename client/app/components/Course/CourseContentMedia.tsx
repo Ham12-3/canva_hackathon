@@ -1,5 +1,6 @@
 import { styles } from "@/app/styles/style";
 import CoursePlayer from "@/app/utils/CoursePlayer";
+import { useGetCourseDetailsQuery } from "@/redux/features/courses/coursesApi";
 import React, { useState } from "react";
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 
@@ -17,11 +18,15 @@ const CourseContentMedia = ({
   setActiveVideo,
 }: Props) => {
   const [activeBar, setActiveBar] = useState(0);
+  const { data: videoData, isLoading } = useGetCourseDetailsQuery(id);
+  console.log(videoData, "videoData");
+  console.log(data, "active vedeos");
+
   return (
     <div className="w-[95%] 800px:w-[86%] py-4 m-auto">
       <CoursePlayer
-        title={data[activeVideo]?.title}
-        videoUrl={data[activeVideo]?.videoUrl}
+        title={videoData?.title}
+        videoUrl={videoData?.course.demoUrl}
       />
       <div className="w-full flex items-center justify-between my-3">
         <div
@@ -55,7 +60,8 @@ const CourseContentMedia = ({
           <AiOutlineArrowRight className="ml-2" />
         </div>
       </div>
-      <h1 className="pt-2 text-[25px] font-[600] ">
+      <br />
+      <h1 className="pt-2 text-[25px] font-[600] text-black dark:text-white ">
         {data[activeVideo]?.title}
       </h1>
       <br />
@@ -83,7 +89,7 @@ const CourseContentMedia = ({
         <div>
           {data[activeVideo]?.links.map((item: any, index: number) => (
             <div className="mb-5">
-              <h2 className="800px:text-[20px] 800px:inline-block">
+              <h2 className="800px:text-[20px] 800px:inline-block dark:text-white text-black">
                 {item.title && item.title + " :"}
               </h2>
               <a
@@ -96,6 +102,13 @@ const CourseContentMedia = ({
           ))}
         </div>
       )}
+
+      {/* 
+      {
+        activeBar === 2 & (
+
+        )
+      } */}
     </div>
   );
 };
