@@ -27,7 +27,7 @@ const CourseContentMedia = ({
         <div
           className={`${
             styles.button
-          } dark:text-white text-black !w-[unset] !min-h-[40px] !py-[unset] ${
+          } text-white  !w-[unset] !min-h-[40px] !py-[unset] ${
             activeVideo === 0 && "!cursor-no-drop opacity-[.8]"
           }`}
           onClick={() =>
@@ -63,7 +63,9 @@ const CourseContentMedia = ({
         {["Overview", "Resources", "Q&A", "Reviews"].map((text, index) => (
           <h5
             className={`800px:text-[20px] text-black dark:text-white curosr-pointer ${
-              activeBar === index && "text-red-500"
+              activeBar === index
+                ? "text-red-500"
+                : "dark:text-white text-black"
             }`}
             onClick={() => setActiveBar(index)}
           >
@@ -76,6 +78,23 @@ const CourseContentMedia = ({
         <p className="text-[18px] text-black dark:text-white whitespace-pre-line mb-3">
           {data[activeVideo]?.description}
         </p>
+      )}
+      {activeBar === 1 && (
+        <div>
+          {data[activeVideo]?.links.map((item: any, index: number) => (
+            <div className="mb-5">
+              <h2 className="800px:text-[20px] 800px:inline-block">
+                {item.title && item.title + " :"}
+              </h2>
+              <a
+                href={item.url}
+                className="inline-block text-[#4395c4] 800px: text-[20px] 800px:pl-2"
+              >
+                {item.url}
+              </a>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
