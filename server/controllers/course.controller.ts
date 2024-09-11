@@ -4,6 +4,7 @@ import axios from "axios"; // Import the 'axios' library
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 
 import ErrorHandler from "../utils/ErrorHandler";
+import { ObjectId } from "mongodb";
 
 import cloudinary from "cloudinary";
 import { createCourse, getAllCoursesService } from "../services/course.service";
@@ -192,7 +193,6 @@ export const getCourseByUser = CatchAsyncError(
       }
 
       const course = await CourseModel.findById(courseId);
-      console.log(course, "course");
 
       if (!course) {
         return next(new ErrorHandler("Course not found", 404));
@@ -204,7 +204,6 @@ export const getCourseByUser = CatchAsyncError(
         success: true,
         content,
       });
-      console.log(content, "content");
     } catch (err: any) {
       return next(new ErrorHandler(err.message, 500));
     }
@@ -231,7 +230,7 @@ export const addQuestion = CatchAsyncError(
       }
 
       const courseContent = course?.courseData.find((item: any) => {
-        return item._id === contentId;
+        return item._id.equals(new ObjectId(contentId)); // Use `.equals()` for ObjectId comparison
       });
 
       if (!courseContent) {
