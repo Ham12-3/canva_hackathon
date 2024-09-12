@@ -15,6 +15,7 @@ import {
   AiOutlineStar,
 } from "react-icons/ai";
 import { BiMessage } from "react-icons/bi";
+import { VscVerifiedFilled } from "react-icons/vsc";
 import { format } from "timeago.js";
 
 type Props = {
@@ -107,6 +108,13 @@ const CourseContentMedia = ({
       contentId: data[activeVideo]._id,
       questionId: questionId,
     });
+  };
+
+  const handleReviewSubmit = async () => {
+    if (review.length === 0) {
+      toast.error("Review can't be empty");
+    } else {
+    }
   };
 
   return (
@@ -304,6 +312,7 @@ const CourseContentMedia = ({
                 <div className="w-full flex justify-end">
                   <div
                     className={`${styles.button} !w-[120px] !h-[40px] text-[18px] mt-5 800px:mr-0 `}
+                    onClick={handleReviewSubmit}
                   >
                     Submit
                   </div>
@@ -377,7 +386,13 @@ const CommentItem = ({
             />
           </div>
           <div className="pl-3">
-            <h5 className="text-[20px] ">{item.user.name}</h5>
+            <div className="flex items-center">
+              <h5 className="text-[20px] ">{item.user.name}</h5>{" "}
+              {item.user.role === "admin" && (
+                <VscVerifiedFilled className="text-[#0f1faf] ml-2 text-[20px]" />
+              )}
+            </div>
+
             <p>{item?.question}</p>
             <small className="text-[#000000b8] dark:text-[#ffffff83]">
               {!item.createdAt ? "" : format(item.createdAt)}
