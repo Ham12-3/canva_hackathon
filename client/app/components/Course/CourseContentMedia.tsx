@@ -81,13 +81,24 @@ const CourseContentMedia = ({
       setQuestion("");
       refetch();
     }
+    if (answerSuccess) {
+      setAnswer("");
+      refetch();
+      toast.success("Answer added successfully");
+    }
     if (error) {
       if ("data" in error) {
         const errorData = error as any;
         toast.error(errorData.data.message);
       }
     }
-  }, [isSuccess, error]);
+    if (answerError) {
+      if ("data" in answerError) {
+        const errorData = answerError as any;
+        toast.error(errorData.data.message);
+      }
+    }
+  }, [isSuccess, error, answerSuccess, answerError]);
 
   const handleAnswerSubmit = () => {
     addAnswerInQuestion({
@@ -229,6 +240,7 @@ const CourseContentMedia = ({
               handleAnswerSubmit={handleAnswerSubmit}
               user={user}
               setQuestionId={setQuestionId}
+              answerCreationLoading={answerCreationLoading}
             />
           </div>
         </>
@@ -313,6 +325,7 @@ const CommentReply = ({
   handleAnserSubmit,
   user,
   setQuestionId, // Add this line to declare the setQuestionId function
+  answerCreationLoading,
 }: any) => {
   return (
     <>
@@ -325,8 +338,10 @@ const CommentReply = ({
             item={item}
             index={index}
             answer={answer}
+            setAnswer={setAnswer}
             setQuestionId={setQuestionId}
             handleAnswerSubmit={handleAnserSubmit}
+            answerCreationLoading={answerCreationLoading}
           />
         ))}
       </div>
@@ -335,13 +350,13 @@ const CommentReply = ({
 };
 
 const CommentItem = ({
-  data,
   setQuestionId,
   item,
   index,
   answer,
   setAnswer,
   handleAnswerSubmit,
+  answerCreationLoading,
 }: any) => {
   const [replyActive, setReplyActive] = useState(false);
   return (
@@ -424,15 +439,17 @@ const CommentItem = ({
                   placeholder="Enter your answer..."
                   value={answer}
                   onChange={(e: any) => setAnswer(e.target.value)}
-                  className="block 800px:ml-12 mt-2 outline-none bg-transparent border-b border-[#00000027] 
+                  className={`block 800px:ml-12 mt-2 outline-none bg-transparent border-b border-[#00000027] 
               dark:text-white text-black
-              dark:border-[#fff] p-[5px] w-[95%]"
+              dark:border-[#fff] p-[5px] w-[95%] ${
+                answer === "" || (answerCreationLoading && "cursor-not-allowed")
+              }`}
                 />
                 <button
                   type="submit"
                   className="absolute right-0 bottom-1"
                   onClick={handleAnswerSubmit}
-                  disabled={answer === ""}
+                  disabled={answer === "" || answerCreationLoading}
                 >
                   Submit
                 </button>
