@@ -18,7 +18,7 @@ const CourseContent: FC<Props> = ({
   setActive,
   courseContentData,
   setCourseContentData,
-  handleSubmit: handleCourseSubmit,
+  handleSubmit,
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(
     Array(courseContentData.length).fill(false)
@@ -41,6 +41,13 @@ const CourseContent: FC<Props> = ({
   const handleAddLink = (index: number) => {
     const updatedData = [...courseContentData];
     updatedData[index].links.push({ title: "", url: "" });
+    setCourseContentData(updatedData);
+  };
+
+  const handleInputChange = (index: number, field: string, value: any) => {
+    const updatedData = courseContentData.map((item, i) =>
+      i === index ? { ...item, [field]: value } : item
+    );
     setCourseContentData(updatedData);
   };
 
@@ -116,7 +123,7 @@ const CourseContent: FC<Props> = ({
     }
 
     setActive(active + 1);
-    handleCourseSubmit();
+    handleSubmit();
   };
 
   return (
@@ -145,11 +152,9 @@ const CourseContent: FC<Props> = ({
                           : "w-max"
                       } font-Poppins cursor-pointer dark:text-white text-black bg-transparent outline-none`}
                       value={item.videoSection}
-                      onChange={(e) => {
-                        const updatedData = [...courseContentData];
-                        updatedData[index].videoSection = e.target.value;
-                        setCourseContentData(updatedData);
-                      }}
+                      onChange={(e) =>
+                        handleInputChange(index, "videoSection", e.target.value)
+                      }
                     />
                     <BsPencil className="cursor-pointer dark:text-white text-black" />
                   </div>
@@ -205,11 +210,9 @@ const CourseContent: FC<Props> = ({
                       placeholder="Project Plan"
                       className={`${styles.input}`}
                       value={item.title}
-                      onChange={(e) => {
-                        const updatedData = [...courseContentData];
-                        updatedData[index].title = e.target.value;
-                        setCourseContentData(updatedData);
-                      }}
+                      onChange={(e) =>
+                        handleInputChange(index, "title", e.target.value)
+                      }
                     />
                   </div>
 
@@ -222,11 +225,9 @@ const CourseContent: FC<Props> = ({
                       placeholder="https://abc.com"
                       className={`${styles.input}`}
                       value={item.videoUrl}
-                      onChange={(e) => {
-                        const updatedData = [...courseContentData];
-                        updatedData[index].videoUrl = e.target.value;
-                        setCourseContentData(updatedData);
-                      }}
+                      onChange={(e) =>
+                        handleInputChange(index, "videoUrl", e.target.value)
+                      }
                     />
                   </div>
 
@@ -238,12 +239,10 @@ const CourseContent: FC<Props> = ({
                       type="number"
                       placeholder="20mins"
                       className={`${styles.input}`}
-                      value={item.videoLength}
-                      onChange={(e) => {
-                        const updatedData = [...courseContentData];
-                        updatedData[index].videoLength = e.target.value;
-                        setCourseContentData(updatedData);
-                      }}
+                      value={item.videoLength || ""} // Ensure videoLength is properly handled
+                      onChange={(e) =>
+                        handleInputChange(index, "videoLength", e.target.value)
+                      }
                     />
                   </div>
 
@@ -256,11 +255,9 @@ const CourseContent: FC<Props> = ({
                       className={`${styles.input} !h-min py-2`}
                       placeholder="Describe the video"
                       value={item.description}
-                      onChange={(e) => {
-                        const updatedData = [...courseContentData];
-                        updatedData[index].description = e.target.value;
-                        setCourseContentData(updatedData);
-                      }}
+                      onChange={(e) =>
+                        handleInputChange(index, "description", e.target.value)
+                      }
                     />
                     <br />
                     <br />
