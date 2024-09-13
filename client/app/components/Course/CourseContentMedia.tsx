@@ -1,8 +1,10 @@
 import { styles } from "@/app/styles/style";
 import CoursePlayer from "@/app/utils/CoursePlayer";
+import Ratings from "@/app/utils/Ratings";
 import {
   useAddAnswerInQuestionMutation,
   useAddNewQuestionMutation,
+  useAddReviewInCourseMutation,
   useGetCourseDetailsQuery,
 } from "@/redux/features/courses/coursesApi";
 import Image from "next/image";
@@ -43,10 +45,19 @@ const CourseContentMedia = ({
   const [answer, setAnswer] = useState("");
   const [questionId, setQuestionId] = useState("");
 
+  const [isReviewReply, setIsReviewReply] = useState(false);
+
   const [
     addNewQuestion,
     { isSuccess, error, isLoading: questionCreationLoading },
   ] = useAddNewQuestionMutation();
+
+  const { data: courseData, refetch: courseRefetch } = useGetCourseDetailsQuery(
+    id,
+    { refetchOnMountOrArgChange: true }
+  );
+
+  const course = courseData?.course;
 
   const { data: videoData, isLoading } = useGetCourseDetailsQuery(id);
   const [
@@ -57,10 +68,18 @@ const CourseContentMedia = ({
       isLoading: answerCreationLoading,
     },
   ] = useAddAnswerInQuestionMutation();
+  const [
+    addReviewInCourse,
+    {
+      isSuccess: reviewSuccess,
+      error: reviewError,
+      isLoading: reviewCreationLoading,
+    },
+  ] = useAddReviewInCourseMutation();
   console.log(videoData, "videoData");
   console.log(data, "active vedeos");
 
-  const isReviewExists = data?.reviews?.find(
+  const isReviewExists = course?.reviews?.find(
     (item: any) => item.user._id === user._id
   );
   console.log(data[activeVideo]._id, "father content id");
@@ -99,7 +118,26 @@ const CourseContentMedia = ({
         toast.error(errorData.data.message);
       }
     }
-  }, [isSuccess, error, answerSuccess, answerError]);
+    if (reviewSuccess) {
+      setReview("");
+      setRating(1);
+      courseRefetch();
+      toast.success("Review added successfully");
+    }
+    if (reviewError) {
+      if ("data" in reviewError) {
+        const errorData = reviewError as any;
+        toast.error(errorData.data.message);
+      }
+    }
+  }, [
+    isSuccess,
+    error,
+    answerSuccess,
+    answerError,
+    reviewSuccess,
+    reviewError,
+  ]);
 
   const handleAnswerSubmit = () => {
     addAnswerInQuestion({
@@ -114,6 +152,11 @@ const CourseContentMedia = ({
     if (review.length === 0) {
       toast.error("Review can't be empty");
     } else {
+      addReviewInCourse({
+        review,
+        rating,
+        courseId: id,
+      });
     }
   };
 
@@ -311,13 +354,62 @@ const CourseContentMedia = ({
                 </div>
                 <div className="w-full flex justify-end">
                   <div
-                    className={`${styles.button} !w-[120px] !h-[40px] text-[18px] mt-5 800px:mr-0 `}
-                    onClick={handleReviewSubmit}
+                    className={`${
+                      styles.button
+                    } !w-[120px] !h-[40px] text-[18px] mt-5 800px:mr-0 ${
+                      reviewCreationLoading && "cursor-no-drop"
+                    }`}
+                    onClick={
+                      reviewCreationLoading ? () => {} : handleReviewSubmit
+                    }
                   >
                     Submit
                   </div>
                 </div>
               </>
+            )}
+            <br />
+            <div className="w-full h-[1px] bg-[#ffffff3b]"></div>
+            <div className="w-full">
+              {(course?.reviews && [...course.reviews].reverse()).map(
+                (item: any, index: number) => (
+                  <div className="w-full my-5 dark:text-white text-black">
+                    <div className="w-full flex">
+                      <div>
+                        <Image
+                          src={
+                            item.user.avatar
+                              ? item.user.avatar.url
+                              : "../../../public/assets/avatar.png"
+                          }
+                          width={20}
+                          height={20}
+                          alt=""
+                          className="w-[50px] h-[50px] rounded-full object-cover"
+                        />
+                      </div>
+                      <div className="ml-2">
+                        <h1 className="text-[18px] ">{item?.user.name}</h1>
+
+                        <Ratings rating={item.rating} />
+
+                        <p>{item.comment}</p>
+
+                        <small className="text-[#ffffff83]">
+                          {format(item.createdAt)}
+                        </small>
+                      </div>
+                    </div>
+                    {user.role === "admin" && (
+                      <span className={`${styles.label}`}>Add Reply </span>
+                    )}
+                  </div>
+                )
+              )}
+            </div>
+            <br />
+            {isReviewReply && (
+              <input type="text" className={`${styles.input}`} />
             )}
           </>
         </div>
