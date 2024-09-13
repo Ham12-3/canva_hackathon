@@ -471,6 +471,7 @@ export const addReplyToReview = CatchAsyncError(
 
       await course?.save();
 
+      await redis.set(courseId, JSON.stringify(course), "EX", 604800);
       res.status(200).json({
         success: true,
         course,
