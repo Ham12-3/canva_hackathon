@@ -4,6 +4,7 @@ import Ratings from "@/app/utils/Ratings";
 import {
   useAddAnswerInQuestionMutation,
   useAddNewQuestionMutation,
+  useAddReplyInReviewMutation,
   useAddReviewInCourseMutation,
   useGetCourseDetailsQuery,
 } from "@/redux/features/courses/coursesApi";
@@ -44,9 +45,9 @@ const CourseContentMedia = ({
 
   const [answer, setAnswer] = useState("");
   const [questionId, setQuestionId] = useState("");
-
+  const [reply, setReply] = useState("");
   const [isReviewReply, setIsReviewReply] = useState(false);
-
+  const [reviewId, setReviewId] = useState("");
   const [
     addNewQuestion,
     { isSuccess, error, isLoading: questionCreationLoading },
@@ -76,6 +77,15 @@ const CourseContentMedia = ({
       isLoading: reviewCreationLoading,
     },
   ] = useAddReviewInCourseMutation();
+
+  const [
+    addRepyInReview,
+    {
+      isSuccess: replySuccess,
+      error: replyError,
+      isLoading: replyCreationLoading,
+    },
+  ] = useAddReplyInReviewMutation();
   console.log(videoData, "videoData");
   console.log(data, "active vedeos");
 
@@ -92,6 +102,18 @@ const CourseContentMedia = ({
         question,
         courseId: id,
         contentId: data[activeVideo]._id,
+      });
+    }
+  };
+
+  const handleReviewReplySubmit = () => {
+    if (reply === "") {
+      toast.error("Reply can't be empty");
+    } else {
+      addRepyInReview({
+        comment: reply,
+        reviewId: reviewId,
+        courseId: id,
       });
     }
   };
@@ -130,6 +152,17 @@ const CourseContentMedia = ({
         toast.error(errorData.data.message);
       }
     }
+    if (replySuccess) {
+      setReply("");
+      courseRefetch();
+      toast.success("Reply added successfully");
+    }
+    if (replyError) {
+      if ("data" in replyError) {
+        const errorData = replyError as any;
+        toast.error(errorData.data.message);
+      }
+    }
   }, [
     isSuccess,
     error,
@@ -137,6 +170,8 @@ const CourseContentMedia = ({
     answerError,
     reviewSuccess,
     reviewError,
+    replySuccess,
+    replyError,
   ]);
 
   const handleAnswerSubmit = () => {
@@ -395,22 +430,47 @@ const CourseContentMedia = ({
 
                         <p>{item.comment}</p>
 
-                        <small className="text-[#ffffff83]">
+                        <small className="dark:text-[#ffffff83] text-black">
                           {format(item.createdAt)}
                         </small>
                       </div>
                     </div>
                     {user.role === "admin" && (
-                      <span className={`${styles.label}`}>Add Reply </span>
+                      <span
+                        className={`${styles.label}pl-5 cursor-pointer`}
+                        onClick={() => {
+                          setIsReviewReply(true), setReviewId(item._id);
+                        }}
+                      >
+                        Add Reply{" "}
+                      </span>
+                    )}
+
+                    {isReviewReply && (
+                      <div className="w-full flex relative">
+                        <input
+                          type="text"
+                          placeholder="Enter your reply"
+                          className="block 800px:ml-12 mt-2 outline-none bg-transparent border-b 
+                          border-[#000]
+                          dark:border-[#fff] p-[5px] w-[95%]"
+                          value={reply}
+                          onChange={(e: any) => setReply(e.target.value)}
+                        />
+
+                        <button
+                          type="submit"
+                          className="absolute right-0 bottom-1"
+                          onClick={handleReviewReplySubmit}
+                        >
+                          Submit
+                        </button>
+                      </div>
                     )}
                   </div>
                 )
               )}
             </div>
-            <br />
-            {isReviewReply && (
-              <input type="text" className={`${styles.input}`} />
-            )}
           </>
         </div>
       )}
