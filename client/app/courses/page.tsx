@@ -7,6 +7,8 @@ import React, { useEffect, useState } from "react";
 import Loader from "../components/Loader/Loader";
 import Header from "../components/Header";
 import Heading from "../utils/Heading";
+import { styles } from "../styles/style";
+import CourseCard from "../components/Course/CourseCard";
 
 type Props = {};
 
@@ -95,6 +97,23 @@ m-3 px-3 rounded-[30px] flex items-center justify-center font-Poppins cursor-poi
                       {item.title}
                     </div>
                   </div>
+                ))}
+            </div>
+            {courses && courses.length === 0 && (
+              <p
+                className={`${styles.label} justify-center min-h-[50vh] flex items-center`}
+              >
+                {search
+                  ? "No courses found!"
+                  : "No courses found in this category. Please try another one."}
+              </p>
+            )}
+            <br />
+            <br />
+            <div className="gird grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-3 lg:gap-[25px] 1500px:grid-cols-4 1500px:gap-[35px] mb-12 border-0">
+              {courses &&
+                courses.map((item: any, index: number) => (
+                  <CourseCard item={item} key={index} />
                 ))}
             </div>
           </div>
