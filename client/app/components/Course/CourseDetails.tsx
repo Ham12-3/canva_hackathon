@@ -17,9 +17,17 @@ type Props = {
   data: any;
   clientSecret: string;
   stripePromise: any;
+  setRoute: any;
+  setOpen: any;
 };
 
-const CourseDetails = ({ data, stripePromise, clientSecret }: Props) => {
+const CourseDetails = ({
+  data,
+  stripePromise,
+  clientSecret,
+  setRoute,
+  setOpen: openAuthModal,
+}: Props) => {
   const { user } = useSelector((state: any) => state.auth);
 
   const [open, setOpen] = useState(false);
@@ -29,7 +37,12 @@ const CourseDetails = ({ data, stripePromise, clientSecret }: Props) => {
   const isPurchased =
     user && user?.courses?.find((item: any) => item.courseId === data._id);
   const handleOrder = (e: any) => {
-    setOpen(true);
+    if (user) {
+      setOpen(true);
+    } else {
+      setRoute("Login");
+      openAuthModal(true);
+    }
   };
 
   const demoUrl = data?.tags;

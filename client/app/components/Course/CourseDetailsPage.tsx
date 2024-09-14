@@ -65,6 +65,8 @@ const CourseDetailsPage = ({ id }: Props) => {
               data={data.course}
               stripePromise={sripPromise}
               clientSecret={clientSecret}
+              setRoute={setRoute}
+              setOpen={setOpen}
             />
           )}
 
