@@ -1,24 +1,52 @@
 "use client";
 import { ThemeSwitcher } from "@/app/utils/ThemeSwitcher";
-import React, { FC, useState } from "react";
+import {
+  useGetAllNotificationsQuery,
+  useUpdateNotificationStatusMutation,
+} from "@/redux/features/notifications/notificationsApi";
+import React, { FC, use, useState } from "react";
 import { IoMdNotificationsOutline } from "react-icons/io";
 
-type Props = {};
+import socketIO from "socket.io-client";
+const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_SERVER_URI || "";
 
-const DashboardHeader: FC<Props> = () => {
+const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
+
+type Props = {
+  open?: boolean;
+  setOpen?: any;
+};
+
+const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
   // State to control the notification panel visibility
-  const [open, setOpen] = useState(false);
+  const { data, refetch } = useGetAllNotificationsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
+  const [updateNotificationStatus, isSuccess] =
+    useUpdateNotificationStatusMutation();
+
+  const [notifications, setNotifications] = useState<any>([]);
+
+  const [audio] = useState(
+    new Audio(
+      "https://res.cloudinary.com/damk25wo5/video/upload/v169345789/notification_vcetjn.mp3"
+    )
+  );
+
+  const playerNotificationSound = () => {
+    audio.play();
+  };
 
   // Function to toggle the notification panel
-  const toggleOpen = () => {
-    setOpen(!open);
-  };
 
   return (
     <div className="w-full flex items-center justify-end p-6 fixed top-5 right-8">
       <ThemeSwitcher />
 
-      <div className="relative cursor-pointer m-2" onClick={toggleOpen}>
+      <div
+        className="relative cursor-pointer m-2"
+        onClick={() => setOpen(!open)}
+      >
         <IoMdNotificationsOutline className="text-2xl dark:text-white text-black cursor-pointer" />
         <span className="absolute -top-2 -right-2 bg-[#3ccba0] rounded-full w-[20px] h-[20px] text-[12px] flex items-center justify-center text-white">
           3

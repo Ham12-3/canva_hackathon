@@ -2,7 +2,7 @@ import { styles } from "@/app/styles/style";
 import CoursePlayer from "@/app/utils/CoursePlayer";
 import Ratings from "@/app/utils/Ratings";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoCheckmarkDoneOutline, IoCloseOutline } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import { format } from "timeago.js";
@@ -28,9 +28,14 @@ const CourseDetails = ({
   setRoute,
   setOpen: openAuthModal,
 }: Props) => {
-  const { user } = useSelector((state: any) => state.auth);
+  const { userData } = useSelector((state: any) => state.auth);
 
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState<any>();
+
+  useEffect(() => {
+    setUser(userData);
+  }, [userData]);
   const discountPercentage =
     ((data?.estimatedPrice - data.price) / data?.estimatedPrice) * 100;
   const discountPercentagePrice = discountPercentage.toFixed(0);
@@ -295,7 +300,7 @@ const CourseDetails = ({
               <div className="w-full">
                 {stripePromise && clientSecret && (
                   <Elements stripe={stripePromise} options={{ clientSecret }}>
-                    <CheckOutForm setOpen={setOpen} data={data} />
+                    <CheckOutForm setOpen={setOpen} data={data} user={user} />
                   </Elements>
                 )}
               </div>

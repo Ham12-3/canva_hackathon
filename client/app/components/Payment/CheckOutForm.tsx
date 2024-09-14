@@ -10,18 +10,25 @@ import {
 import { redirect } from "next/navigation"; // Keep using redirect
 import React, { FC, useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import socketIO from "socket.io-client";
+const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_SERVER_URI || "";
+
+const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 type Props = {
   setOpen: any;
   data: any;
+  user: any;
 };
 
-const CheckOutForm: FC<Props> = ({ setOpen, data }: Props) => {
+const CheckOutForm: FC<Props> = ({ setOpen, data, user }: Props) => {
   const stripe = useStripe();
   const elements = useElements();
   const [message, setMessage] = useState<string>("");
   const [createOrder, { data: orderData, error }] = useCreateOrderMutation();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
   console.log("Hello world");
   console.log(data._id, "Data identifi");
   const handleSubmit = async (e: any) => {
@@ -51,6 +58,11 @@ const CheckOutForm: FC<Props> = ({ setOpen, data }: Props) => {
       } else {
         // If order creation is successful, redirect to course access
         setIsLoading(false);
+        socketId.emit("notification", {
+          title: "New Order ",
+          messaeg: `You have a new order from ${data.course.name}`,
+          userId: user._id,
+        });
         redirect(`/course-access/${data._id}`);
       }
     }
