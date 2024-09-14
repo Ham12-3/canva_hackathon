@@ -21,7 +21,9 @@ const page = (props: Props) => {
           <AdminSidebar />
         </div>
         <div className="w-[85%]">
-          <DashboardHeader />
+          <div className="z-20">
+            <DashboardHero isDashboard={false} />
+          </div>
           {/* Add some margin to the top of AllCourses */}{" "}
           {/* Adjust the margin as needed */}
           <AllUsers isTeam={true} />

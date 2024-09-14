@@ -9,7 +9,7 @@ type Props = {
 const DashboardHero = ({ isDashboard }: Props) => {
   const [open, setOpen] = useState(false);
   return (
-    <div>
+    <div className="z-20">
       <DashboardHeader open={open} setOpen={setOpen} />
       {isDashboard && <DashboardWidgets open={open} />}
     </div>

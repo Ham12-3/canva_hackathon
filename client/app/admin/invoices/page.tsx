@@ -6,6 +6,7 @@ import CreateCourse from "../../components/Admin/Course/CreateCourse";
 import DashboardHeader from "../../components/Admin/DashboardHeader";
 import OrderAnalytics from "@/app/components/Admin/Analytics/OrderAnalytics";
 import AllInvoices from "@/app/components/Admin/Order/AllInvoices";
+import DashboardHero from "@/app/components/Admin/DashboardHero";
 
 type Props = {};
 
@@ -23,7 +24,9 @@ const page = (props: Props) => {
           <AdminSidebar />
         </div>
         <div className="w-[85%]">
-          <DashboardHeader open={open} setOpen={setOpen} />
+          <div className="z-20">
+            <DashboardHero isDashboard={false} />
+          </div>
           <AllInvoices />
         </div>
       </div>

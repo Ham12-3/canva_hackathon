@@ -6,6 +6,7 @@ import CreateCourse from "../../components/Admin/Course/CreateCourse";
 import DashboardHeader from "../../components/Admin/DashboardHeader";
 import CourseAnalytics from "../../components/Admin/Analytics/CourseAnalytics";
 import UserAnalytics from "@/app/components/Admin/Analytics/UserAnalytics";
+import DashboardHero from "@/app/components/Admin/DashboardHero";
 
 type Props = {};
 
@@ -22,7 +23,9 @@ const page = (props: Props) => {
           <AdminSidebar />
         </div>
         <div className="w-[85%]">
-          <DashboardHeader />
+          <div className="z-20">
+            <DashboardHero isDashboard={false} />
+          </div>
           <UserAnalytics />
         </div>
       </div>
