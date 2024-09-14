@@ -64,7 +64,7 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
   // Function to toggle the notification panel
 
   return (
-    <div className="w-full flex items-center justify-end p-6 fixed top-5 right-8">
+    <div className="w-full flex items-center justify-end p-6 fixed top-5 right-8 z-50">
       <ThemeSwitcher />
 
       <div

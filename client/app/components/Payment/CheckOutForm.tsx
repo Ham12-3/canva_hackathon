@@ -60,7 +60,7 @@ const CheckOutForm: FC<Props> = ({ setOpen, data, user }: Props) => {
         setIsLoading(false);
         socketId.emit("notification", {
           title: "New Order ",
-          messaeg: `You have a new order from ${data.course.name}`,
+          message: `You have a new order from ${data.name}`,
           userId: user._id,
         });
         redirect(`/course-access/${data._id}`);

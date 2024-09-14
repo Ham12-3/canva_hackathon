@@ -6,7 +6,7 @@ import ErrorHandler from "../utils/ErrorHandler";
 
 import OrderModel, { IOrder } from "../models/order.model";
 
-import CourseModel from "../models/course.model";
+import CourseModel, { ICourse } from "../models/course.model";
 import userModel from "../models/user.model";
 
 import path from "path";
@@ -58,7 +58,7 @@ export const createOrder = CatchAsyncError(
         );
       }
 
-      const course = await CourseModel.findById(courseId);
+      const course: ICourse | null = await CourseModel.findById(courseId);
 
       if (!course) {
         return next(new ErrorHandler("Course not found", 404));
