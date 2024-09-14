@@ -13,6 +13,7 @@ const config: Config = {
       fontFamily: {
         Poppins: ["var(--font-Poppins)"],
         Josefin: ["var(--font-Josefin)"],
+        cursive: ['"Great Vibes"', "cursive"],
       },
       backgroundImage: {
         "gradeint-radial": "radial-gradient(var(--tw-gradient-color-stops))",

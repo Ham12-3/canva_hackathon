@@ -9,6 +9,7 @@ import Header from "../components/Header";
 import Heading from "../utils/Heading";
 import { styles } from "../styles/style";
 import CourseCard from "../components/Course/CourseCard";
+import Footer from "../components/Footer";
 
 type Props = {};
 
@@ -45,7 +46,7 @@ const page = (props: Props) => {
   const categories = categoriesData?.layout?.categories;
 
   return (
-    <>
+    <div>
       {isLoading ? (
         <Loader />
       ) : (
@@ -119,7 +120,8 @@ m-3 px-3 rounded-[30px] flex items-center justify-center font-Poppins cursor-poi
           </div>
         </>
       )}
-    </>
+      <Footer />
+    </div>
   );
 };
 
