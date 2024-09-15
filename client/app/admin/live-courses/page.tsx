@@ -2,9 +2,9 @@
 import AdminSidebar from "../../../app/components/Admin/Sidebar/AdminSidebar";
 import Heading from "../../../app/utils/Heading";
 import React from "react";
-import DashboardHeader from "../../../app/components/Admin/DashboardHeader";
+
 import DashboardHero from "@/app/components/Admin/DashboardHero";
-import AdminProtected from "@/app/hooks/adminProtected";
+
 import AllCourses from "@/app/components/Admin/Course/AllCourses";
 
 type Props = {};

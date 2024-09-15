@@ -10,6 +10,7 @@ import { FcGoogle } from "react-icons/fc";
 import * as Yup from "yup";
 import { styles } from "../../styles/style";
 import { useLoginMutation } from "../../../redux/features/auth/authApi";
+import { useRefreshTokenQuery } from "@/redux/features/api/apiSlice";
 import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
 
@@ -30,27 +31,41 @@ const Login: FC<Props> = ({ setRoute, setOpen, refetch }) => {
   const [show, setShow] = useState(false);
 
   const [login, { isSuccess, isError, data, error }] = useLoginMutation();
+  const { refetch: refreshToken } = useRefreshTokenQuery(); // Use the query to refresh token
+
   const formik = useFormik({
     initialValues: { email: "", password: "" },
     validationSchema: schema,
     onSubmit: async ({ email, password }) => {
-      await login({ email, password });
+      try {
+        const loginResult = await login({ email, password }).unwrap();
+
+        // Call refreshToken query
+        await refreshToken(); // Call refreshToken query
+
+        toast.success("Login and token refresh successful");
+        setOpen(false);
+        refetch();
+      } catch (err) {
+        console.error("Login or token refresh failed:", err);
+        toast.error("Login failed. Please try again.");
+      }
     },
   });
 
   useEffect(() => {
     if (isSuccess) {
       setOpen(false);
-      toast.success("Login successfully");
+      toast.success("Login successful");
       refetch();
     }
-    if (error) {
+    if (isError) {
       if ("data" in error) {
         const errorData = error as any;
         toast.error(errorData.data.message);
       }
     }
-  }, [isSuccess, error]);
+  }, [isSuccess, isError]);
 
   const { errors, touched, values, handleChange, handleSubmit } = formik;
 
@@ -74,7 +89,7 @@ const Login: FC<Props> = ({ setRoute, setOpen, refetch }) => {
           }`}
         />
         {errors.email && touched.email && (
-          <span className="text-red-500 pt-2 block">{errors.email} </span>
+          <span className="text-red-500 pt-2 block">{errors.email}</span>
         )}
 
         <div className="w-full mt-5 relative mb-1">
@@ -96,7 +111,7 @@ const Login: FC<Props> = ({ setRoute, setOpen, refetch }) => {
 
           {!show ? (
             <AiOutlineEyeInvisible
-              className="absolute right-2 bottom-3  z-10 cursor-pointer"
+              className="absolute right-2 bottom-3 z-10 cursor-pointer"
               size={20}
               onClick={() => setShow(true)}
             />

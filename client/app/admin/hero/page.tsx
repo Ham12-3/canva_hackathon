@@ -2,8 +2,7 @@
 import React from "react";
 import AdminSidebar from "../../components/Admin/Sidebar/AdminSidebar";
 import Heading from "../../utils/Heading";
-import CreateCourse from "../../components/Admin/Course/CreateCourse";
-import DashboardHeader from "../../components/Admin/DashboardHeader";
+
 import EditHero from "../../components/Admin/Customization/EditHero";
 import DashboardHero from "@/app/components/Admin/DashboardHero";
 

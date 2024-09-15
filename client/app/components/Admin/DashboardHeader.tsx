@@ -4,9 +4,8 @@ import {
   useGetAllNotificationsQuery,
   useUpdateNotificationStatusMutation,
 } from "@/redux/features/notifications/notificationsApi";
-import React, { FC, use, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { IoMdNotificationsOutline } from "react-icons/io";
-
 import socketIO from "socket.io-client";
 import { format } from "timeago.js";
 
@@ -27,17 +26,20 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
   const [updateNotificationStatus, isSuccess] =
     useUpdateNotificationStatusMutation();
 
-  const [notifications, setNotifications] = useState<any>([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
-  const [audio] = useState(
-    new Audio(
+  useEffect(() => {
+    const audioInstance = new Audio(
       "https://res.cloudinary.com/damk25wo5/video/upload/v169345789/notification_vcetjn.mp3"
-    )
-  );
+    );
+    setAudio(audioInstance);
+  }, []);
 
   const playerNotificationSound = () => {
-    audio.play();
+    audio?.play();
   };
+
   useEffect(() => {
     if (data) {
       setNotifications(
@@ -47,21 +49,24 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
     if (isSuccess) {
       refetch();
     }
-    audio.load();
-  }, [data, isSuccess]);
+    audio?.load(); // Make sure audio is not null
+  }, [data, isSuccess, audio]);
 
   useEffect(() => {
     socketId.on("newNotification", (data) => {
       refetch();
       playerNotificationSound();
     });
-  }, []);
+
+    // Cleanup the socket connection on component unmount
+    return () => {
+      socketId.off("newNotification");
+    };
+  }, [refetch]);
 
   const handleNotificationStatusChange = async (id: string) => {
     await updateNotificationStatus(id);
   };
-
-  // Function to toggle the notification panel
 
   return (
     <div className="w-full flex items-center justify-end p-6 fixed top-5 right-8 z-50">
@@ -73,7 +78,7 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
       >
         <IoMdNotificationsOutline className="text-2xl dark:text-white text-black cursor-pointer" />
         <span className="absolute -top-2 -right-2 bg-[#3ccba0] rounded-full w-[20px] h-[20px] text-[12px] flex items-center justify-center text-white">
-          {notifications && notifications.length}
+          {notifications.length}
         </span>
       </div>
 
@@ -83,27 +88,23 @@ const DashboardHeader: FC<Props> = ({ open, setOpen }) => {
             Notifications
           </h5>
 
-          {notifications &&
-            notifications.map((item: any, index: number) => (
-              <div
-                className="dark:bg-[#2d3a4e] bg-[#00000013] font-Poppins dark:border-b-[#ffffff47] border-b-[#0000000f]
-              
-              "
-              >
-                <div className="w-full flex items-center justify-between p-2">
-                  <p className="text-black dark:text-white">{item.title}</p>
-                  <p className="px-2 text-black dark:text-white cursor-pointer">
-                    mark as read
-                  </p>
-                </div>
-                <p className="px-2 text-black dark:text-white">
-                  {item.message}
-                </p>
-                <p className="p-2 text-black dark:text-white text-[14px]">
-                  {format(item.createdAt)}
+          {notifications.map((item: any, index: number) => (
+            <div
+              className="dark:bg-[#2d3a4e] bg-[#00000013] font-Poppins dark:border-b-[#ffffff47] border-b-[#0000000f]"
+              key={index}
+            >
+              <div className="w-full flex items-center justify-between p-2">
+                <p className="text-black dark:text-white">{item.title}</p>
+                <p className="px-2 text-black dark:text-white cursor-pointer">
+                  mark as read
                 </p>
               </div>
-            ))}
+              <p className="px-2 text-black dark:text-white">{item.message}</p>
+              <p className="p-2 text-black dark:text-white text-[14px]">
+                {format(item.createdAt)}
+              </p>
+            </div>
+          ))}
         </div>
       )}
     </div>

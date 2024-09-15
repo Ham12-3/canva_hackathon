@@ -4,7 +4,6 @@ import { Response } from "express";
 import { IUser } from "../models/user.model";
 import { redis } from "./redis";
 import { RedisKey } from "ioredis";
-import { access } from "fs";
 
 interface ITokenOptions {
   expires: Date;
@@ -14,50 +13,52 @@ interface ITokenOptions {
   secure?: boolean;
 }
 
-const accessTokenExpire = parseInt(
-  process.env.ACCESS_TOKEN_EXPIRE || "300",
+// Parse environment variables for token expiration times
+const accessTokenExpireMinutes = parseInt(
+  process.env.ACCESS_TOKEN_EXPIRE || "5", // Default to 5 minutes
   10
 );
-const refreshTokenExpire = parseInt(
-  process.env.REFRESH_TOKEN_EXPIRE || "300",
+const refreshTokenExpireDays = parseInt(
+  process.env.REFRESH_TOKEN_EXPIRE || "3", // Default to 3 days
   10
 );
 
 // Options for cookies
 export const accessTokenOptions: ITokenOptions = {
-  expires: new Date(Date.now() + accessTokenExpire * 60 * 60 * 1000),
-  maxAge: accessTokenExpire * 60 * 60 * 1000,
+  expires: new Date(Date.now() + accessTokenExpireMinutes * 60 * 1000), // Set access token expiry time in minutes
+  maxAge: accessTokenExpireMinutes * 60 * 1000, // Max age in milliseconds
   httpOnly: true,
   sameSite: "lax",
-  // Ensure this matches the path from where you're sending the request
+  secure: process.env.NODE_ENV === "production", // Set secure flag only in production
 };
 
 export const refreshTokenOptions: ITokenOptions = {
-  expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000),
-  maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000,
+  expires: new Date(Date.now() + refreshTokenExpireDays * 24 * 60 * 60 * 1000), // Set refresh token expiry time in days
+  maxAge: refreshTokenExpireDays * 24 * 60 * 60 * 1000, // Max age in milliseconds
   httpOnly: true,
   sameSite: "lax",
-  // Ensure this matches the path from where you're sending the request
+  secure: process.env.NODE_ENV === "production", // Set secure flag only in production
 };
 
+// Function to send tokens to the client
 export const sendToken = (user: IUser, statusCode: number, res: Response) => {
+  // Generate access and refresh tokens
   const accessToken = user.SignAccessToken();
   const refreshToken = user.SignRefreshToken();
 
-  // Upload session to Redis
-  redis.set(user._id as RedisKey, JSON.stringify(user) as any);
+  // Upload user session to Redis with expiry time matching refresh token
+  redis.set(
+    user._id as RedisKey,
+    JSON.stringify(user),
+    "EX",
+    refreshTokenExpireDays * 24 * 60 * 60
+  );
 
-  // Parse environment variable to integrate with fallback values
-
-  // Only set secure to true in production
-  if (process.env.NODE_ENV === "production") {
-    accessTokenOptions.secure = true;
-    refreshTokenOptions.secure = true;
-  }
-
+  // Set cookies with tokens
   res.cookie("access_token", accessToken, accessTokenOptions);
   res.cookie("refresh_token", refreshToken, refreshTokenOptions);
 
+  // Send response with tokens
   res.status(statusCode).json({
     success: true,
     user,
@@ -65,3 +66,7 @@ export const sendToken = (user: IUser, statusCode: number, res: Response) => {
     refresh_token: refreshToken,
   });
 };
+
+// Log the token options for debugging purposes
+console.log("Access Token Options:", accessTokenOptions);
+console.log("Refresh Token Options:", refreshTokenOptions);

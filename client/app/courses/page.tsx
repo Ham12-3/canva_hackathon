@@ -1,9 +1,9 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useGetUsersAllCoursesQuery } from "@/redux/features/courses/coursesApi";
 import { useGetHeroDataQuery } from "@/redux/features/layout/layoutApi";
-import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
 import Loader from "../components/Loader/Loader";
 import Header from "../components/Header";
 import Heading from "../utils/Heading";
@@ -13,33 +13,33 @@ import Footer from "../components/Footer";
 
 type Props = {};
 
-const page = (props: Props) => {
+const PageContent = (props: Props) => {
   const searchParams = useSearchParams();
   const search = searchParams?.get("title");
   const { data, isLoading } = useGetUsersAllCoursesQuery(undefined, {});
-
   const { data: categoriesData } = useGetHeroDataQuery("Categories", {});
 
   const [route, setRoute] = useState("Login");
   const [open, setOpen] = useState(false);
-  const [courses, setCourses] = useState([]);
+  const [courses, setCourses] = useState<any[]>([]);
   const [category, setCategory] = useState("All");
 
   useEffect(() => {
-    if (category === "All") {
-      setCourses(data?.courses);
-    }
-    if (category !== "All") {
-      setCourses(
-        data?.courses.filter((item: any) => item.categories === category)
-      );
-    }
-    if (search) {
-      setCourses(
-        data?.courses.filter((item: any) =>
-          item.name.toLowerCase().includes(search.toLowerCase())
-        )
-      );
+    if (data) {
+      if (category === "All") {
+        setCourses(data?.courses);
+      } else {
+        setCourses(
+          data?.courses.filter((item: any) => item.categories === category)
+        );
+      }
+      if (search) {
+        setCourses(
+          data?.courses.filter((item: any) =>
+            item.name.toLowerCase().includes(search.toLowerCase())
+          )
+        );
+      }
     }
   }, [data, category, search]);
 
@@ -58,13 +58,9 @@ const page = (props: Props) => {
             setOpen={setOpen}
             activeItem={1}
           />
-          <div
-            className="w-[95%] 800px:w-[85%] m-auto min-h-[70vh]
-          
-          "
-          >
+          <div className="w-[95%] 800px:w-[85%] m-auto min-h-[70vh]">
             <Heading
-              title={"All Courses - Elarning"}
+              title={"All Courses - Elearning"}
               description={"Elearning is a programming community"}
               keywords={
                 "Programming community, coding skills, expert insights, collaboration, growth"
@@ -75,9 +71,7 @@ const page = (props: Props) => {
               <div
                 className={`h-[35px] ${
                   category === "All" ? "bg-[crimson]" : "bg-[#5050cb]"
-                }
-                m-3 px-3 rounded-[30px] flex items-center justify-center font-Poppins cursor-pointer
-                `}
+                } m-3 px-3 rounded-[30px] flex items-center justify-center font-Poppins cursor-pointer`}
                 onClick={() => setCategory("All")}
               >
                 All
@@ -90,9 +84,7 @@ const page = (props: Props) => {
                         category === item.title
                           ? "bg-[crimson]"
                           : "bg-[#5050cb]"
-                      }
-m-3 px-3 rounded-[30px] flex items-center justify-center font-Poppins cursor-pointer
-`}
+                      } m-3 px-3 rounded-[30px] flex items-center justify-center font-Poppins cursor-pointer`}
                       onClick={() => setCategory(item.title)}
                     >
                       {item.title}
@@ -111,7 +103,7 @@ m-3 px-3 rounded-[30px] flex items-center justify-center font-Poppins cursor-poi
             )}
             <br />
             <br />
-            <div className="gird grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-3 lg:gap-[25px] 1500px:grid-cols-4 1500px:gap-[35px] mb-12 border-0">
+            <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-3 lg:gap-[25px] 1500px:grid-cols-4 1500px:gap-[35px] mb-12 border-0">
               {courses &&
                 courses.map((item: any, index: number) => (
                   <CourseCard item={item} key={index} />
@@ -125,4 +117,10 @@ m-3 px-3 rounded-[30px] flex items-center justify-center font-Poppins cursor-poi
   );
 };
 
-export default page;
+const Page = (props: Props) => (
+  <React.Suspense fallback={<div>Loading...</div>}>
+    <PageContent {...props} />
+  </React.Suspense>
+);
+
+export default Page;
