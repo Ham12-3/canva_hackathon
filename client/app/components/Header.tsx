@@ -151,14 +151,35 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
           >
             <div className="w-[70%] fixed z-[999999999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0">
               <NavItems activeItem={activeItem} isMobile={true} />
-              <HiOutlineUserCircle
-                size={25}
-                className="cursor-pointer ml-5 my-2 text-black dark:text-white"
-                onClick={() => {
-                  setOpen(true);
-                  setRoute("Login");
-                }}
-              />
+              {userData ? (
+                <Link href={"/profile"}>
+                  {userData.user.avatar ? (
+                    <Image
+                      src={userData.user.avatar.url}
+                      alt="User Avatar"
+                      className="w-10 h-10 rounded-full ml-[20px] object-cover"
+                      width={40}
+                      height={40}
+                    />
+                  ) : (
+                    <HiOutlineUserCircle
+                      size={25}
+                      className="hidden md:block cursor-pointer dark:text-white text-black"
+                    />
+                  )}
+                </Link>
+              ) : (
+                <HiOutlineUserCircle
+                  size={25}
+                  className="hidden md:block cursor-pointer dark:text-white text-black"
+                  onClick={() => {
+                    setOpen(true);
+                    setRoute("Login");
+                  }}
+                />
+              )}
+              <br />
+              <br />
               <p className="text-[16px] px-2 pl-5 text-black dark:text-white">
                 Copyright © {new Date().getFullYear()} Elearning
               </p>

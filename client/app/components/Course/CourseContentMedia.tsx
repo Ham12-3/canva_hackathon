@@ -460,16 +460,17 @@ const CourseContentMedia = ({
                         </small>
                       </div>
                     </div>
-                    {user.role === "admin" && (
-                      <span
-                        className={`${styles.label}pl-5 cursor-pointer`}
-                        onClick={() => {
-                          setIsReviewReply(true), setReviewId(item._id);
-                        }}
-                      >
-                        Add Reply{" "}
-                      </span>
-                    )}
+                    {user.role === "admin" &&
+                      item.commentReplies.length === 0 && (
+                        <span
+                          className={`${styles.label}pl-5 cursor-pointer`}
+                          onClick={() => {
+                            setIsReviewReply(true), setReviewId(item._id);
+                          }}
+                        >
+                          Add Reply{" "}
+                        </span>
+                      )}
 
                     {isReviewReply && (
                       <div className="w-full flex relative">
