@@ -12,12 +12,14 @@ export const apiSlice = createApi({
       query: () => ({
         url: "refreshtoken",
         method: "GET",
+        credentials: "include" as const,
       }),
     }),
     loadUser: builder.query({
       query: () => ({
         url: "me",
         method: "GET",
+        credentials: "include" as const,
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
