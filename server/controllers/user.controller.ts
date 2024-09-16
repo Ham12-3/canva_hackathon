@@ -25,6 +25,7 @@ import {
 } from "../services/user.service";
 
 import cloudinary from "cloudinary";
+import { RedisKey } from "ioredis";
 
 require("dotenv").config();
 
@@ -222,18 +223,59 @@ export const authorizeRoles = (...roles: string[]) => {
 
 // Update access token
 
+// Define the expected user structure
 export const updateAccessToken = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const refreshToken = req.cookies.refresh_token;
+      let refreshToken = req.cookies.refresh_token;
       console.log(refreshToken, "refreshToken");
-      // Check if refresh token is missing
+
+      let decoded: JwtPayload | null = null;
+      let user: IUser; // Use IUser instead of User
+
       if (!refreshToken) {
-        return next(new ErrorHandler("Refresh token is missing", 401));
+        // No refresh token, create new one
+        console.log("No refresh token found. Creating new tokens.");
+
+        // Create a new user session (assuming user info is available in req.user)
+        user = req.user as IUser; // Ensure req.user is typed as IUser
+
+        if (!user) {
+          return next(new ErrorHandler("User not authenticated", 401));
+        }
+
+        // Create new access and refresh tokens
+        const accessToken = jwt.sign(
+          { id: user._id },
+          process.env.ACCESS_TOKEN as string,
+          { expiresIn: "5m" }
+        );
+
+        const newRefreshToken = jwt.sign(
+          { id: user._id },
+          process.env.REFRESH_TOKEN as string,
+          { expiresIn: "3d" }
+        );
+
+        // Set new tokens in cookies
+        res.cookie("access_token", accessToken, accessTokenOptions);
+        res.cookie("refresh_token", newRefreshToken, refreshTokenOptions);
+
+        // Store user session in Redis with TTL (7 days)
+        await redis.set(
+          user._id as RedisKey,
+          JSON.stringify(user),
+          "EX",
+          604800
+        );
+
+        // Attach user to request
+        req.user = user;
+
+        return next(); // Proceed to the next middleware
       }
 
-      // Verify refresh token
-      let decoded: JwtPayload | null = null;
+      // Verify refresh token if it's present
       try {
         decoded = jwt.verify(
           refreshToken,
@@ -251,13 +293,13 @@ export const updateAccessToken = CatchAsyncError(
       }
 
       // Retrieve user session from Redis
-      const session = await redis.get(decoded.id as string);
+      const session = await redis.get(decoded.id as RedisKey);
 
       if (!session) {
         return next(new ErrorHandler(message, 400));
       }
 
-      const user = JSON.parse(session);
+      user = JSON.parse(session) as IUser; // Cast parsed session as IUser
 
       // Create new access token
       const accessToken = jwt.sign(
@@ -274,9 +316,9 @@ export const updateAccessToken = CatchAsyncError(
       );
 
       // Update user session in Redis (refresh TTL)
-      await redis.set(user._id, JSON.stringify(user), "EX", 604800); // 7 days
+      await redis.set(user._id as RedisKey, JSON.stringify(user), "EX", 604800); // 7 days
 
-      // Set new tokens in cookies (adjust options based on your environment)
+      // Set new tokens in cookies
       res.cookie("access_token", accessToken, accessTokenOptions);
       res.cookie("refresh_token", newRefreshToken, refreshTokenOptions);
 
