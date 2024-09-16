@@ -139,13 +139,10 @@ export const createOrder = CatchAsyncError(
     }
   }
 );
-
-// get all orders
-
 export const getAllOrders = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      getAllOrdersService(res);
+      await getAllOrdersService(req, res, next); // Pass req, res, and next
     } catch (err: any) {
       return next(new ErrorHandler(err.message, 500));
     }

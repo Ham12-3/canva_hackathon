@@ -164,7 +164,7 @@ const CourseDetails = ({
                     .reverse()
                     .map((item: any, index: number) => {
                       return (
-                        <div className="w-full pb-4 key={index}">
+                        <div className="w-full pb-4 key={index}" key={index}>
                           <div className="flex">
                             <div className="w-[50px] h-[50px]">
                               <Image
@@ -202,7 +202,10 @@ const CourseDetails = ({
                             </div>
                           </div>
                           {item.commentReplies.map((i: any, index: number) => (
-                            <div className="w-full flex 800px:ml-16 my-5">
+                            <div
+                              className="w-full flex 800px:ml-16 my-5"
+                              key={index}
+                            >
                               <div className="w-[50px] h-[50px]">
                                 <Image
                                   src={

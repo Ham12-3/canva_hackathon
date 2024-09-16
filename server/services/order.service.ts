@@ -1,28 +1,36 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Response, Request } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import OrderModel from "../models/order.model";
 
 // create new order
-
 export const newOrder = CatchAsyncError(
-  async (data: any, next: NextFunction, res: Response) => {
-    const order = await OrderModel.create(data);
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const order = await OrderModel.create(req.body); // use req.body for order data
+
+      res.status(200).json({
+        success: true,
+        message: "Order created successfully",
+        order,
+      });
+    } catch (error) {
+      next(error); // pass error to Express error handling middleware
+    }
+  }
+);
+export const getAllOrdersService = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const orders = await OrderModel.find();
 
     res.status(200).json({
       success: true,
-      message: "Order created successfully",
-      order,
+      orders,
     });
+  } catch (error) {
+    next(error); // Pass the error to the next middleware
   }
-);
-
-// get all orders service
-
-export const getAllOrdersService = async (res: Response) => {
-  const orders = await OrderModel.find();
-
-  res.status(200).json({
-    success: true,
-    orders,
-  });
 };
