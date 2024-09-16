@@ -99,21 +99,6 @@ const EditCourse: FC<Props> = ({ id }) => {
     }
   }, [editCourseData, data]);
 
-  useEffect(() => {
-    if (isSuccess) {
-      toast.success("Course updated successfully");
-      redirect("/admin/all-courses");
-    }
-    if (error) {
-      if ("data" in error) {
-        const errorMessage = error as any;
-        toast.error(errorMessage.data.message || "An error occurred");
-      } else {
-        toast.error("An error occurred");
-      }
-    }
-  }, [isSuccess, error]);
-
   const handleSubmit = async () => {
     // If thumbnail is a string (from older data), treat it accordingly
     let thumbnailData;
@@ -171,19 +156,25 @@ const EditCourse: FC<Props> = ({ id }) => {
     setCourseData(data);
   };
 
+  console.log("Course Data:", courseData);
+  console.log("Edit Course Data:", editCourseData?._id);
+
   const handleCourseCreate = async () => {
     if (!editCourseData?._id) {
       toast.error("Course ID is missing");
       return;
     }
+
     try {
       const result = await editCourse({
-        id: editCourseData._id,
+        id: editCourseData?._id,
         data: courseData,
       }).unwrap();
       if (result) {
-        toast.success("Course updated successfully");
-        redirect("/admin/live-courses");
+        toast.success("Course is been updated successfully");
+        setTimeout(() => {
+          redirect("/admin/live-courses");
+        }, 1000); // Delay the redirect slightly to ensure everything is processed
       }
     } catch (err) {
       toast.error("An error occurred while updating the course");
