@@ -227,84 +227,25 @@ export const authorizeRoles = (...roles: string[]) => {
 export const updateAccessToken = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      let refreshToken = req.cookies.refresh_token;
-
-      console.log(refreshToken, "refreshToken");
-
-      let decoded: JwtPayload | null = null;
-      let user: IUser; // Define user as IUser type
-
-      // Check if refresh token is missing
-      if (!refreshToken) {
-        // Handle the case when there's no refresh token
-        console.log("No refresh token found. Creating new tokens.");
-
-        // If no refresh token, ensure req.user exists
-        if (!req.user) {
-          return next(new ErrorHandler("User not authenticated", 401)); // Early return if no user session
-        }
-
-        // Assume user exists in req.user when refresh token is missing
-        user = req.user as IUser;
-
-        // Create new access token
-        const accessToken = jwt.sign(
-          { id: user._id },
-          process.env.ACCESS_TOKEN as string,
-          { expiresIn: "5m" }
-        );
-
-        // Create new refresh token
-        const newRefreshToken = jwt.sign(
-          { id: user._id },
-          process.env.REFRESH_TOKEN as string,
-          { expiresIn: "3d" }
-        );
-
-        // Store user session in Redis with TTL (7 days)
-        await redis.set(
-          user._id as RedisKey,
-          JSON.stringify(user),
-          "EX",
-          604800
-        );
-
-        // Set new tokens in cookies
-        res.cookie("access_token", accessToken, accessTokenOptions);
-        res.cookie("refresh_token", newRefreshToken, refreshTokenOptions);
-
-        // Attach user to request
-        req.user = user;
-
-        // Proceed to next middleware
-        return next();
-      }
-
-      // If refresh token exists, verify it
-      try {
-        decoded = jwt.verify(
-          refreshToken,
-          process.env.REFRESH_TOKEN as string
-        ) as JwtPayload;
-      } catch (error) {
-        return next(new ErrorHandler("Invalid or expired refresh token", 401));
-      }
+      const refresh_token = req.cookies.refresh_token;
+      const decoded = jwt.verify(
+        refresh_token,
+        process.env.REFRESH_TOKEN as string
+      ) as JwtPayload;
 
       const message = "Could not refresh token";
-
-      // Check if decoded token is valid
-      if (!decoded || !decoded.id) {
-        return next(new ErrorHandler(message, 400));
+      if (!decoded) {
+        return next(
+          new ErrorHandler("Please login for access to this resources", 400)
+        );
       }
-
-      // Retrieve user session from Redis
-      const session = await redis.get(decoded.id as RedisKey);
+      const session = await redis.get(decoded.id as string);
 
       if (!session) {
         return next(new ErrorHandler(message, 400));
       }
 
-      user = JSON.parse(session) as IUser; // Parse session and cast as IUser
+      const user = JSON.parse(session);
 
       // Create new access token
       const accessToken = jwt.sign(
@@ -312,32 +253,21 @@ export const updateAccessToken = CatchAsyncError(
         process.env.ACCESS_TOKEN as string,
         { expiresIn: "5m" }
       );
-
-      // Create new refresh token
-      const newRefreshToken = jwt.sign(
+      const refreshToken = jwt.sign(
         { id: user._id },
         process.env.REFRESH_TOKEN as string,
         { expiresIn: "3d" }
       );
-
-      // Update user session in Redis with refreshed TTL
-      await redis.set(user._id as RedisKey, JSON.stringify(user), "EX", 604800);
-
-      // Set new tokens in cookies
-      res.cookie("access_token", accessToken, accessTokenOptions);
-      res.cookie("refresh_token", newRefreshToken, refreshTokenOptions);
-
-      // Attach user to request
       req.user = user;
-
+      res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+      await redis.set(user._id, JSON.stringify(user), "EX", 604800);
       // Proceed to next middleware
       next();
     } catch (err: any) {
-      return next(new ErrorHandler(err.message, 500)); // Handle general errors
+      return next(new ErrorHandler(err.message, 400));
     }
   }
 );
-
 // get user info
 
 export const getUserInfo = CatchAsyncError(
