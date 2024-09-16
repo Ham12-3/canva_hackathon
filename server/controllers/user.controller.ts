@@ -225,48 +225,68 @@ export const authorizeRoles = (...roles: string[]) => {
 export const updateAccessToken = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const refresh_token = req.cookies.refresh_token;
-      const decoded = jwt.verify(
-        refresh_token,
-        process.env.REFRESH_TOKEN as string
-      ) as JwtPayload;
+      const refreshToken = req.cookies.refresh_token;
 
-      const message = "Could not refresh token";
-      if (!decoded) {
-        return next(
-          new ErrorHandler("Please login for access to this resources", 400)
-        );
+      // Check if refresh token is missing
+      if (!refreshToken) {
+        return next(new ErrorHandler("Refresh token is missing", 401));
       }
 
+      // Verify refresh token
+      let decoded: JwtPayload | null = null;
+      try {
+        decoded = jwt.verify(
+          refreshToken,
+          process.env.REFRESH_TOKEN as string
+        ) as JwtPayload;
+      } catch (error) {
+        return next(new ErrorHandler("Invalid or expired refresh token", 401));
+      }
+
+      const message = "Could not refresh token";
+
+      // Check if decoded token is valid
+      if (!decoded || !decoded.id) {
+        return next(new ErrorHandler(message, 400));
+      }
+
+      // Retrieve user session from Redis
       const session = await redis.get(decoded.id as string);
 
       if (!session) {
         return next(new ErrorHandler(message, 400));
       }
+
       const user = JSON.parse(session);
 
+      // Create new access token
       const accessToken = jwt.sign(
         { id: user._id },
         process.env.ACCESS_TOKEN as string,
         { expiresIn: "5m" }
       );
 
-      const refreshToken = jwt.sign(
+      // Create new refresh token
+      const newRefreshToken = jwt.sign(
         { id: user._id },
         process.env.REFRESH_TOKEN as string,
         { expiresIn: "3d" }
       );
 
+      // Update user session in Redis (refresh TTL)
+      await redis.set(user._id, JSON.stringify(user), "EX", 604800); // 7 days
+
+      // Set new tokens in cookies (adjust options based on your environment)
+      res.cookie("access_token", accessToken, accessTokenOptions);
+      res.cookie("refresh_token", newRefreshToken, refreshTokenOptions);
+
+      // Attach user to request
       req.user = user;
 
-      res.cookie("access_token", accessToken, accessTokenOptions);
-
-      res.cookie("refresh_token", refreshToken, refreshTokenOptions);
-
-      await redis.set(user._id, JSON.stringify(user), "EX", 604800);
+      // Proceed to next middleware
       next();
     } catch (err: any) {
-      return next(new ErrorHandler(err.message, 400));
+      return next(new ErrorHandler(err.message, 500)); // General error fallback
     }
   }
 );
