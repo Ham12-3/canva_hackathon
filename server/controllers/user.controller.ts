@@ -226,7 +226,7 @@ export const updateAccessToken = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const refreshToken = req.cookies.refresh_token;
-
+      console.log(refreshToken, "refreshToken");
       // Check if refresh token is missing
       if (!refreshToken) {
         return next(new ErrorHandler("Refresh token is missing", 401));
