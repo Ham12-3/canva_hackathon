@@ -242,7 +242,7 @@ export const updateAccessToken = CatchAsyncError(
       const session = await redis.get(decoded.id as string);
 
       if (!session) {
-        return next(new ErrorHandler(message, 400));
+        return next(new ErrorHandler(message + "jwt meeage", 400));
       }
       console.log(message, "jwt meeage");
 
