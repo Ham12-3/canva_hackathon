@@ -231,35 +231,34 @@ export const updateAccessToken = CatchAsyncError(
       console.log(refreshToken, "refreshToken");
 
       let decoded: JwtPayload | null = null;
-      let user: IUser; // Use IUser instead of User
+      let user: IUser; // Define user as IUser type
 
+      // Check if refresh token is missing
       if (!refreshToken) {
-        // No refresh token, create new one
+        // Handle the case when there's no refresh token
         console.log("No refresh token found. Creating new tokens.");
 
-        // Create a new user session (assuming user info is available in req.user)
-        user = req.user as IUser; // Ensure req.user is typed as IUser
-
-        if (!user) {
-          return next(new ErrorHandler("User not authenticated", 401));
+        // If no refresh token, ensure req.user exists
+        if (!req.user) {
+          return next(new ErrorHandler("User not authenticated", 401)); // Early return if no user session
         }
 
-        // Create new access and refresh tokens
+        // Assume user exists in req.user when refresh token is missing
+        user = req.user as IUser;
+
+        // Create new access token
         const accessToken = jwt.sign(
           { id: user._id },
           process.env.ACCESS_TOKEN as string,
           { expiresIn: "5m" }
         );
 
+        // Create new refresh token
         const newRefreshToken = jwt.sign(
           { id: user._id },
           process.env.REFRESH_TOKEN as string,
           { expiresIn: "3d" }
         );
-
-        // Set new tokens in cookies
-        res.cookie("access_token", accessToken, accessTokenOptions);
-        res.cookie("refresh_token", newRefreshToken, refreshTokenOptions);
 
         // Store user session in Redis with TTL (7 days)
         await redis.set(
@@ -269,13 +268,18 @@ export const updateAccessToken = CatchAsyncError(
           604800
         );
 
+        // Set new tokens in cookies
+        res.cookie("access_token", accessToken, accessTokenOptions);
+        res.cookie("refresh_token", newRefreshToken, refreshTokenOptions);
+
         // Attach user to request
         req.user = user;
 
-        return next(); // Proceed to the next middleware
+        // Proceed to next middleware
+        return next();
       }
 
-      // Verify refresh token if it's present
+      // If refresh token exists, verify it
       try {
         decoded = jwt.verify(
           refreshToken,
@@ -299,7 +303,7 @@ export const updateAccessToken = CatchAsyncError(
         return next(new ErrorHandler(message, 400));
       }
 
-      user = JSON.parse(session) as IUser; // Cast parsed session as IUser
+      user = JSON.parse(session) as IUser; // Parse session and cast as IUser
 
       // Create new access token
       const accessToken = jwt.sign(
@@ -315,8 +319,8 @@ export const updateAccessToken = CatchAsyncError(
         { expiresIn: "3d" }
       );
 
-      // Update user session in Redis (refresh TTL)
-      await redis.set(user._id as RedisKey, JSON.stringify(user), "EX", 604800); // 7 days
+      // Update user session in Redis with refreshed TTL
+      await redis.set(user._id as RedisKey, JSON.stringify(user), "EX", 604800);
 
       // Set new tokens in cookies
       res.cookie("access_token", accessToken, accessTokenOptions);
@@ -328,7 +332,7 @@ export const updateAccessToken = CatchAsyncError(
       // Proceed to next middleware
       next();
     } catch (err: any) {
-      return next(new ErrorHandler(err.message, 500)); // General error fallback
+      return next(new ErrorHandler(err.message, 500)); // Handle general errors
     }
   }
 );
