@@ -25,7 +25,6 @@ import {
 } from "../services/user.service";
 
 import cloudinary from "cloudinary";
-import { RedisKey } from "ioredis";
 
 require("dotenv").config();
 
@@ -223,7 +222,6 @@ export const authorizeRoles = (...roles: string[]) => {
 
 // Update access token
 
-// Define the expected user structure
 export const updateAccessToken = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -239,36 +237,40 @@ export const updateAccessToken = CatchAsyncError(
           new ErrorHandler("Please login for access to this resources", 400)
         );
       }
+
       const session = await redis.get(decoded.id as string);
 
       if (!session) {
-        return next(new ErrorHandler(message + "jwt meeage", 400));
+        return next(new ErrorHandler(message, 400));
       }
-      console.log(message, "jwt meeage");
-
       const user = JSON.parse(session);
 
-      // Create new access token
       const accessToken = jwt.sign(
         { id: user._id },
         process.env.ACCESS_TOKEN as string,
         { expiresIn: "5m" }
       );
+
       const refreshToken = jwt.sign(
         { id: user._id },
         process.env.REFRESH_TOKEN as string,
         { expiresIn: "3d" }
       );
+
       req.user = user;
+
+      res.cookie("access_token", accessToken, accessTokenOptions);
+
       res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+
       await redis.set(user._id, JSON.stringify(user), "EX", 604800);
-      // Proceed to next middleware
       next();
     } catch (err: any) {
       return next(new ErrorHandler(err.message, 400));
     }
   }
 );
+
 // get user info
 
 export const getUserInfo = CatchAsyncError(
