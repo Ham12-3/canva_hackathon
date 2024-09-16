@@ -244,7 +244,7 @@ export const updateAccessToken = CatchAsyncError(
       if (!session) {
         return next(new ErrorHandler(message, 400));
       }
-      console.log(message);
+      console.log(message, "jwt meeage");
 
       const user = JSON.parse(session);
 
