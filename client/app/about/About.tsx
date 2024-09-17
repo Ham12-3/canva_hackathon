@@ -42,7 +42,7 @@ const About = () => {
           <br />
         </p>
         <br />
-        <span className="font-cursive text-[22px] ">Abdulhamid Sonaike</span>
+        <span className=" text-[22px] ">Abdulhamid Sonaike</span>
         <h5 className="text-[18px] font-Poppins">
           Founder and CEO of Lacodemy
         </h5>
