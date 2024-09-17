@@ -7,6 +7,7 @@ import Header from "../components/Header";
 import Profile from "../components/Profile/Profile";
 import { useSelector } from "react-redux";
 import Footer from "../components/Footer";
+import { useLoadUserQuery } from "@/redux/features/api/apiSlice";
 
 type Props = {};
 
@@ -15,7 +16,8 @@ const Page: FC<Props> = (props) => {
 
   const [activeItem, setActiveItem] = useState(5);
   const [route, setRoute] = useState("");
-  const { user } = useSelector((state: any) => state.auth);
+  const { data } = useLoadUserQuery(undefined, {});
+  const user = data;
   return (
     <div className="min-h-screen">
       <Protected>
