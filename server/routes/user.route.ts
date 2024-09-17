@@ -29,8 +29,8 @@ userRouter.post("/login", loginUser);
 
 userRouter.get(
   "/logout",
-  authorizeRoles("admin"), // Admin authorization first
-  isAuthenticated, // Authentication second
+  isAuthenticated, // Authentication first
+  authorizeRoles("admin"), // Admin authorization second
   logoutUser
 );
 
@@ -64,22 +64,22 @@ userRouter.put(
 
 userRouter.get(
   "/get-all-users",
-  authorizeRoles("admin"), // Admin authorization first
-  isAuthenticated, // Authentication second
+  isAuthenticated, // Authentication first
+  authorizeRoles("admin"), // Admin authorization second
   getAllUsers
 );
 
 userRouter.put(
   "/update-user",
-  authorizeRoles("admin"), // Admin authorization first
-  isAuthenticated, // Authentication second
+  isAuthenticated, // Authentication first
+  authorizeRoles("admin"), // Admin authorization second
   updateUserRole
 );
 
 userRouter.delete(
   "/delete-user/:id",
-  authorizeRoles("admin"), // Admin authorization first
-  isAuthenticated, // Authentication second
+  isAuthenticated, // Authentication first
+  authorizeRoles("admin"), // Admin authorization second
   deleteUser
 );
 

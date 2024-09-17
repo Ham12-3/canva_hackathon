@@ -19,8 +19,8 @@ orderRouter.post(
 // Get all orders
 orderRouter.get(
   "/get-all-orders",
-  authorizeRoles("admin"), // Admin authorization first
-  isAuthenticated, // Authentication second
+  isAuthenticated, // Authentication first
+  authorizeRoles("admin"), // Admin authorization second
   getAllOrders
 );
 

@@ -11,15 +11,15 @@ const layoutRouter = express.Router();
 
 layoutRouter.post(
   "/create-layout",
-  authorizeRoles("admin"), // Admin authorization first
-  isAuthenticated, // Authentication second
+  isAuthenticated, // Authentication first
+  authorizeRoles("admin"), // Admin authorization second
   createLayout
 );
 
 layoutRouter.put(
   "/edit-layout",
-  authorizeRoles("admin"), // Admin authorization first
-  isAuthenticated, // Authentication second
+  isAuthenticated, // Authentication first
+  authorizeRoles("admin"), // Admin authorization second
   editLayout
 );
 

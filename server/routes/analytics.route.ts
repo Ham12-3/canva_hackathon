@@ -11,22 +11,22 @@ const analyticsRouter = express.Router();
 
 analyticsRouter.get(
   "/get-users-analytics",
-  authorizeRoles("admin"), // Admin authorization first
-  isAuthenticated, // Authentication second
+  isAuthenticated, // Authentication first
+  authorizeRoles("admin"), // Admin authorization second
   getUserAnalytics
 );
 
 analyticsRouter.get(
   "/get-courses-analytics",
-  authorizeRoles("admin"), // Admin authorization first
-  isAuthenticated, // Authentication second
+  isAuthenticated, // Authentication first
+  authorizeRoles("admin"), // Admin authorization second
   getCourseAnalytics
 );
 
 analyticsRouter.get(
   "/get-orders-analytics",
-  authorizeRoles("admin"), // Admin authorization first
-  isAuthenticated, // Authentication second
+  isAuthenticated, // Authentication first
+  authorizeRoles("admin"), // Admin authorization second
   getOrderAnalytics
 );
 

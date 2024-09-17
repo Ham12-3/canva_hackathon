@@ -10,15 +10,15 @@ const notificationRouter = express.Router();
 
 notificationRouter.get(
   "/get-all-notifications",
-  authorizeRoles("admin"), // Admin authorization first
-  isAuthenticated, // Authentication second
+  isAuthenticated, // Authentication first
+  authorizeRoles("admin"), // Admin authorization second
   getNotifications
 );
 
 notificationRouter.put(
   "/update-notification/:id",
-  authorizeRoles("admin"), // Admin authorization first
-  isAuthenticated, // Authentication second
+  isAuthenticated, // Authentication first
+  authorizeRoles("admin"), // Admin authorization second
   updateNotification
 );
 
