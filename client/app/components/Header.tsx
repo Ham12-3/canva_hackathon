@@ -28,22 +28,13 @@ type Props = {
 const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   const [active, setActive] = useState(true);
   const [openSidebar, setOpenSidebar] = useState(false);
-  const [isClient, setIsClient] = useState(false); // To ensure it's client-side
 
-  // Ensure we are on the client side before attempting to fetch user data
-  useEffect(() => {
-    setIsClient(typeof window !== "undefined");
-  }, []);
-
-  // Fetch user data only if we are on the client
   const {
     data: userData,
     error,
     isLoading,
     refetch,
-  } = useLoadUserQuery(undefined, {
-    skip: !isClient, // Skip fetching on the server side
-  });
+  } = useLoadUserQuery(undefined, {});
 
   const { data: sessionData, status } = useSession();
   const [socialAuth, { isSuccess }] = useSocialAuthMutation();
@@ -54,7 +45,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   });
 
   useEffect(() => {
-    if (isClient && !isLoading && !userData && sessionData) {
+    if (!isLoading && !userData && sessionData) {
       socialAuth({
         email: sessionData?.user?.email,
         name: sessionData?.user?.name,
@@ -65,23 +56,16 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
     if (!sessionData && !isLoading && !userData) {
       setLogout(true);
     }
-  }, [sessionData, userData, isLoading, isClient]); // Added isClient dependency
+  }, [sessionData, userData, isLoading]);
 
   useEffect(() => {
     const handleScroll = () => {
       setActive(window.scrollY > 80);
     };
 
-    if (isClient) {
-      window.addEventListener("scroll", handleScroll);
-    }
-
-    return () => {
-      if (isClient) {
-        window.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, [isClient]);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleClose = (e: React.MouseEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).id === "screen") {
@@ -90,7 +74,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   };
 
   return (
-    <div className="w-full relative">
+    <div className="w-full relative mb-[120px]">
       <div
         className={`w-full h-[80px] z-[80] transition duration-500 ${
           active || openSidebar
