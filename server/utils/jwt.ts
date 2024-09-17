@@ -24,7 +24,7 @@ const refreshTokenExpireDays = parseInt(
 );
 
 // Dynamically set the cookie options based on environment
-const isProduction = process.env.NODE_ENV === "development";
+const isProduction = process.env.NODE_ENV === "production";
 
 // Options for cookies
 export const accessTokenOptions: ITokenOptions = {
