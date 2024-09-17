@@ -35,7 +35,7 @@ userRouter.get(
   logoutUser
 );
 
-userRouter.get("/refreshtoken", updateAccessToken);
+userRouter.get("/refreshtoken", updateAccessToken, isAuthenticated);
 
 userRouter.get("/me", updateAccessToken, isAuthenticated, getUserInfo);
 
