@@ -27,14 +27,14 @@ const refreshTokenExpireDays = parseInt(
 export const accessTokenOptions: ITokenOptions = {
   expires: new Date(Date.now() + accessTokenExpireMinutes * 60 * 1000), // Set access token expiry time in minutes
   maxAge: accessTokenExpireMinutes * 60 * 1000, // Max age in milliseconds
-  httpOnly: true,
+  httpOnly: false,
   sameSite: "none",
 };
 
 export const refreshTokenOptions: ITokenOptions = {
   expires: new Date(Date.now() + refreshTokenExpireDays * 24 * 60 * 60 * 1000), // Set refresh token expiry time in days
   maxAge: refreshTokenExpireDays * 24 * 60 * 60 * 1000, // Max age in milliseconds
-  httpOnly: true,
+  httpOnly: false,
   sameSite: "none",
 };
 
