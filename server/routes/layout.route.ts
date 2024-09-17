@@ -25,8 +25,7 @@ layoutRouter.put(
 
 layoutRouter.get(
   "/get-layout/:type",
-  isAuthenticated,
-  authorizeRoles("admin"),
+
   getLayoutByType
 );
 
