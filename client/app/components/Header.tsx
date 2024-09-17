@@ -109,7 +109,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
               </div>
 
               {/* User Avatar or Icon */}
-              {!isLoading && userData ? (
+              {userData ? (
                 <Link href={"/profile"}>
                   {userData.user.avatar ? (
                     <Image
