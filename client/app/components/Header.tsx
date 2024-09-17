@@ -28,12 +28,15 @@ type Props = {
 const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   const [active, setActive] = useState(true);
   const [openSidebar, setOpenSidebar] = useState(false);
+
   const {
     data: userData,
+    error,
     isLoading,
     refetch,
   } = useLoadUserQuery(undefined, {});
-  const { data, status } = useSession();
+
+  const { data: sessionData, status } = useSession();
   const [socialAuth, { isSuccess }] = useSocialAuthMutation();
   const [logout, setLogout] = useState(false);
 
@@ -42,23 +45,18 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   });
 
   useEffect(() => {
-    if (!isLoading) {
-      if (!userData) {
-        if (data) {
-          socialAuth({
-            email: data?.user?.email,
-
-            name: data?.user?.name,
-            avatar: data?.user?.image,
-          });
-        }
-      }
+    if (!isLoading && !userData && sessionData) {
+      socialAuth({
+        email: sessionData?.user?.email,
+        name: sessionData?.user?.name,
+        avatar: sessionData?.user?.image,
+      });
     }
 
-    if (data === null && !isLoading && !userData) {
+    if (!sessionData && !isLoading && !userData) {
       setLogout(true);
     }
-  }, [data, userData, isLoading]);
+  }, [sessionData, userData, isLoading]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -111,7 +109,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
               </div>
 
               {/* User Avatar or Icon */}
-              {userData ? (
+              {!isLoading && userData ? (
                 <Link href={"/profile"}>
                   {userData.user.avatar ? (
                     <Image
@@ -151,7 +149,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
           >
             <div className="w-[70%] fixed z-[999999999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0">
               <NavItems activeItem={activeItem} isMobile={true} />
-              {userData ? (
+              {!isLoading && userData ? (
                 <Link href={"/profile"}>
                   {userData.user.avatar ? (
                     <Image
