@@ -13,9 +13,10 @@ const notificationRouter = express.Router();
 
 notificationRouter.get(
   "/get/all/notifications",
-  authorizeRoles("admin"),
+
   updateAccessToken,
   isAuthenticated,
+  authorizeRoles("admin"),
   getNotifications
 );
 
