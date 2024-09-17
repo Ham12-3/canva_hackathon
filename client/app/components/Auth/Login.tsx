@@ -42,6 +42,7 @@ const Login: FC<Props> = ({ setRoute, setOpen, refetch }) => {
 
         // Call refreshToken query
         await refreshToken(); // Call refreshToken query
+        console.log(loginResult);
 
         toast.success("Login and token refresh successful");
         setOpen(false);
