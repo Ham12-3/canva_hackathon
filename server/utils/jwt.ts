@@ -29,7 +29,6 @@ export const accessTokenOptions: ITokenOptions = {
   maxAge: accessTokenExpireMinutes * 60 * 1000, // Max age in milliseconds
   httpOnly: true,
   sameSite: "none",
-  secure: process.env.NODE_ENV === "production", // Set secure flag only in production
 };
 
 export const refreshTokenOptions: ITokenOptions = {
@@ -37,7 +36,6 @@ export const refreshTokenOptions: ITokenOptions = {
   maxAge: refreshTokenExpireDays * 24 * 60 * 60 * 1000, // Max age in milliseconds
   httpOnly: true,
   sameSite: "none",
-  secure: process.env.NODE_ENV === "production", // Set secure flag only in production
 };
 
 // Function to send tokens to the client
