@@ -225,7 +225,7 @@ export const authorizeRoles = (...roles: string[]) => {
 export const updateAccessToken = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const refreshToken = req.cookies.refresh_token;
+      const refreshToken = process.env.REFRESH_TOKEN as string;
       // console.log(req.cookies.refresh_token, "req");
 
       // // Check if refresh token is missing
