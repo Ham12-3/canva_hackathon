@@ -12,23 +12,24 @@ const orderRouter = express.Router();
 
 orderRouter.post(
   "/create-order",
-
-  isAuthenticated,
+  isAuthenticated, // Authentication first
   createOrder
 );
 
-// get all orders
-
+// Get all orders
 orderRouter.get(
   "/get-all-orders",
-
-  isAuthenticated,
-  authorizeRoles("admin"),
+  authorizeRoles("admin"), // Admin authorization first
+  isAuthenticated, // Authentication second
   getAllOrders
 );
 
 orderRouter.get("/payment/stripepublishablekey", sendStripePublishableKey);
 
-orderRouter.post("/payment", isAuthenticated, newPayment);
+orderRouter.post(
+  "/payment",
+  isAuthenticated, // Authentication first
+  newPayment
+);
 
 export default orderRouter;
