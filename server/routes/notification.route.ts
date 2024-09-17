@@ -12,7 +12,7 @@ import {
 const notificationRouter = express.Router();
 
 notificationRouter.get(
-  "/get/all/notifications",
+  "/get-all-notifications",
 
   updateAccessToken,
   isAuthenticated,
