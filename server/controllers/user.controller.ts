@@ -243,6 +243,7 @@ export const updateAccessToken = CatchAsyncError(
       } catch (error) {
         return next(new ErrorHandler("Invalid or expired refresh token", 401));
       }
+      console.log(decoded, "decoded");
 
       const message = "Could not refresh token";
 
