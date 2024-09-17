@@ -23,19 +23,24 @@ const refreshTokenExpireDays = parseInt(
   10
 );
 
+// Dynamically set the cookie options based on environment
+const isProduction = process.env.NODE_ENV === "development";
+
 // Options for cookies
 export const accessTokenOptions: ITokenOptions = {
   expires: new Date(Date.now() + accessTokenExpireMinutes * 60 * 1000), // Set access token expiry time in minutes
   maxAge: accessTokenExpireMinutes * 60 * 1000, // Max age in milliseconds
-  httpOnly: false,
-  sameSite: "none",
+  httpOnly: isProduction, // In production, use httpOnly for security
+  sameSite: isProduction ? "none" : "lax", // Use "none" for cross-origin requests in production, "lax" in development
+  secure: isProduction, // Only set secure flag in production (HTTPS)
 };
 
 export const refreshTokenOptions: ITokenOptions = {
   expires: new Date(Date.now() + refreshTokenExpireDays * 24 * 60 * 60 * 1000), // Set refresh token expiry time in days
   maxAge: refreshTokenExpireDays * 24 * 60 * 60 * 1000, // Max age in milliseconds
-  httpOnly: false,
-  sameSite: "none",
+  httpOnly: isProduction, // Use httpOnly in production for refresh token
+  sameSite: isProduction ? "none" : "lax", // SameSite policy
+  secure: isProduction, // Secure cookies only in production
 };
 
 // Function to send tokens to the client
