@@ -226,12 +226,12 @@ export const updateAccessToken = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const refreshToken = req.cookies.refresh_token;
-      console.log(req.cookies.refresh_token, "req");
+      // console.log(req.cookies.refresh_token, "req");
 
-      // Check if refresh token is missing
-      if (!refreshToken) {
-        return next(new ErrorHandler("Refresh token is missing", 401));
-      }
+      // // Check if refresh token is missing
+      // if (!refreshToken) {
+      //   return next(new ErrorHandler("Refresh token is missing", 401));
+      // }
 
       // Verify refresh token
       let decoded: JwtPayload | null = null;
