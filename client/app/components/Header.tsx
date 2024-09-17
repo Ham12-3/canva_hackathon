@@ -28,13 +28,22 @@ type Props = {
 const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   const [active, setActive] = useState(true);
   const [openSidebar, setOpenSidebar] = useState(false);
+  const [isClient, setIsClient] = useState(false); // To ensure it's client-side
 
+  // Ensure we are on the client side before attempting to fetch user data
+  useEffect(() => {
+    setIsClient(typeof window !== "undefined");
+  }, []);
+
+  // Fetch user data only if we are on the client
   const {
     data: userData,
     error,
     isLoading,
     refetch,
-  } = useLoadUserQuery(undefined, {});
+  } = useLoadUserQuery(undefined, {
+    skip: !isClient, // Skip fetching on the server side
+  });
 
   const { data: sessionData, status } = useSession();
   const [socialAuth, { isSuccess }] = useSocialAuthMutation();
@@ -45,7 +54,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   });
 
   useEffect(() => {
-    if (!isLoading && !userData && sessionData) {
+    if (isClient && !isLoading && !userData && sessionData) {
       socialAuth({
         email: sessionData?.user?.email,
         name: sessionData?.user?.name,
@@ -56,16 +65,23 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
     if (!sessionData && !isLoading && !userData) {
       setLogout(true);
     }
-  }, [sessionData, userData, isLoading]);
+  }, [sessionData, userData, isLoading, isClient]); // Added isClient dependency
 
   useEffect(() => {
     const handleScroll = () => {
       setActive(window.scrollY > 80);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    if (isClient) {
+      window.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (isClient) {
+        window.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, [isClient]);
 
   const handleClose = (e: React.MouseEvent<HTMLDivElement>) => {
     if ((e.target as HTMLElement).id === "screen") {
