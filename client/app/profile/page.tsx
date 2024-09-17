@@ -16,8 +16,13 @@ const Page: FC<Props> = (props) => {
 
   const [activeItem, setActiveItem] = useState(5);
   const [route, setRoute] = useState("");
-  const { data } = useLoadUserQuery(undefined, {});
-  const user = data.user;
+  const {
+    data: userData,
+    error,
+    isLoading,
+    refetch,
+  } = useLoadUserQuery(undefined, {});
+  const user = userData?.user;
   return (
     <div className="min-h-screen">
       <Protected>

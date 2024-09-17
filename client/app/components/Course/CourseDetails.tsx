@@ -34,7 +34,7 @@ const CourseDetails = ({
   const [user, setUser] = useState<any>();
 
   useEffect(() => {
-    setUser(userData.user);
+    setUser(userData?.user);
   }, [userData]);
   const discountPercentage =
     ((data?.estimatedPrice - data.price) / data?.estimatedPrice) * 100;
