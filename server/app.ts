@@ -22,7 +22,7 @@ app.use(cookieParser());
 // CORS configuration to allow credentials
 app.use(
   cors({
-    origin: ["https://canva-hackathon-red.vercel.app"], // Ensure this is correctly set
+    origin: ["http://localhost:3000"], // Ensure this is correctly set
     credentials: true, // Allow cookies and other credentials
   })
 );
