@@ -28,7 +28,7 @@ const CourseDetails = ({
   setRoute,
   setOpen: openAuthModal,
 }: Props) => {
-  const { userData } = useSelector((state: any) => state.auth);
+  const { data: userData, isLoading } = useLoadUserQuery(undefined, {});
 
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<any>();
