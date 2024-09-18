@@ -33,7 +33,7 @@ const PageContent = (props: Props) => {
         setCourses(data?.courses);
       } else {
         setCourses(
-          data?.courses.filter((item: any) => item.categories === category)
+          data?.courses.filter((item: any) => item.category === category)
         );
       }
       if (search) {
