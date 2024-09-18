@@ -22,7 +22,7 @@ const PageContent = (props: Props) => {
   const [route, setRoute] = useState("Login");
   const [open, setOpen] = useState(false);
   const [courses, setCourses] = useState<any[]>([]);
-  const [category, setCategory] = useState("All");
+  const [category, setCategory] = useState<any>("All");
 
   const categories = categoriesData?.layout?.categories;
   console.log(categories, "categories");
@@ -36,7 +36,7 @@ const PageContent = (props: Props) => {
 
       if (category !== "All") {
         filteredCourses = filteredCourses.filter(
-          (item: any) => item.category === category
+          (item: any) => item.category === category?._id
         );
       }
 
@@ -91,7 +91,7 @@ const PageContent = (props: Props) => {
                           ? "bg-[crimson]"
                           : "bg-[#5050cb]"
                       } m-3 px-3 rounded-[30px] flex items-center justify-center font-Poppins cursor-pointer`}
-                      onClick={() => setCategory(item.title)}
+                      onClick={() => setCategory(item)}
                     >
                       {item.title}
                     </div>
