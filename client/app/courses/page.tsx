@@ -13,7 +13,7 @@ import Footer from "../components/Footer";
 
 type Props = {};
 
-const PageContent = (props: Props) => {
+const Page = (props: Props) => {
   const searchParams = useSearchParams();
   const search = searchParams?.get("title");
   const { data, isLoading } = useGetUsersAllCoursesQuery(undefined, {});
@@ -30,7 +30,7 @@ const PageContent = (props: Props) => {
         setCourses(data?.courses);
       } else {
         setCourses(
-          data?.courses.filter((item: any) => item.categories === category)
+          data?.layout.filter((item: any) => item.categories === category)
         );
       }
       if (search) {
@@ -116,11 +116,5 @@ const PageContent = (props: Props) => {
     </div>
   );
 };
-
-const Page = (props: Props) => (
-  <React.Suspense fallback={<div>Loading...</div>}>
-    <PageContent {...props} />
-  </React.Suspense>
-);
 
 export default Page;
