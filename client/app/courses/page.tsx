@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useGetUsersAllCoursesQuery } from "@/redux/features/courses/coursesApi";
 import { useGetHeroDataQuery } from "@/redux/features/layout/layoutApi";
@@ -50,7 +50,7 @@ const Page = (props: Props) => {
       {isLoading ? (
         <Loader />
       ) : (
-        <>
+        <Suspense fallback={<Loader />}>
           <Header
             route={route}
             setRoute={setRoute}
@@ -110,7 +110,7 @@ const Page = (props: Props) => {
                 ))}
             </div>
           </div>
-        </>
+        </Suspense>
       )}
       <Footer />
     </div>
