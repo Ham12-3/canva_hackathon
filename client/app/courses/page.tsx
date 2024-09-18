@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useGetUsersAllCoursesQuery } from "@/redux/features/courses/coursesApi";
 import { useGetHeroDataQuery } from "@/redux/features/layout/layoutApi";
@@ -13,7 +13,7 @@ import Footer from "../components/Footer";
 
 type Props = {};
 
-const Page = (props: Props) => {
+const PageContent = (props: Props) => {
   const searchParams = useSearchParams();
   const search = searchParams?.get("title");
   const { data, isLoading } = useGetUsersAllCoursesQuery(undefined, {});
@@ -30,7 +30,7 @@ const Page = (props: Props) => {
         setCourses(data?.courses);
       } else {
         setCourses(
-          data?.layout.filter((item: any) => item.categories === category)
+          data?.courses.filter((item: any) => item.categories === category)
         );
       }
       if (search) {
@@ -50,7 +50,7 @@ const Page = (props: Props) => {
       {isLoading ? (
         <Loader />
       ) : (
-        <Suspense fallback={<Loader />}>
+        <>
           <Header
             route={route}
             setRoute={setRoute}
@@ -110,11 +110,17 @@ const Page = (props: Props) => {
                 ))}
             </div>
           </div>
-        </Suspense>
+        </>
       )}
       <Footer />
     </div>
   );
 };
+
+const Page = (props: Props) => (
+  <React.Suspense fallback={<div>Loading...</div>}>
+    <PageContent {...props} />
+  </React.Suspense>
+);
 
 export default Page;
