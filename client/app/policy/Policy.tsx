@@ -13,7 +13,7 @@ const Policy = (props: Props) => {
           Platform Terms and Condition
         </h1>
       </div>
-      <ul
+      <div
         style={{ listStyle: "unset", marginLeft: "15px" }}
         className="w-[95%] 800px:w-[85%] m-auto"
       >
@@ -44,7 +44,7 @@ const Policy = (props: Props) => {
           voluptatum deserunt numquam rerum rem eos? Tempora sequi excepturi
           modi?
         </p>
-      </ul>
+      </div>
     </div>
   );
 };
