@@ -44,7 +44,7 @@ const Profile: FC<Props> = ({ user }) => {
   useEffect(() => {
     if (isSuccess) {
       toast.success("Logged out successfully");
-      redirect("/");
+      window.location.reload();
     }
     if (data) {
       const filteredCourses = user.courses

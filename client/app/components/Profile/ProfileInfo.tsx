@@ -49,7 +49,7 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
   useEffect(() => {
     if (avatarSuccess || profileSuccess) {
       toast.success("Profile updated successfully");
-      redirect("/profile"); // Refetch user data to get the latest updates
+      window.location.reload(); // Refetch user data to get the latest updates
     }
     if (avatarError || profileError) {
       toast.error("An error occurred while updating.");
