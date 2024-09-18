@@ -23,7 +23,7 @@ const Profile: FC<Props> = ({ user }) => {
     refetchOnMountOrArgChange: true,
   });
 
-  const { refetch, isSuccess, isError } = useLogOutQuery(undefined, {
+  const { isSuccess, isError } = useLogOutQuery(undefined, {
     skip: !logout,
   });
 
@@ -31,9 +31,8 @@ const Profile: FC<Props> = ({ user }) => {
     setLogout(true);
 
     // Sign out with no automatic redirect
-    await signOut({ redirect: false });
+
     // Trigger logout query and refresh state
-    refetch();
   };
 
   useEffect(() => {
