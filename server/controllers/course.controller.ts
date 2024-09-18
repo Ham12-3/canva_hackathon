@@ -96,6 +96,7 @@ export const editCourse = CatchAsyncError(
         },
         { new: true }
       );
+      console.log(course, "course");
 
       res.status(200).json({
         success: true,
