@@ -1,14 +1,12 @@
-import React, { FC, use, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import SideBarProfile from "./SideBarProfile";
 import { useLogOutQuery } from "../../../redux/features/auth/authApi";
 import { signOut } from "next-auth/react";
-import { redirect } from "next/navigation";
 import toast from "react-hot-toast";
 import ProfileInfo from "./ProfileInfo";
 import ChangePassword from "./ChangePassword";
 import CourseCard from "../Course/CourseCard";
 import { useGetUsersAllCoursesQuery } from "@/redux/features/courses/coursesApi";
-import { useLoadUserQuery } from "@/redux/features/api/apiSlice";
 
 type Props = {
   user: any;
@@ -25,27 +23,27 @@ const Profile: FC<Props> = ({ user }) => {
     refetchOnMountOrArgChange: true,
   });
 
-  const { refetch, isSuccess } = useLogOutQuery(undefined, {
+  const { refetch, isSuccess, isError } = useLogOutQuery(undefined, {
     skip: !logout,
   });
 
   const logOutHandler = async () => {
     setLogout(true);
 
-    redirect("/");
-    window.location.reload();
+    // Sign out with no automatic redirect
+    await signOut({ redirect: false });
+    // Trigger logout query and refresh state
+    refetch();
   };
-
-  if (typeof window !== "undefined") {
-    window.addEventListener("scroll", () => {
-      setScroll(window.scrollY > 85);
-    });
-  }
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success("Logged out successfully");
+      toast.success("Logged out successfully!");
+      // Optional: Refresh the page to clear out any user state
       window.location.reload();
+    }
+    if (isError) {
+      toast.error("Failed to log out. Please try again.");
     }
     if (data) {
       const filteredCourses = user.courses
@@ -55,7 +53,14 @@ const Profile: FC<Props> = ({ user }) => {
         .filter((course: any) => course !== undefined);
       setCourses(filteredCourses);
     }
-  }, [data]);
+  }, [isSuccess, isError, data]);
+
+  if (typeof window !== "undefined") {
+    window.addEventListener("scroll", () => {
+      setScroll(window.scrollY > 85);
+    });
+  }
+
   return (
     <div
       className={`w-full px-3 800px:px-10 flex justify-center items-center pt-24 ${
