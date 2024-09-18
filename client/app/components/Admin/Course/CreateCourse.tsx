@@ -9,21 +9,12 @@ import CoursePreview from "./CoursePreview";
 import { useCreateCourseMutation } from "@/redux/features/courses/coursesApi";
 import toast from "react-hot-toast";
 import { redirect } from "next/navigation";
+import { ContentItem } from "./types";
 
 // Define types for course content and other structures
 type Link = {
   title: string;
   url: string;
-};
-
-type CourseContentData = {
-  videoUrl: string;
-  title: string;
-  description: string;
-  videoSection: string;
-  videoLength: string;
-  links: Link[];
-  suggestions: string;
 };
 
 type BenefitsPrerequisites = {
@@ -74,9 +65,7 @@ const CreateCourse = () => {
   const [prerequisites, setPrerequisites] = useState<BenefitsPrerequisites[]>([
     { title: "" },
   ]);
-  const [courseContentData, setCourseContentData] = useState<
-    CourseContentData[]
-  >([
+  const [courseContentData, setCourseContentData] = useState<ContentItem[]>([
     {
       videoUrl: "",
       title: "",
@@ -84,7 +73,7 @@ const CreateCourse = () => {
       videoSection: "Untitled section",
       videoLength: "",
       links: [{ title: "", url: "" }],
-      suggestions: "",
+      suggestions: [],
     },
   ]);
 
@@ -123,7 +112,7 @@ const CreateCourse = () => {
           title: link.title,
           url: link.url,
         })),
-        suggestions: courseContent.suggestions,
+        suggestions: courseContent.suggestions || "", // Ensure suggestions is a string
       })
     );
 
