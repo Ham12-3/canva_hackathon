@@ -181,6 +181,7 @@ const EditCourse: FC<Props> = ({ id }) => {
       console.error("Edit Course Error:", err);
     }
   };
+  console.log(courseInfo, "courseInfo");
 
   return (
     <div className="w-full flex min-h-screen">
