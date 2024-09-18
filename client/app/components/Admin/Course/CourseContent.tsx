@@ -44,7 +44,11 @@ const CourseContent: FC<Props> = ({
     setCourseContentData(updatedData);
   };
 
-  const handleInputChange = (index: number, field: string, value: any) => {
+  const handleInputChange = (
+    index: number,
+    field: string,
+    value: string | number
+  ) => {
     const updatedData = courseContentData.map((item, i) =>
       i === index ? { ...item, [field]: value } : item
     );
@@ -285,84 +289,66 @@ const CourseContent: FC<Props> = ({
                       </div>
                       <input
                         type="text"
-                        placeholder="Source code... (Link title)"
-                        className={`${styles.input}`}
+                        placeholder="Link Title"
+                        className={styles.input}
                         value={link.title}
-                        onChange={(e) => {
-                          const updatedData = [...courseContentData];
-                          updatedData[index].links[linkIndex].title =
-                            e.target.value;
-                          setCourseContentData(updatedData);
-                        }}
+                        onChange={(e) =>
+                          handleInputChange(
+                            index,
+                            `links[${linkIndex}].title`,
+                            e.target.value
+                          )
+                        }
                       />
                       <input
-                        type="url"
-                        placeholder="Source code URL... (Link URL)"
-                        className={`${styles.input} mt-6`}
+                        type="text"
+                        placeholder="Link URL"
+                        className={styles.input}
                         value={link.url}
-                        onChange={(e) => {
-                          const updatedData = [...courseContentData];
-                          updatedData[index].links[linkIndex].url =
-                            e.target.value;
-                          setCourseContentData(updatedData);
-                        }}
+                        onChange={(e) =>
+                          handleInputChange(
+                            index,
+                            `links[${linkIndex}].url`,
+                            e.target.value
+                          )
+                        }
                       />
                     </div>
                   ))}
-
-                  <div className="inline-block mb-4">
-                    <p
-                      className="flex items-center text-[18px] dark:text-white text-black cursor-pointer"
-                      onClick={() => handleAddLink(index)}
-                    >
-                      <BsLink45Deg className="mr-2" /> Add Link
-                    </p>
-                  </div>
-                </>
-              )}
-
-              <br />
-
-              {index === courseContentData.length - 1 && (
-                <div>
                   <p
-                    className="flex items-center text-[18px] dark:text-white text-black cursor-pointer"
-                    onClick={() => newContentHandler(item)}
+                    className="text-[#1a73e8] dark:text-gray-400 hover:underline cursor-pointer"
+                    onClick={() => handleAddLink(index)}
                   >
-                    <AiOutlinePlusCircle className="mr-2" />
-                    Add New Content
+                    <BsLink45Deg />
+                    Add new link
                   </p>
-                </div>
+                </>
               )}
             </div>
           );
         })}
 
-        <br />
-        <div
-          className="flex items-center text-[20px] dark:text-white text-black cursor-pointer"
-          onClick={() => addNewSection()}
-        >
-          <AiOutlinePlusCircle className="mr-2" />
-          Add New Section
+        <div className="mt-4">
+          <button
+            className={`${styles.button} mx-4 !bg-black dark:!bg-white !text-white dark:!text-black`}
+            onClick={() => prevButton()}
+          >
+            Back
+          </button>
+          <button
+            className={`${styles.button} mx-4 !bg-black dark:!bg-white !text-white dark:!text-black`}
+            onClick={() => addNewSection()}
+          >
+            Add new section
+          </button>
+          <button
+            className={`${styles.button} mx-4 !bg-black dark:!bg-white !text-white dark:!text-black`}
+            onClick={() => handleOptions()}
+          >
+            Next
+          </button>
         </div>
       </form>
-
-      <br />
-      <div className="w-full flex items-center justify-between mt-8">
-        <button
-          className="w-full 800px:w-[180px] flex items-center justify-center h-[40px] bg-[#37a39a] text-center text-white rounded cursor-pointer"
-          onClick={prevButton}
-        >
-          Prev
-        </button>
-        <button
-          className="w-full 800px:w-[180px] flex items-center justify-center h-[40px] bg-[#37a39a] text-center text-white rounded cursor-pointer"
-          onClick={handleOptions}
-        >
-          Next
-        </button>
-      </div>
     </div>
   );
 };
