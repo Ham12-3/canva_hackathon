@@ -1,15 +1,21 @@
 import { styles } from "@/app/styles/style";
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 import { AiOutlineDelete, AiOutlinePlusCircle } from "react-icons/ai";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { BsLink45Deg, BsPencil } from "react-icons/bs";
 import toast from "react-hot-toast";
+import { ContentItem } from "./types";
+
+type Link = {
+  title: string;
+  url: string;
+};
 
 type Props = {
   active: number;
   setActive: (active: number) => void;
-  courseContentData: any[];
-  setCourseContentData: (courseContentData: any[]) => void;
+  courseContentData: ContentItem[];
+  setCourseContentData: (courseContentData: ContentItem[]) => void;
   handleSubmit: () => void;
 };
 
@@ -20,42 +26,47 @@ const CourseContent: FC<Props> = ({
   setCourseContentData,
   handleSubmit,
 }) => {
-  const [isCollapsed, setIsCollapsed] = useState(
+  const [isCollapsed, setIsCollapsed] = useState<boolean[]>(
     Array(courseContentData.length).fill(false)
   );
+  const [activeSection, setActiveSection] = useState<number>(1);
 
-  const [activeSection, setActiveSection] = useState(1);
+  // Keep track of the changes made to the course content data
+  useEffect(() => {
+    console.log(courseContentData); // This helps track the updates in console
+  }, [courseContentData]);
 
+  // Handle collapse toggle for sections
   const handleCollapseToggle = (index: number) => {
     const updatedCollapsed = [...isCollapsed];
     updatedCollapsed[index] = !updatedCollapsed[index];
     setIsCollapsed(updatedCollapsed);
   };
 
+  // Handle removing a link
   const handleRemoveLink = (index: number, linkIndex: number) => {
     const updatedData = [...courseContentData];
     updatedData[index].links.splice(linkIndex, 1);
     setCourseContentData(updatedData);
   };
 
+  // Handle adding a new link
   const handleAddLink = (index: number) => {
     const updatedData = [...courseContentData];
     updatedData[index].links.push({ title: "", url: "" });
     setCourseContentData(updatedData);
   };
 
-  const handleInputChange = (
-    index: number,
-    field: string,
-    value: string | number
-  ) => {
+  // Handle input changes for course content
+  const handleInputChange = (index: number, field: string, value: any) => {
     const updatedData = courseContentData.map((item, i) =>
       i === index ? { ...item, [field]: value } : item
     );
     setCourseContentData(updatedData);
   };
 
-  const newContentHandler = (item: any) => {
+  // Handle adding new content
+  const newContentHandler = (item: ContentItem) => {
     if (
       item.title === "" ||
       item.description === "" ||
@@ -72,7 +83,7 @@ const CourseContent: FC<Props> = ({
         ? courseContentData[courseContentData.length - 1].videoSection
         : "";
 
-    const newContent = {
+    const newContent: ContentItem = {
       videoUrl: "",
       title: "",
       description: "",
@@ -83,6 +94,7 @@ const CourseContent: FC<Props> = ({
     setCourseContentData([...courseContentData, newContent]);
   };
 
+  // Handle adding a new section
   const addNewSection = () => {
     const lastContent = courseContentData[courseContentData.length - 1];
     if (
@@ -98,7 +110,7 @@ const CourseContent: FC<Props> = ({
 
     setActiveSection(activeSection + 1);
 
-    const newContent = {
+    const newContent: ContentItem = {
       videoUrl: "",
       title: "",
       description: "",
@@ -109,10 +121,12 @@ const CourseContent: FC<Props> = ({
     setCourseContentData([...courseContentData, newContent]);
   };
 
+  // Previous step button handler
   const prevButton = () => {
     setActive(active - 1);
   };
 
+  // Handle moving to the next step and submitting the data
   const handleOptions = () => {
     const lastContent = courseContentData[courseContentData.length - 1];
     if (
@@ -126,6 +140,7 @@ const CourseContent: FC<Props> = ({
       return;
     }
 
+    // Move to the next step and trigger the submission
     setActive(active + 1);
     handleSubmit();
   };
@@ -205,6 +220,7 @@ const CourseContent: FC<Props> = ({
 
               {!isCollapsed[index] && (
                 <>
+                  {/* Video Title Input */}
                   <div className="my-3">
                     <label htmlFor="" className={styles.label}>
                       Video Title
@@ -220,6 +236,7 @@ const CourseContent: FC<Props> = ({
                     />
                   </div>
 
+                  {/* Video URL Input */}
                   <div className="mb-3">
                     <label htmlFor="" className={styles.label}>
                       Video URL
@@ -235,6 +252,7 @@ const CourseContent: FC<Props> = ({
                     />
                   </div>
 
+                  {/* Video Length Input */}
                   <div className="mb-3">
                     <label htmlFor="" className={styles.label}>
                       Video Length (in minutes)
@@ -243,109 +261,114 @@ const CourseContent: FC<Props> = ({
                       type="number"
                       placeholder="20mins"
                       className={`${styles.input}`}
-                      value={item.videoLength || ""} // Ensure videoLength is properly handled
+                      value={item.videoLength || ""}
                       onChange={(e) =>
                         handleInputChange(index, "videoLength", e.target.value)
                       }
                     />
                   </div>
 
+                  {/* Video Description Input */}
                   <div className="mb-3">
                     <label htmlFor="" className={styles.label}>
-                      Video Description
+                      Description
                     </label>
                     <textarea
-                      rows={8}
-                      className={`${styles.input} !h-min py-2`}
-                      placeholder="Describe the video"
+                      placeholder="Description of video"
+                      className={`${styles.input}`}
                       value={item.description}
                       onChange={(e) =>
                         handleInputChange(index, "description", e.target.value)
                       }
                     />
-                    <br />
-                    <br />
-                    <br />
                   </div>
 
-                  {item.links.map((link: any, linkIndex: any) => (
-                    <div key={linkIndex} className="mb-3">
-                      <div className="w-full flex items-center justify-between">
-                        <label className={styles.label}>
-                          Link {linkIndex + 1}
-                        </label>
-                        <AiOutlineDelete
-                          className={`${
-                            linkIndex === 0
-                              ? "cursor-no-drop"
-                              : "cursor-pointer"
-                          } text-black dark:text-white text-[20px]`}
-                          onClick={() =>
-                            linkIndex === 0
-                              ? null
-                              : handleRemoveLink(index, linkIndex)
-                          }
+                  {/* Resource Links */}
+                  {item.links.map((link, linkIndex) => (
+                    <div key={linkIndex}>
+                      <div className="flex w-full items-center justify-between">
+                        <div className="w-[96%]">
+                          <label htmlFor="" className={styles.label}>
+                            Resource Title
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Resource title"
+                            className={styles.input}
+                            value={link.title}
+                            onChange={(e) =>
+                              handleInputChange(index, "links", [
+                                ...item.links.slice(0, linkIndex),
+                                {
+                                  ...link,
+                                  title: e.target.value,
+                                },
+                                ...item.links.slice(linkIndex + 1),
+                              ])
+                            }
+                          />
+                        </div>
+                        <BsLink45Deg
+                          className="cursor-pointer dark:text-white text-black"
+                          onClick={() => handleRemoveLink(index, linkIndex)}
                         />
                       </div>
+
+                      <label htmlFor="" className={styles.label}>
+                        URL
+                      </label>
                       <input
-                        type="text"
-                        placeholder="Link Title"
-                        className={styles.input}
-                        value={link.title}
-                        onChange={(e) =>
-                          handleInputChange(
-                            index,
-                            `links[${linkIndex}].title`,
-                            e.target.value
-                          )
-                        }
-                      />
-                      <input
-                        type="text"
-                        placeholder="Link URL"
+                        type="url"
+                        placeholder="https://abc.com"
                         className={styles.input}
                         value={link.url}
                         onChange={(e) =>
-                          handleInputChange(
-                            index,
-                            `links[${linkIndex}].url`,
-                            e.target.value
-                          )
+                          handleInputChange(index, "links", [
+                            ...item.links.slice(0, linkIndex),
+                            { ...link, url: e.target.value },
+                            ...item.links.slice(linkIndex + 1),
+                          ])
                         }
                       />
                     </div>
                   ))}
-                  <p
-                    className="text-[#1a73e8] dark:text-gray-400 hover:underline cursor-pointer"
+
+                  {/* Add New Link Button */}
+                  <div
+                    className="flex items-center mt-2 cursor-pointer"
                     onClick={() => handleAddLink(index)}
                   >
-                    <BsLink45Deg />
-                    Add new link
-                  </p>
+                    <AiOutlinePlusCircle className="dark:text-white text-black" />
+                    <p className="ml-2 text-[#03a9f4]">Add new link</p>
+                  </div>
                 </>
               )}
             </div>
           );
         })}
 
-        <div className="mt-4">
+        {/* Add Section Button */}
+        <div
+          className="w-full bg-[#03a9f4] p-2 rounded-lg flex items-center justify-center mt-3 cursor-pointer"
+          onClick={addNewSection}
+        >
+          <AiOutlinePlusCircle className="text-white" />
+          <p className="text-white ml-2">Add new section</p>
+        </div>
+
+        {/* Form Navigation Buttons */}
+        <div className="flex w-full items-center justify-between pt-10">
           <button
-            className={`${styles.button} mx-4 !bg-black dark:!bg-white !text-white dark:!text-black`}
-            onClick={() => prevButton()}
+            className="bg-[#03a9f4] p-2.5 text-white rounded-lg text-[18px] font-Poppins cursor-pointer"
+            onClick={prevButton}
           >
-            Back
+            Previous
           </button>
           <button
-            className={`${styles.button} mx-4 !bg-black dark:!bg-white !text-white dark:!text-black`}
-            onClick={() => addNewSection()}
+            className="bg-[#03a9f4] p-2.5 text-white rounded-lg text-[18px] font-Poppins cursor-pointer"
+            onClick={handleOptions}
           >
-            Add new section
-          </button>
-          <button
-            className={`${styles.button} mx-4 !bg-black dark:!bg-white !text-white dark:!text-black`}
-            onClick={() => handleOptions()}
-          >
-            Next
+            Save & Next
           </button>
         </div>
       </form>

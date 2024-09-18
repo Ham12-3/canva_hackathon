@@ -11,8 +11,10 @@ import {
   useGetAllInfoCoursesQuery,
 } from "@/redux/features/courses/coursesApi";
 import toast from "react-hot-toast";
+import { ContentItem } from "./types";
 import { redirect } from "next/navigation";
 
+// Define types
 type Thumbnail = {
   public_id: string;
   url: string;
@@ -27,7 +29,7 @@ type CourseInfo = {
   tags: string;
   level: string;
   demoUrl: string;
-  thumbnail: Thumbnail; // Now it's a Thumbnail object
+  thumbnail: Thumbnail;
 };
 
 type Props = {
@@ -51,28 +53,14 @@ const EditCourse: FC<Props> = ({ id }) => {
     tags: "",
     level: "",
     demoUrl: "",
-    thumbnail: { public_id: "", url: "" }, // Initialize as object
+    thumbnail: { public_id: "", url: "" },
   });
 
-  const [benefits, setBenefits] = useState([{ title: "" }]);
-  const [prerequisites, setPrerequisites] = useState([{ title: "" }]);
-  const [courseContentData, setCourseContentData] = useState([
-    {
-      videoUrl: "",
-      title: "",
-      description: "",
-      videoSection: "Untitled section",
-      links: [
-        {
-          title: "",
-          url: "",
-        },
-      ],
-      suggestions: "",
-    },
-  ]);
+  const [benefits, setBenefits] = useState<{ title: string }[]>([]);
+  const [prerequisites, setPrerequisites] = useState<{ title: string }[]>([]);
+  const [courseContentData, setCourseContentData] = useState<ContentItem[]>([]);
 
-  const [courseData, setCourseData] = useState({});
+  const [courseData, setCourseData] = useState<any>({});
 
   // Safe access to data and courses
   const editCourseData = data?.courses?.find((i: any) => i._id === id);
@@ -90,7 +78,7 @@ const EditCourse: FC<Props> = ({ id }) => {
         thumbnail: {
           public_id: editCourseData.thumbnail?.public_id || "",
           url: editCourseData.thumbnail?.url || "",
-        }, // Handle as object
+        },
         category: editCourseData.category || "",
       });
       setBenefits(editCourseData.benefits || []);
@@ -99,67 +87,62 @@ const EditCourse: FC<Props> = ({ id }) => {
     }
   }, [editCourseData, data]);
 
-  const handleSubmit = async () => {
-    // If thumbnail is a string (from older data), treat it accordingly
-    let thumbnailData;
+  useEffect(() => {
+    const formatCourseData = () => {
+      const thumbnailData =
+        typeof courseInfo.thumbnail === "string"
+          ? { url: courseInfo.thumbnail, public_id: "" }
+          : {
+              url: courseInfo.thumbnail.url,
+              public_id: courseInfo.thumbnail.public_id || "",
+            };
 
-    if (typeof courseInfo.thumbnail === "string") {
-      thumbnailData = {
-        url: courseInfo.thumbnail, // Handle as a string
-        public_id: "", // Assume no public_id if it's just a string
+      const formattedBenefits = benefits.map((benefit) => ({
+        title: benefit.title,
+      }));
+
+      const formattedPrerequisites = prerequisites.map((prerequisite) => ({
+        title: prerequisite.title,
+      }));
+
+      const formattedCourseContentData = courseContentData.map(
+        (courseContent) => ({
+          videoUrl: courseContent.videoUrl,
+          title: courseContent.title,
+          description: courseContent.description,
+          videoSection: courseContent.videoSection,
+          links: courseContent.links.map((link) => ({
+            title: link.title,
+            url: link.url,
+          })),
+          suggestions: courseContent.suggestions,
+        })
+      );
+
+      return {
+        name: courseInfo.name,
+        description: courseInfo.description,
+        price: courseInfo.price,
+        estimatedPrice: courseInfo.estimatedPrice,
+        tags: courseInfo.tags,
+        category: courseInfo.category,
+        thumbnail: thumbnailData,
+        level: courseInfo.level,
+        demoUrl: courseInfo.demoUrl,
+        totalVideos: courseContentData.length,
+        benefits: formattedBenefits,
+        prerequisites: formattedPrerequisites,
+        courseContent: formattedCourseContentData,
       };
-    } else {
-      thumbnailData = {
-        url: courseInfo.thumbnail.url, // Access the URL from the object
-        public_id: courseInfo.thumbnail.public_id || "",
-      };
-    }
-
-    const formattedBenefits = benefits.map((benefit) => ({
-      title: benefit.title,
-    }));
-
-    const formattedPrerequisites = prerequisites.map((prerequisite) => ({
-      title: prerequisite.title,
-    }));
-
-    const formattedCourseContentData = courseContentData.map(
-      (courseContent) => ({
-        videoUrl: courseContent.videoUrl,
-        title: courseContent.title,
-        description: courseContent.description,
-        videoSection: courseContent.videoSection,
-        links: courseContent.links.map((link) => ({
-          title: link.title,
-          url: link.url,
-        })),
-        suggestions: courseContent.suggestions,
-      })
-    );
-
-    const data = {
-      name: courseInfo.name,
-      description: courseInfo.description,
-      price: courseInfo.price,
-      estimatedPrice: courseInfo.estimatedPrice,
-      tags: courseInfo.tags,
-      category: courseInfo.category,
-      thumbnail: thumbnailData, // Correctly handle both cases
-      level: courseInfo.level,
-      demoUrl: courseInfo.demoUrl,
-      totalVideos: courseContentData.length,
-      benefits: formattedBenefits,
-      prerequisites: formattedPrerequisites,
-      courseContent: formattedCourseContentData,
     };
 
-    setCourseData(data);
-  };
+    setCourseData(formatCourseData());
+  }, [courseInfo, benefits, prerequisites, courseContentData]);
 
-  console.log("Course Data:", courseData);
-  console.log("Edit Course Data:", editCourseData?._id);
+  const handleSubmit = async () => {
+    // Course data is updated automatically via useEffect
+    console.log("Submitting course data:", courseData);
 
-  const handleCourseCreate = async () => {
     if (!editCourseData?._id) {
       toast.error("Course ID is missing");
       return;
@@ -167,21 +150,20 @@ const EditCourse: FC<Props> = ({ id }) => {
 
     try {
       const result = await editCourse({
-        id: editCourseData?._id,
+        id: editCourseData._id,
         data: courseData,
       }).unwrap();
       if (result) {
-        toast.success("Course is been updated successfully");
+        toast.success("Course has been updated successfully");
         setTimeout(() => {
           redirect("/admin/live-courses");
-        }, 1000); // Delay the redirect slightly to ensure everything is processed
+        }, 1000);
       }
     } catch (err) {
       toast.error("An error occurred while updating the course");
       console.error("Edit Course Error:", err);
     }
   };
-  console.log(courseInfo, "courseInfo");
 
   return (
     <div className="w-full flex min-h-screen">
@@ -221,7 +203,7 @@ const EditCourse: FC<Props> = ({ id }) => {
             active={active}
             setActive={setActive}
             courseData={courseData}
-            handleCourseCreate={handleCourseCreate}
+            handleCourseCreate={handleSubmit}
             isEdit={true}
           />
         )}
