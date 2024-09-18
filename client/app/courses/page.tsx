@@ -17,7 +17,7 @@ const PageContent = (props: Props) => {
   const searchParams = useSearchParams();
   const search = searchParams?.get("title");
   const { data, isLoading } = useGetUsersAllCoursesQuery(undefined, {});
-  const { data: categoriesData } = useGetHeroDataQuery("Categories", {});
+  const { data: categoriesData } = useGetHeroDataQuery("categories", {});
 
   const [route, setRoute] = useState("Login");
   const [open, setOpen] = useState(false);
@@ -43,7 +43,7 @@ const PageContent = (props: Props) => {
     }
   }, [data, category, search]);
 
-  const categories = categoriesData?.layout?.categories;
+  const categories = categoriesData?.categories;
 
   return (
     <div>
