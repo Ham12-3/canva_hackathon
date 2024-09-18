@@ -32,7 +32,7 @@ const Profile: FC<Props> = ({ user }) => {
   const logOutHandler = async () => {
     setLogout(true);
 
-    refetch();
+    redirect("/");
   };
 
   if (typeof window !== "undefined") {

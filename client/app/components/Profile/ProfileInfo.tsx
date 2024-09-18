@@ -9,6 +9,7 @@ import {
 } from "../../../redux/features/user/userApi";
 import { useLoadUserQuery } from "@/redux/features/api/apiSlice";
 import toast from "react-hot-toast";
+import { redirect } from "next/navigation";
 
 type Props = {
   avatar: string | null;
@@ -37,7 +38,7 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
         if (fileReader.readyState === 2) {
           const base64String = fileReader.result as string;
           await updateAvatar({ avatar: base64String });
-          refetchUser(); // Refetch user data to get the latest updates
+          redirect("/"); // Redirect to the home page
           setLocalAvatar(base64String); // Update local avatar state immediately
         }
       };
@@ -59,7 +60,7 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
     e.preventDefault();
     if (name !== "") {
       await editProfile({ name });
-      refetchUser(); // Refetch user data to get the latest updates
+      redirect("/"); // Redirect to the home page
     }
   };
 
