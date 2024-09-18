@@ -37,6 +37,7 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
         if (fileReader.readyState === 2) {
           const base64String = fileReader.result as string;
           await updateAvatar({ avatar: base64String });
+          refetchUser(); // Refetch user data to get the latest updates
           setLocalAvatar(base64String); // Update local avatar state immediately
         }
       };
@@ -58,6 +59,7 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
     e.preventDefault();
     if (name !== "") {
       await editProfile({ name });
+      refetchUser(); // Refetch user data to get the latest updates
     }
   };
 
