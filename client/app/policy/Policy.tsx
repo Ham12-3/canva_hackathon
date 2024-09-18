@@ -5,45 +5,46 @@ type Props = {};
 
 const Policy = (props: Props) => {
   return (
-    <div>
-      <div
-        className={`w-[95%] 800px:w-[92%] m-auto py-2 dark:text-white text-black px-3`}
-      >
-        <h1 className={`${styles.title} !text-start pt-2`}>
-          Platform Terms and Condition
-        </h1>
-      </div>
-      <div
-        style={{ listStyle: "unset", marginLeft: "15px" }}
-        className="w-[95%] 800px:w-[85%] m-auto"
-      >
-        <p className="py-2 ml-[-15px] text-[-16px] font-Poppins leading-8 whitespace-pre-line">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem pariatur
-          placeat maxime? Et facilis dicta quod at sunt, voluptas fugiat
-          voluptatum deserunt numquam rerum rem eos? Tempora sequi excepturi
-          modi?
+    <div className="text-black dark:text-white">
+      <br />
+      <h1 className={`${styles.title} 800px:!text-[45px]`}>Terms and Policy</h1>
+      <br />
+      <div className="w-[95%] 800px:w-[85%] m-auto text-black dark:text-white">
+        <p className="text-[18px] font-Poppins">
+          Lacodemy is an AI edtech app for helping students learn better and
+          also programmers as well. We provide courses on programming, web
+          development, mobile development, and other technical courses. We also
+          provide a platform for students to learn and practice programming. We
+          have a community of programmers who are willing to help you learn and
+          grow in your programming career. We provide a platform for students to
+          learn.
+          <br />
+          <br />
+          We provide a platform for students to learn and practice programming.
+          We have a community of programmers who are willing to help you learn
+          and grow in your programming career. We provide a platform for
+          students to learn and practice programming. We have a community of
+          programmers who are willing to help you learn and grow in your
+          programming career. We provide a platform for students to learn and
+          practice programming. We have a community of programmers who are
+          willing to help you learn and grow in your programming career.
+          <br />
+          <br />
+          We provide a platform for students to learn and practice programming.
+          We have a community of programmers who are willing to help you learn
+          and grow in your programming career. We provide a platform for
+          students to learn and practice programming. We have a community of
+          programmers who are willing to help you learn and grow in your
+          programming career. We provide a platform for students to learn and
+          practice programming.
+          <br />
+          <br />
         </p>
         <br />
-        <p className="py-2 ml-[-15px] text-[-16px] font-Poppins leading-8 whitespace-pre-line">
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Commodi
-          omnis labore corporis obcaecati pariatur repudiandae vitae quos sunt
-          dolorem iusto perspiciatis placeat, earum, nobis non, rerum aperiam
-          reiciendis expedita porro.
-        </p>
+
         <br />
-        <p className="py-2 ml-[-15px] text-[-16px] font-Poppins leading-8 whitespace-pre-line">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Est
-          obcaecati eveniet voluptas alias. Aliquid consequatur, assumenda,
-          aliquam laborum debitis, aut itaque nesciunt voluptatem esse enim
-          aspernatur. Velit est consequuntur vitae.
-        </p>
         <br />
-        <p className="py-2 ml-[-15px] text-[-16px] font-Poppins leading-8 whitespace-pre-line">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem pariatur
-          placeat maxime? Et facilis dicta quod at sunt, voluptas fugiat
-          voluptatum deserunt numquam rerum rem eos? Tempora sequi excepturi
-          modi?
-        </p>
+        <br />
       </div>
     </div>
   );

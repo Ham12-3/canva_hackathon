@@ -10,7 +10,7 @@ const About = () => {
         What is <span className="text-gradient">Lacodemy?</span>
       </h1>
       <br />
-      <div className="w-[95%] 800px:w-[85%] m-auto">
+      <div className="w-[95%] 800px:w-[85%] m-auto text-black dark:text-white">
         <p className="text-[18px] font-Poppins">
           Lacodemy is an AI edtech app for helping students learn better and
           also programmers as well. We provide courses on programming, web
