@@ -35,7 +35,7 @@ const Profile: FC<Props> = ({ user }) => {
   const logOutHandler = async () => {
     setLogout(true);
     await signOut({ redirect: false }); // Prevent automatic redirection by NextAuth
-    refetch();
+    await refetch();
     redirect("/");
   };
 
