@@ -24,6 +24,8 @@ const PageContent = (props: Props) => {
   const [courses, setCourses] = useState<any[]>([]);
   const [category, setCategory] = useState("All");
 
+  console.log(categoriesData, "categoriesData");
+
   useEffect(() => {
     if (data) {
       if (category === "All") {
