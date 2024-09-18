@@ -13,7 +13,10 @@ const Policy = (props: Props) => {
           Platform Terms and Condition
         </h1>
       </div>
-      <ul style={{ listStyle: "unset", marginLeft: "15px" }}>
+      <ul
+        style={{ listStyle: "unset", marginLeft: "15px" }}
+        className="w-[95%] 800px:w-[85%] m-auto"
+      >
         <p className="py-2 ml-[-15px] text-[-16px] font-Poppins leading-8 whitespace-pre-line">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem pariatur
           placeat maxime? Et facilis dicta quod at sunt, voluptas fugiat
