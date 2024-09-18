@@ -17,16 +17,16 @@ type Props = {
 
 const ProfileInfo: FC<Props> = ({ avatar, user }) => {
   const [name, setName] = useState(user?.name || "");
+  const [localAvatar, setLocalAvatar] = useState(user?.avatar?.url || avatar); // Local state for avatar
 
-  const [updateAvatar, { isSuccess, error }] = useUpdateAvatarMutation();
+  const [updateAvatar, { isSuccess: avatarSuccess, error: avatarError }] =
+    useUpdateAvatarMutation();
 
-  const [editProfile, { isSuccess: success, error: updateError }] =
+  const [editProfile, { isSuccess: profileSuccess, error: profileError }] =
     useEditProfileMutation();
 
-  const [loadUser, setLoadUser] = useState(false);
-
-  const {} = useLoadUserQuery(undefined, {
-    skip: !loadUser,
+  const { refetch: refetchUser } = useLoadUserQuery(undefined, {
+    skip: true, // Skip initial query until manually called
   });
 
   const imageHandler = async (e: any) => {
@@ -36,8 +36,8 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
       fileReader.onload = async () => {
         if (fileReader.readyState === 2) {
           const base64String = fileReader.result as string;
-          // Send base64 string to the server
           await updateAvatar({ avatar: base64String });
+          setLocalAvatar(base64String); // Update local avatar state immediately
         }
       };
       fileReader.readAsDataURL(file);
@@ -45,35 +45,29 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
   };
 
   useEffect(() => {
-    if (isSuccess || success) {
-      setLoadUser(true);
-    }
-    if (error || updateError) {
-      console.error("Error updating avatar:", error); // Debugging
-    }
-    if (success) {
+    if (avatarSuccess || profileSuccess) {
       toast.success("Profile updated successfully");
+      refetchUser(); // Refetch user data to get the latest updates
     }
-  }, [isSuccess, error, success, updateError]);
+    if (avatarError || profileError) {
+      toast.error("An error occurred while updating.");
+    }
+  }, [avatarSuccess, profileSuccess, avatarError, profileError, refetchUser]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (name !== "") {
-      await editProfile({
-        name: name,
-      });
+      await editProfile({ name });
     }
   };
-
-  const imageSrc = user?.avatar?.url || avatar;
 
   return (
     <div className="w-full flex flex-col items-center">
       <div className="relative">
         <div className="w-[120px] h-[120px] cursor-pointer border-[3px] border-[#37a39a] rounded-full overflow-hidden">
-          {imageSrc ? (
+          {localAvatar ? (
             <Image
-              src={imageSrc}
+              src={localAvatar} // Use localAvatar for instant update
               alt="User Avatar"
               objectFit="cover"
               className="rounded-full"
@@ -104,7 +98,10 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
         <form onSubmit={handleSubmit}>
           <div className="800px:w-[50%] m-auto block pb-4">
             <div className="w-full mb-4">
-              <label htmlFor="fullName" className="block pb-2">
+              <label
+                htmlFor="fullName"
+                className="block pb-2 dark:text-white text-black"
+              >
                 Full Name
               </label>
               <input
@@ -118,7 +115,10 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
             </div>
 
             <div className="w-full mb-4">
-              <label htmlFor="email" className="block pb-2">
+              <label
+                htmlFor="email"
+                className="block pb-2 dark:text-white text-black"
+              >
                 Email Address
               </label>
               <input

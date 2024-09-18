@@ -20,7 +20,9 @@ const Profile: FC<Props> = ({ user }) => {
   const [logout, setLogout] = useState(false);
   const [courses, setCourses] = useState([]);
 
-  const { data, isLoading } = useGetUsersAllCoursesQuery(undefined, {});
+  const { data, isLoading, refetch } = useGetUsersAllCoursesQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
   const {} = useLogOutQuery(undefined, {
     skip: !logout,
   });
@@ -28,6 +30,7 @@ const Profile: FC<Props> = ({ user }) => {
   const logOutHandler = async () => {
     setLogout(true);
     await signOut({ redirect: false }); // Prevent automatic redirection by NextAuth
+    refetch();
     redirect("/");
   };
 
