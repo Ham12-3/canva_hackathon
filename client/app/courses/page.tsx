@@ -24,25 +24,27 @@ const PageContent = (props: Props) => {
   const [courses, setCourses] = useState<any[]>([]);
   const [category, setCategory] = useState("All");
 
-  console.log(categoriesData, "categoriesData");
-  console.log(data, "data");
   const categories = categoriesData?.layout?.categories;
+
   useEffect(() => {
     if (data) {
-      if (category === "All") {
-        setCourses(data?.courses);
-      } else {
-        setCourses(
-          data?.courses.filter((item: any) => item.category === categories)
+      // Filter courses by category
+      let filteredCourses = data?.courses;
+
+      if (category !== "All") {
+        filteredCourses = filteredCourses.filter(
+          (item: any) => item.category === category
         );
       }
+
+      // If search is active, filter by search query
       if (search) {
-        setCourses(
-          data?.courses.filter((item: any) =>
-            item.name.toLowerCase().includes(search.toLowerCase())
-          )
+        filteredCourses = filteredCourses.filter((item: any) =>
+          item.name.toLowerCase().includes(search.toLowerCase())
         );
       }
+
+      setCourses(filteredCourses);
     }
   }, [data, category, search]);
 
@@ -93,12 +95,13 @@ const PageContent = (props: Props) => {
                   </div>
                 ))}
             </div>
+            {/* Show no courses found message if no courses match */}
             {courses && courses.length === 0 && (
               <p
                 className={`${styles.label} justify-center min-h-[50vh] flex items-center`}
               >
                 {search
-                  ? "No courses found!"
+                  ? "No courses found matching the search query!"
                   : "No courses found in this category. Please try another one."}
               </p>
             )}
