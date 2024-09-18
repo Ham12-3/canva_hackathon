@@ -45,7 +45,7 @@ const PageContent = (props: Props) => {
     }
   }, [data, category, search]);
 
-  const categories = categoriesData?.categories;
+  const categories = categoriesData?.layout?.categories;
 
   return (
     <div>
