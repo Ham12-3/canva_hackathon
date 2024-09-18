@@ -24,11 +24,8 @@ const Profile: FC<Props> = ({ user }) => {
   const { data, isLoading } = useGetUsersAllCoursesQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });
-  const { refetch } = useLoadUserQuery(undefined, {
-    skip: true, // Skip initial query until manually called
-  });
 
-  const {} = useLogOutQuery(undefined, {
+  const { refetch } = useLogOutQuery(undefined, {
     skip: !logout,
   });
 
