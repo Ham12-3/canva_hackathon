@@ -25,6 +25,7 @@ const PageContent = (props: Props) => {
   const [category, setCategory] = useState("All");
 
   console.log(categoriesData, "categoriesData");
+  console.log(data, "data");
 
   useEffect(() => {
     if (data) {
