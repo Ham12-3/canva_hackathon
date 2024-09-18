@@ -37,7 +37,7 @@ const CoursePreview: FC<Props> = ({
         <div className="flex items-center mt-4">
           <h1>{courseData?.price === 0 ? "Free" : `${courseData?.price}£`}</h1>
           <h5 className="pl-3 text-[20px] mt-2 line-through opacity-80">
-            {courseData?.estimatedPrice}£
+            £{courseData?.estimatedPrice}
           </h5>
           <h4 className="pl-5 pt-4 text-[22px]">
             {discountPercentagePrice}% Off
@@ -48,7 +48,7 @@ const CoursePreview: FC<Props> = ({
           <div
             className={`${styles.button} !w-[180px] my-3 font-Poppins !bg-[crimson] cursor-not-allowed`}
           >
-            Buy Now {courseData?.price}£
+            Buy Now £{courseData?.price}
           </div>
         </div>
 

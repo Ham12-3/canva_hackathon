@@ -49,6 +49,7 @@ export const editCourse = CatchAsyncError(
       const data = req.body;
       const courseId = req.params.id;
       console.log(data, "father data");
+      console.log(courseId, "courseId");
 
       const thumbnail = data.thumbnail;
       const courseData = (await CourseModel.findById(courseId)) as any;
