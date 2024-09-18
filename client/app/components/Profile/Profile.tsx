@@ -8,6 +8,7 @@ import ProfileInfo from "./ProfileInfo";
 import ChangePassword from "./ChangePassword";
 import CourseCard from "../Course/CourseCard";
 import { useGetUsersAllCoursesQuery } from "@/redux/features/courses/coursesApi";
+import { useLoadUserQuery } from "@/redux/features/api/apiSlice";
 
 type Props = {
   user: any;
@@ -20,9 +21,13 @@ const Profile: FC<Props> = ({ user }) => {
   const [logout, setLogout] = useState(false);
   const [courses, setCourses] = useState([]);
 
-  const { data, isLoading, refetch } = useGetUsersAllCoursesQuery(undefined, {
+  const { data, isLoading } = useGetUsersAllCoursesQuery(undefined, {
     refetchOnMountOrArgChange: true,
   });
+  const { refetch } = useLoadUserQuery(undefined, {
+    skip: true, // Skip initial query until manually called
+  });
+
   const {} = useLogOutQuery(undefined, {
     skip: !logout,
   });
