@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, use, useEffect, useState } from "react";
 import SideBarProfile from "./SideBarProfile";
 import { useLogOutQuery } from "../../../redux/features/auth/authApi";
 import { signOut } from "next-auth/react";
@@ -25,7 +25,7 @@ const Profile: FC<Props> = ({ user }) => {
     refetchOnMountOrArgChange: true,
   });
 
-  const { refetch } = useLogOutQuery(undefined, {
+  const { refetch, isSuccess } = useLogOutQuery(undefined, {
     skip: !logout,
   });
 
@@ -42,6 +42,10 @@ const Profile: FC<Props> = ({ user }) => {
   }
 
   useEffect(() => {
+    if (isSuccess) {
+      toast.success("Logged out successfully");
+      redirect("/");
+    }
     if (data) {
       const filteredCourses = user.courses
         .map((userCourse: any) =>

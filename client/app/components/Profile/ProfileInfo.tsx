@@ -38,7 +38,7 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
         if (fileReader.readyState === 2) {
           const base64String = fileReader.result as string;
           await updateAvatar({ avatar: base64String });
-          redirect("/"); // Redirect to the home page
+          redirect("/profile"); // Redirect to the home page
           setLocalAvatar(base64String); // Update local avatar state immediately
         }
       };
@@ -49,7 +49,7 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
   useEffect(() => {
     if (avatarSuccess || profileSuccess) {
       toast.success("Profile updated successfully");
-      refetchUser(); // Refetch user data to get the latest updates
+      redirect("/profile"); // Refetch user data to get the latest updates
     }
     if (avatarError || profileError) {
       toast.error("An error occurred while updating.");
@@ -60,7 +60,7 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
     e.preventDefault();
     if (name !== "") {
       await editProfile({ name });
-      redirect("/"); // Redirect to the home page
+      redirect("/profile"); // Redirect to the home page
     }
   };
 
