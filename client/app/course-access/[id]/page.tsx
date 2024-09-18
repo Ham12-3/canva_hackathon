@@ -16,7 +16,7 @@ const Page = ({ params }: Props) => {
   const { data: contentData, isLoading: supportLoader } =
     useGetCourseContentQuery(id);
   console.log(contentData, "contentData");
-  console.log(data, "data");
+  console.log(data.user.courses.courseId, "data");
   console.log(id, "id");
   useEffect(() => {
     if (data) {
