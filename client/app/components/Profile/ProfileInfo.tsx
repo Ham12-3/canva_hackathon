@@ -39,6 +39,7 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
           const base64String = fileReader.result as string;
           await updateAvatar({ avatar: base64String });
           redirect("/profile"); // Redirect to the home page
+          window.location.reload();
           setLocalAvatar(base64String); // Update local avatar state immediately
         }
       };
@@ -61,6 +62,7 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
     if (name !== "") {
       await editProfile({ name });
       redirect("/profile"); // Redirect to the home page
+      window.location.reload();
     }
   };
 

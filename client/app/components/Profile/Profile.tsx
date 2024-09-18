@@ -33,6 +33,7 @@ const Profile: FC<Props> = ({ user }) => {
     setLogout(true);
 
     redirect("/");
+    window.location.reload();
   };
 
   if (typeof window !== "undefined") {
