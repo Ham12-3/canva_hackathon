@@ -26,14 +26,14 @@ const PageContent = (props: Props) => {
 
   console.log(categoriesData, "categoriesData");
   console.log(data, "data");
-
+  const categories = categoriesData?.layout?.categories;
   useEffect(() => {
     if (data) {
       if (category === "All") {
         setCourses(data?.courses);
       } else {
         setCourses(
-          data?.courses.filter((item: any) => item.category === category)
+          data?.courses.filter((item: any) => item.category === categories)
         );
       }
       if (search) {
@@ -45,8 +45,6 @@ const PageContent = (props: Props) => {
       }
     }
   }, [data, category, search]);
-
-  const categories = categoriesData?.layout?.categories;
 
   return (
     <div>
