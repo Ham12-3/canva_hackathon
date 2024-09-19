@@ -11,7 +11,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn --transpile-only index.ts",
     "start": "node build/index.js",
-    "build": "tsc "
+    
+     "build": "tsc && copyfiles -u 1 ./mails/**/* build/mails"
   },
   "author": "",
   "license": "ISC",
@@ -50,7 +51,6 @@
     "@types/mongoose": "^5.11.97",
     "@types/node": "^22.5.5",
     "@types/nodemailer": "^6.4.15",
-    "@types/socket.io": "^3.0.2",
-    "copyfiles": "^2.4.1"
+    "@types/socket.io": "^3.0.2"
   }
 }
