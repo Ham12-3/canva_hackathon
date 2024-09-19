@@ -13,7 +13,6 @@ import { useLoginMutation } from "../../../redux/features/auth/authApi";
 import { useRefreshTokenQuery } from "@/redux/features/api/apiSlice";
 import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
-import { useSocialAuthMutation } from "@/redux/features/auth/authApi";
 
 type Props = {
   setRoute: (route: string) => void;
@@ -33,35 +32,6 @@ const Login: FC<Props> = ({ setRoute, setOpen, refetch }) => {
 
   const [login, { isSuccess, isError, data, error }] = useLoginMutation();
   const { refetch: refreshToken } = useRefreshTokenQuery(); // Use the query to refresh token
-  const [socialAuth, { isLoading }] = useSocialAuthMutation();
-
-  const handleSocialLogin = async (provider: string) => {
-    try {
-      const result = await signIn(provider, { redirect: false });
-
-      if (result?.error) {
-        throw new Error(result.error);
-      }
-
-      // Assuming you get user details like email, name, avatar from NextAuth
-      console.log(result, "result");
-      // const user = result?.user;
-
-      // if (user) {
-      //   await socialAuth({
-      //     email: user.email,
-      //     name: user.name,
-      //     avatar: user.image,
-      //   }).unwrap();
-
-      //   setOpen(false);
-      //   refetch();
-      // }
-    } catch (err) {
-      console.error("Social login failed:", err);
-      toast.error("Social login failed. Please try again.");
-    }
-  };
 
   const formik = useFormik({
     initialValues: { email: "", password: "" },
@@ -169,12 +139,12 @@ const Login: FC<Props> = ({ setRoute, setOpen, refetch }) => {
           <FcGoogle
             size={30}
             className="cursor-pointer mr-2"
-            onClick={() => handleSocialLogin("google")}
+            onClick={() => signIn("google")}
           />
           <AiFillGithub
             size={30}
             className="cursor-pointer ml-2"
-            onClick={() => handleSocialLogin("github")}
+            onClick={() => signIn("github")}
           />
         </div>
         <h5 className="text-center pt-4 font-Poppins text-[14px]">
