@@ -44,7 +44,7 @@ const Login: FC<Props> = ({ setRoute, setOpen, refetch }) => {
       }
 
       // Assuming you get user details like email, name, avatar from NextAuth
-      console.log(result);
+      console.log(result, "result");
       // const user = result?.user;
 
       // if (user) {
