@@ -2,8 +2,8 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
-    "rootDir": "../server",
-    "outDir": "./build",
+    "rootDir": "./",           // Keep rootDir as the current directory (inside server)
+    "outDir": "./build",       // Output compiled files to build directory
     "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -15,11 +15,11 @@
     "downlevelIteration": true
   },
   "include": [
-    "./**/*.ts",      /* Include all TypeScript files in the project. */
-    "./**/*.ejs"      /* Optionally include .ejs files for visibility in IDEs. */
+    "./**/*.ts",               // Include all TypeScript files in the server directory
+    "./mails/**/*.ejs"         // Adjust path to target the .ejs files inside 'mails' (if that is where they reside)
   ],
   "exclude": [
-    "node_modules",   /* Exclude node_modules from the compilation. */
-    "build"           /* Exclude the build directory to prevent re-compilation of already emitted files. */
+    "node_modules",            // Exclude node_modules from compilation
+    "build"                    // Exclude build directory to prevent re-compilation
   ]
 }
