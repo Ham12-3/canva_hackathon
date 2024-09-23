@@ -23,6 +23,7 @@ const Page: FC<Props> = (props) => {
     refetch,
   } = useLoadUserQuery(undefined, {});
   const user = userData?.user;
+  console.log(user), "the user";
   return (
     <div className="min-h-screen">
       <Protected>
