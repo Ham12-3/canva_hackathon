@@ -8,22 +8,24 @@ import OrderModel, { IOrder } from "../models/order.model";
 
 import CourseModel, { ICourse } from "../models/course.model";
 import userModel from "../models/user.model";
-
+import OrderConfirmationMail from "../mails/order-confirmation-mail";
 import path from "path";
 
 import ejs, { name } from "ejs";
 import sendMail from "../utils/sendMail";
+import { renderToStaticMarkup } from "react-dom/server";
 
 import NotificationModel from "../models/notification.model";
 import { getAllOrdersService, newOrder } from "../services/order.service";
 import { redis } from "../utils/redis";
+import React from "react";
 
 require("dotenv").config();
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 // Create order
-
+// Create order
 export const createOrder = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -35,23 +37,19 @@ export const createOrder = CatchAsyncError(
           paymentIntentId
         );
 
-        // If the payment is not successful, throw an error
         if (paymentIntent.status !== "succeeded") {
           return next(new ErrorHandler("Payment not authorized", 400));
         }
       }
 
       const user = await userModel.findById(req.user?._id);
-      console.log(req);
       if (!user) {
         return next(new ErrorHandler("User not found", 404));
       }
 
-      // Check if user has already purchased the course
       const courseExistUser = user.courses.some(
         (course: any) => course.courseId === courseId
       );
-
       if (courseExistUser) {
         return next(
           new ErrorHandler("You have already purchased this course", 400)
@@ -59,20 +57,19 @@ export const createOrder = CatchAsyncError(
       }
 
       const course: ICourse | null = await CourseModel.findById(courseId);
-
       if (!course) {
         return next(new ErrorHandler("Course not found", 404));
       }
 
       // Create order data
-      const data: any = {
+      const orderData: any = {
         courseId: course._id,
         userId: user._id,
         payment_info,
       };
 
       // Create the order
-      await newOrder(data, res, next);
+      await newOrder(orderData, res, next);
 
       // Prepare mail data
       const mailData = {
@@ -93,9 +90,8 @@ export const createOrder = CatchAsyncError(
       };
 
       // Render and send email
-      const html = await ejs.renderFile(
-        path.join(__dirname, "../mails/order-confirmation.ejs"),
-        mailData
+      const html = renderToStaticMarkup(
+        React.createElement(OrderConfirmationMail, { order: mailData.order })
       );
 
       try {
@@ -103,8 +99,7 @@ export const createOrder = CatchAsyncError(
           await sendMail({
             email: user.email,
             subject: "Order Confirmation",
-            template: "order-confirmation.ejs",
-            data: mailData,
+            html, // Send the rendered HTML as the email body
           });
         }
       } catch (err: any) {
@@ -115,7 +110,7 @@ export const createOrder = CatchAsyncError(
       user.courses.push({ courseId: course._id } as any);
       await user.save();
 
-      // Cache user data in Redis after successfully saving it
+      // Cache user data in Redis
       await redis.set(req.user?.id, JSON.stringify(user));
 
       // Increment course purchased count

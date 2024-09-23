@@ -16,8 +16,9 @@
     "downlevelIteration": true                  // Enable downlevel iteration for ES2015+ features
   },
   "include": [
-    "./**/*.ts",                               // Include all TypeScript files in the server directory
-    "mails/*.ejs"                        // Adjust path to target .ejs files inside 'mails'
+    "./**/*.ts",                               // Include all TypeScript files in the server directory.
+    "./mails/**.tsx"
+                          // Adjust path to target .ejs files inside 'mails'
   ],
   "exclude": [
     "node_modules",                           // Exclude node_modules from compilation

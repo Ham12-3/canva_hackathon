@@ -1,4 +1,4 @@
-# Lacodemy AI Edtech App
+# Lacodemy Edtech App
 
 ## Introduction
 
