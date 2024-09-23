@@ -36,29 +36,48 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
       const fileReader = new FileReader();
       fileReader.onload = async () => {
         if (fileReader.readyState === 2) {
-          const base64String = fileReader.result as string;
-          await updateAvatar({ avatar: base64String });
-
-          setLocalAvatar(base64String); // Update local avatar state immediately
+          try {
+            const base64String = fileReader.result as string;
+            await updateAvatar({ avatar: base64String });
+            setLocalAvatar(base64String); // Update local avatar state immediately
+          } catch (error) {
+            toast.error("Failed to update avatar.");
+          }
         }
       };
+      fileReader.onerror = () => {
+        toast.error("Error reading file.");
+      };
       fileReader.readAsDataURL(file);
+    } else {
+      toast.error("No file selected.");
     }
   };
-
   useEffect(() => {
-    if (avatarSuccess || profileSuccess) {
-      toast.success("Profile updated successfully");
+    if (avatarSuccess) {
+      console.log("Avatar updated successfully");
     }
-    if (avatarError || profileError) {
-      toast.error("An error occurred while updating.");
+    if (profileSuccess) {
+      console.log("Profile updated successfully");
     }
-  }, [avatarSuccess, profileSuccess, avatarError, profileError, refetchUser]);
+    if (avatarError) {
+      console.error("Error updating avatar:", avatarError);
+    }
+    if (profileError) {
+      console.error("Error updating profile:", profileError);
+    }
+  }, [avatarSuccess, profileSuccess, avatarError, profileError]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     if (name !== "") {
-      await editProfile({ name });
+      try {
+        await editProfile({ name });
+
+        refetchUser(); // Ensure user data is refetched after update
+      } catch (error) {
+        toast.error("Failed to update profile");
+      }
     }
   };
 
@@ -68,12 +87,12 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
         <div className="w-[120px] h-[120px] cursor-pointer border-[3px] border-[#37a39a] rounded-full overflow-hidden">
           {localAvatar ? (
             <Image
-              src={localAvatar} // Use localAvatar for instant update
+              src={localAvatar}
               alt="User Avatar"
-              objectFit="cover"
               className="rounded-full"
               width={120}
               height={120}
+              style={{ objectFit: "cover" }} // Replace objectFit with style prop
             />
           ) : (
             <HiOutlineUserCircle className="w-full h-full text-gray-400" />
@@ -127,7 +146,6 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
                 type="text"
                 readOnly
                 className={`${styles.input} w-full`}
-                required
                 value={user?.email}
               />
             </div>

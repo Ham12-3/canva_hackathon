@@ -94,7 +94,7 @@ const SideBarProfile: FC<Props> = ({
 
       {/* Admin Dashboard  */}
 
-      {user.role === "admin" && (
+      {user?.role === "admin" && (
         <Link
           className={`w-full flex items-center cursor-pointer rounded-md shadow-sm transition-all duration-300 ease-in-out mt-6 ${
             active === 6
