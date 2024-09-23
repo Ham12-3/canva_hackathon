@@ -44,7 +44,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   });
 
   useEffect(() => {
-    if (!userData && sessionData) {
+    if (!userData && sessionData && !logout) {
       socialAuth({
         email: sessionData?.user?.email,
         name: sessionData?.user?.name,
