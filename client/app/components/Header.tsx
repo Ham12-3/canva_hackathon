@@ -134,14 +134,15 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
                   )}
                 </Link>
               ) : (
-                <HiOutlineUserCircle
-                  size={25}
-                  className="hidden md:block cursor-pointer dark:text-white text-black"
+                <button
                   onClick={() => {
                     setOpen(true);
                     setRoute("Login");
                   }}
-                />
+                  className="px-6 py-3 bg-blue-600 dark:bg-blue-700 text-white font-semibold rounded-full shadow-lg hover:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition duration-300 cursor-pointer hidden md:block"
+                >
+                  Join Us
+                </button>
               )}
             </div>
           </div>
