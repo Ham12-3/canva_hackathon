@@ -53,7 +53,6 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
     }
 
     if (!userData && sessionData) {
-      signOut();
       setLogout(true);
     }
 
