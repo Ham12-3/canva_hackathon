@@ -30,9 +30,8 @@ const Profile: FC<Props> = ({ user }) => {
 
   const logOutHandler = async () => {
     try {
-      await signOut();
-
       setLogout(true);
+      await signOut();
       redirect("/");
     } catch (error: any) {
       toast.error("An error occurred while logging out.");
