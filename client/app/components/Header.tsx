@@ -44,13 +44,13 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   });
 
   useEffect(() => {
-    if (!isLoading && !userData && sessionData) {
-      socialAuth({
-        email: sessionData?.user?.email,
-        name: sessionData?.user?.name,
-        avatar: sessionData?.user?.image,
-      });
-    }
+    // if (!isLoading && !userData && sessionData) {
+    //   socialAuth({
+    //     email: sessionData?.user?.email,
+    //     name: sessionData?.user?.name,
+    //     avatar: sessionData?.user?.image,
+    //   });
+    // }
 
     if (sessionData === null) {
       if (isSuccess) {
