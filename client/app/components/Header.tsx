@@ -9,7 +9,7 @@ import SignUp from "../components/Auth/SignUp";
 import Verification from "./Auth/Verification";
 import { useSelector } from "react-redux";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import {
   useLogOutQuery,
   useSocialAuthMutation,
@@ -52,7 +52,8 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
       });
     }
 
-    if (!userData && sessionData) {
+    if (!userData) {
+      signOut();
       setLogout(true);
     }
 
