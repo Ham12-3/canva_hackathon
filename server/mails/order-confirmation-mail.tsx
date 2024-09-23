@@ -1,28 +1,28 @@
 // OrderConfirmationMail.tsx
-import React from 'react';
+import React from "react";
 
 interface Order {
-_id: string;
-date: string;
-name: string;
-price: number;
+  _id: any;
+  date: string;
+  name: string;
+  price: number;
 }
 
 interface OrderConfirmationMailProps {
-order: Order;
+  order: Order;
 }
 
-const OrderConfirmationMail: React.FC<OrderConfirmationMailProps> = ({ order }) => {
-    return (
+const OrderConfirmationMail: React.FC<OrderConfirmationMailProps> = ({
+  order,
+}) => {
+  return (
     <html lang="en">
-
-        <head>
-            <meta charSet="UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <title>Order Confirmation</title>
-            <style>
-                {
-                    ` body {
+      <head>
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Order Confirmation</title>
+        <style>
+          {` body {
                         font-family: Arial, sans-serif;
                         background-color: #f4f4f4;
                         color: #333;
@@ -109,66 +109,64 @@ const OrderConfirmationMail: React.FC<OrderConfirmationMailProps> = ({ order }) 
                         text-decoration: underline;
                     }
 
-                    `
-                }
-            </style>
-        </head>
+                    `}
+        </style>
+      </head>
 
-        <body>
-            <div className="container">
-                <div className="header">
-                    <h1>Your eLearning Order is Confirmed</h1>
-                    <p>And we're just as excited as you are!</p>
-                </div>
+      <body>
+        <div className="container">
+          <div className="header">
+            <h1>Your eLearning Order is Confirmed</h1>
+            <p>And we're just as excited as you are!</p>
+          </div>
 
-                <div className="order-details">
-                    <h4>Here's what you ordered:</h4>
-                    <table className="order-info">
-                        <tr>
-                            <td>Order #:</td>
-                            <td>{order._id}</td>
-                            <td>Order Date:</td>
-                            <td>{order.date}</td>
-                        </tr>
-                    </table>
+          <div className="order-details">
+            <h4>Here's what you ordered:</h4>
+            <table className="order-info">
+              <tr>
+                <td>Order #:</td>
+                <td>{order._id}</td>
+                <td>Order Date:</td>
+                <td>{order.date}</td>
+              </tr>
+            </table>
 
-                    <table className="order-summary">
-                        <tr>
-                            <td>Item</td>
-                            <td>Qty</td>
-                            <td>Cost</td>
-                        </tr>
-                        <tr>
-                            <td>{order.name}</td>
-                            <td>1</td>
-                            <td>{order.price}</td>
-                        </tr>
-                    </table>
+            <table className="order-summary">
+              <tr>
+                <td>Item</td>
+                <td>Qty</td>
+                <td>Cost</td>
+              </tr>
+              <tr>
+                <td>{order.name}</td>
+                <td>1</td>
+                <td>{order.price}</td>
+              </tr>
+            </table>
 
-                    <table className="order-total">
-                        <tr>
-                            <td>Subtotal:</td>
-                            <td>{order.price}</td>
-                        </tr>
-                        <tr>
-                            <td>Total:</td>
-                            <td>{order.price}</td>
-                        </tr>
-                    </table>
-                </div>
+            <table className="order-total">
+              <tr>
+                <td>Subtotal:</td>
+                <td>{order.price}</td>
+              </tr>
+              <tr>
+                <td>Total:</td>
+                <td>{order.price}</td>
+              </tr>
+            </table>
+          </div>
 
-                <div className="footer">
-                    <p>
-                        If you have any questions about your order, please contact us at{' '}
-                        <a href="mailto:support@Lacodemy.com">support@Lacodemy.com</a>
-                    </p>
-                    <p>&copy; 2024 eLearning. All rights reserved.</p>
-                </div>
-            </div>
-        </body>
-
+          <div className="footer">
+            <p>
+              If you have any questions about your order, please contact us at{" "}
+              <a href="mailto:support@Lacodemy.com">support@Lacodemy.com</a>
+            </p>
+            <p>&copy; 2024 eLearning. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
     </html>
-    );
-    };
+  );
+};
 
-    export default OrderConfirmationMail;
+export default OrderConfirmationMail;

@@ -1,25 +1,26 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
-    "rootDir": "./",           // Keep rootDir as the current directory (inside server)
-    "outDir": "./build",       // Output compiled files to build directory
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "removeComments": true,
-    "noEmit": false,
-    "downlevelIteration": true
+    "target": "ES2020",    
+    "jsx":"react",                    // Target ECMAScript 2020
+    "module": "commonjs",                      // Use CommonJS module system
+    "rootDir": "./",                           // Keep rootDir as the current directory (inside server)
+    "outDir": "./build",                       // Output compiled files to build directory
+    "moduleResolution": "node",                 // Node module resolution strategy
+    "esModuleInterop": true,                   // Enables emit interoperability between CommonJS and ES Modules
+    "allowSyntheticDefaultImports": true,      // Allow synthetic default imports
+    "forceConsistentCasingInFileNames": true, // Enforce consistent file naming
+    "strict": true,                            // Enable all strict type-checking options
+    "skipLibCheck": true,                      // Skip type checking of declaration files
+    "removeComments": true,                    // Remove comments from output
+    "noEmit": false,                           // Allow emitting output files
+    "downlevelIteration": true                  // Enable downlevel iteration for ES2015+ features
   },
   "include": [
-    "./**/*.ts",               // Include all TypeScript files in the server directory
-    "./mails/**/*.ejs"         // Adjust path to target the .ejs files inside 'mails' (if that is where they reside)
+    "./**/*.ts",                               // Include all TypeScript files in the server directory
+    "mails/*.ejs"                        // Adjust path to target .ejs files inside 'mails'
   ],
   "exclude": [
-    "node_modules",            // Exclude node_modules from compilation
-    "build"                    // Exclude build directory to prevent re-compilation
+    "node_modules",                           // Exclude node_modules from compilation
+    "build"                                   // Exclude build directory to prevent re-compilation
   ]
 }

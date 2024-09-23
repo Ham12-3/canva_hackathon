@@ -5,7 +5,9 @@ import userModel, { IUser } from "../models/user.model";
 import ErrorHandler from "../utils/ErrorHandler";
 
 import { CatchAsyncError } from "../middleware/catchAsyncError";
+import { renderToStaticMarkup } from "react-dom/server";
 
+import ActivationMail from "../mails/activation-mail";
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import ejs from "ejs";
 
@@ -25,6 +27,7 @@ import {
 } from "../services/user.service";
 
 import cloudinary from "cloudinary";
+import React from "react";
 
 require("dotenv").config();
 
@@ -41,7 +44,7 @@ interface IActivationToken {
   token: string;
   activationCode: string;
 }
-
+// Register User
 export const registrationUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -61,19 +64,19 @@ export const registrationUser = CatchAsyncError(
       const activationToken = createActivationToken(user);
       const activationCode = activationToken.activationCode;
 
-      const data = { user: { name: user.name }, activationCode };
-
-      const html = await ejs.renderFile(
-        path.join(process.cwd(), "../mails/activation-mail.ejs"),
-        data
+      // Render the ActivationMail component to static HTML
+      const html = renderToStaticMarkup(
+        React.createElement(ActivationMail, {
+          userName: user.name,
+          activationCode,
+        })
       );
 
       try {
         await sendMail({
           email: user.email,
           subject: "Account Activation",
-          template: "activation-mail.ejs",
-          data: { user: user.name, activationCode },
+          html, // Use the rendered HTML
         });
 
         res.status(200).json({

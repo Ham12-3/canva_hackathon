@@ -1,5 +1,6 @@
 import { NextFunction, Request, response, Response } from "express";
 import axios from "axios"; // Import the 'axios' library
+import React from "react";
 
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 
@@ -16,6 +17,9 @@ import ejs from "ejs";
 import sendMail from "../utils/sendMail";
 import NotificationModel from "../models/notification.model";
 
+import { renderToStaticMarkup } from "react-dom/server";
+
+import QuestionReplyMail from "../mails/question-reply-mail";
 // upload course
 
 export const uploadCourse = CatchAsyncError(
@@ -335,16 +339,14 @@ export const addAnswer = CatchAsyncError(
           title: courseContent.title,
         };
 
-        const html = await ejs.renderFile(
-          path.join(__dirname, "../mails/question-reply.ejs"),
-          data
+        const html = renderToStaticMarkup(
+          React.createElement(QuestionReplyMail, data)
         );
         try {
           await sendMail({
             email: question.user.email,
             subject: "Question Reply",
-            template: "question-reply.ejs",
-            data,
+            html, // Send the rendered HTML as the email body
           });
         } catch (err: any) {
           return next(new ErrorHandler(err.message, 500));
@@ -526,8 +528,7 @@ export const generateVideoUrl = CatchAsyncError(
     try {
       const { videoId } = req.body;
       const response = await axios.post(
-        `
-        https://dev.vdocipher.com/api/videos/${videoId}/otp`,
+        `https://dev.vdocipher.com/api/videos/${videoId}/otp`,
         { ttl: 300 },
         {
           headers: {
