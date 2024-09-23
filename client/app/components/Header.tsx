@@ -52,7 +52,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
       });
     }
 
-    if (!sessionData && !userData && !isLoading) {
+    if (!userData) {
       setLogout(true);
     }
 
