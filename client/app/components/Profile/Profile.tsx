@@ -30,7 +30,7 @@ const Profile: FC<Props> = ({ user }) => {
 
   const logOutHandler = async () => {
     try {
-      await signOut();
+      await signOut({ redirect: false });
 
       setLogout(true);
       redirect("/");
