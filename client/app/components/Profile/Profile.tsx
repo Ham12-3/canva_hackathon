@@ -7,6 +7,7 @@ import ProfileInfo from "./ProfileInfo";
 import ChangePassword from "./ChangePassword";
 import CourseCard from "../Course/CourseCard";
 import { useGetUsersAllCoursesQuery } from "@/redux/features/courses/coursesApi";
+import { redirect } from "next/navigation";
 
 type Props = {
   user: any;
@@ -23,12 +24,14 @@ const Profile: FC<Props> = ({ user }) => {
     refetchOnMountOrArgChange: true,
   });
 
-  const { isSuccess, isError } = useLogOutQuery(undefined, {
-    skip: !logout,
+  const {} = useLogOutQuery(undefined, {
+    skip: !logout ? true : false,
   });
 
   const logOutHandler = async () => {
     setLogout(true);
+    await signOut();
+    redirect("/");
 
     // Sign out with no automatic redirect
 
@@ -36,14 +39,6 @@ const Profile: FC<Props> = ({ user }) => {
   };
 
   useEffect(() => {
-    if (isSuccess) {
-      toast.success("Logged out successfully!");
-      // Optional: Refresh the page to clear out any user state
-      window.location.reload();
-    }
-    if (isError) {
-      toast.error("Failed to log out. Please try again.");
-    }
     if (data) {
       const filteredCourses = user.courses
         .map((userCourse: any) =>
@@ -52,11 +47,15 @@ const Profile: FC<Props> = ({ user }) => {
         .filter((course: any) => course !== undefined);
       setCourses(filteredCourses);
     }
-  }, [isSuccess, isError, data]);
+  }, [data]);
 
   if (typeof window !== "undefined") {
     window.addEventListener("scroll", () => {
-      setScroll(window.scrollY > 85);
+      if (window.scrollY > 85) {
+        setScroll(true);
+      } else {
+        setScroll(false);
+      }
     });
   }
 

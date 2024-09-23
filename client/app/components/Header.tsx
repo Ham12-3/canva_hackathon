@@ -35,13 +35,12 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
     isLoading,
     refetch,
   } = useLoadUserQuery(undefined, {});
+  const [logout, setLogout] = useState(false);
 
   const { data: sessionData, status } = useSession();
   const [socialAuth, { isSuccess }] = useSocialAuthMutation();
-  const [logout, setLogout] = useState(false);
-
-  useLogOutQuery(undefined, {
-    skip: !logout,
+  const {} = useLogOutQuery(undefined, {
+    skip: !logout ? true : false,
   });
 
   useEffect(() => {
@@ -56,7 +55,15 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
     if (!sessionData && !isLoading && !userData) {
       setLogout(true);
     }
-  }, [sessionData, userData, isLoading]);
+    if (sessionData === null) {
+      if (isSuccess) {
+        toast.success("Logged in successfully");
+      }
+    }
+    if (sessionData === null) {
+      setLogout(true);
+    }
+  }, [sessionData, userData, isLoading, isSuccess]);
 
   useEffect(() => {
     const handleScroll = () => {
