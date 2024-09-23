@@ -49,7 +49,6 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
   useEffect(() => {
     if (avatarSuccess || profileSuccess) {
       toast.success("Profile updated successfully");
-      window.location.reload();
     }
     if (avatarError || profileError) {
       toast.error("An error occurred while updating.");
