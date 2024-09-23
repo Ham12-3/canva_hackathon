@@ -52,9 +52,6 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
       });
     }
 
-    if (!sessionData && !isLoading && !userData) {
-      setLogout(true);
-    }
     if (sessionData === null) {
       if (isSuccess) {
         toast.success("Logged in successfully");
