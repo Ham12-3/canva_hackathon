@@ -64,7 +64,7 @@ const PageContent = (props: Props) => {
             setOpen={setOpen}
             activeItem={1}
           />
-          <div className="w-[95%] 800px:w-[85%] m-auto min-h-[70vh]">
+          <div className="w-[95%] 800px:w-[85%] mt-[100px] m-auto min-h-[70vh]">
             <Heading
               title={"All Courses - Elearning"}
               description={"Elearning is a programming community"}

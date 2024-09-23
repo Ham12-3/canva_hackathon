@@ -52,13 +52,12 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
       });
     }
 
-    if (sessionData === null) {
-      if (isSuccess) {
-        toast.success("Logged in successfully");
-      }
-    }
-    if (sessionData === null && !userData) {
+    if (!sessionData && !userData && !isLoading) {
       setLogout(true);
+    }
+
+    if (isSuccess && !sessionData) {
+      toast.success("Logged in successfully");
     }
   }, [sessionData, userData, isLoading, isSuccess]);
 
@@ -78,7 +77,7 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, open, setRoute }) => {
   };
 
   return (
-    <div className="w-full relative mb-[120px]">
+    <div className="w-full relative mb-[20px]">
       <div
         className={`w-full h-[80px] z-[80] transition duration-500 ${
           active || openSidebar

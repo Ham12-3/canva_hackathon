@@ -4,7 +4,7 @@ import { styles } from "../styles/style";
 
 const About = () => {
   return (
-    <div className="text-black dark:text-white">
+    <div className="text-black dark:text-white mt-[100px]">
       <br />
       <h1 className={`${styles.title} 800px:!text-[45px]`}>
         What is <span className="text-gradient">Lacodemy?</span>
