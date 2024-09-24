@@ -2,10 +2,10 @@ import { styles } from "@/app/styles/style";
 import { useGetHeroDataQuery } from "@/redux/features/layout/layoutApi";
 import React, { FC, useEffect, useState } from "react";
 
-type Thumbnail = {
-  public_id: string;
-  url: string;
-};
+// type Thumbnail = {
+//   public_id: string;
+//   url: string;
+// };
 
 type CourseInfo = {
   name: string;
@@ -16,7 +16,7 @@ type CourseInfo = {
   category: string;
   level: string;
   demoUrl: string;
-  thumbnail: Thumbnail; // Change to Thumbnail object
+  thumbnail: any; // Change to Thumbnail object
 };
 
 type Props = {
