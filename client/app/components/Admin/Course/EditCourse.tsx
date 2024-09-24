@@ -15,10 +15,10 @@ import { ContentItem } from "./types";
 import { redirect } from "next/navigation";
 
 // Define types
-type Thumbnail = {
-  public_id: string;
-  url: string;
-};
+// type Thumbnail = {
+//   public_id: string;
+//   url: string;
+// };
 
 type CourseInfo = {
   name: string;
@@ -29,7 +29,7 @@ type CourseInfo = {
   tags: string;
   level: string;
   demoUrl: string;
-  thumbnail: Thumbnail;
+  thumbnail: any;
 };
 
 type Props = {
