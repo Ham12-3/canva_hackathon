@@ -375,3 +375,12 @@ Feel free to adjust any section or provide more details if needed! Let me know i
 ![alt text](server/images/image-18.png)
 
 ![alt text](server/images/image-19.png)
+![alt text](server/images/image-20.png)
+
+![alt text](server/images/image-21.png)
+
+![alt text](server/images/image-22.png)
+
+![alt text](server/images/image-23.png)
+
+
