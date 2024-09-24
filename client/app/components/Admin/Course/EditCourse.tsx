@@ -15,10 +15,10 @@ import { ContentItem } from "./types";
 import { redirect } from "next/navigation";
 
 // Define types
-// type Thumbnail = {
-//   public_id: string;
-//   url: string;
-// };
+type Thumbnail = {
+  public_id: string;
+  url: string;
+};
 
 type CourseInfo = {
   name: string;
@@ -29,7 +29,7 @@ type CourseInfo = {
   tags: string;
   level: string;
   demoUrl: string;
-  thumbnail: any;
+  thumbnail: Thumbnail;
 };
 
 type Props = {
@@ -76,8 +76,8 @@ const EditCourse: FC<Props> = ({ id }) => {
         level: editCourseData.level || "",
         demoUrl: editCourseData.demoUrl || "",
         thumbnail: {
-          public_id: editCourseData.thumbnail?.public_id || "",
-          url: editCourseData.thumbnail?.url || "",
+          public_id: String(editCourseData.thumbnail?.public_id || ""),
+          url: String(editCourseData.thumbnail?.url || ""),
         },
         category: editCourseData.category || "",
       });
