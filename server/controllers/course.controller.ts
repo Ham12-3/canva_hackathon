@@ -29,7 +29,7 @@ export const uploadCourse = CatchAsyncError(
 
       const thumbnail = data.thumbnail;
       if (thumbnail) {
-        const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
+        const myCloud = await cloudinary.v2.uploader.upload(thumbnail.url, {
           folder: "courses",
         });
         data.thumbnail = {
@@ -66,7 +66,7 @@ export const editCourse = CatchAsyncError(
         }
 
         // Upload new thumbnail
-        const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
+        const myCloud = await cloudinary.v2.uploader.upload(thumbnail.url, {
           folder: "courses",
         });
 
@@ -375,7 +375,7 @@ export const addReview = CatchAsyncError(
       // check if courseId already exists in userCourseList based on _id
 
       const courseExists = userCourseList?.some((course: any) => {
-        return course._id.toString() === courseId.toString();
+        return course.courseId.toString() === courseId.toString();
       });
 
       if (!courseExists) {
