@@ -324,7 +324,7 @@ Feel free to adjust any section or provide more details if needed! Let me know i
 
 ### Images
 
-![alt text](./server/images/image.png)
+![image](https://github.com/user-attachments/assets/db2b1346-0e20-4b39-82e2-fd61ab7783ce)
 <br>
 <br>
 ![alt text](server/images/image-1.png)
@@ -378,7 +378,7 @@ Feel free to adjust any section or provide more details if needed! Let me know i
 ![alt text](server/images/image-20.png)
 
 ![alt text](server/images/image-21.png)
-![image](https://github.com/user-attachments/assets/db2b1346-0e20-4b39-82e2-fd61ab7783ce)
+
 
 ![alt text](server/images/image-22.png)
 
