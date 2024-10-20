@@ -324,7 +324,9 @@ Feel free to adjust any section or provide more details if needed! Let me know i
 
 ### Images
 
-![image](https://github.com/user-attachments/assets/db2b1346-0e20-4b39-82e2-fd61ab7783ce)
+
+![image](https://github.com/user-attachments/assets/fee97fd9-86d6-45b5-a89b-79a5692d90b0)
+
 <br>
 <br>
 ![alt text](server/images/image-1.png)
