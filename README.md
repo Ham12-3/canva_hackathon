@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Lacodemy AI is an educational technology app designed to manage and deliver courses efficiently. This repository contains both the client and server code for the application.
+Lacodemy is an educational technology app designed to manage and deliver courses efficiently. This repository contains both the client and server code for the application.
 
 ## Project Structure
 
